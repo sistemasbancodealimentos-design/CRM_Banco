@@ -9,7 +9,7 @@
   <style>
     body { background-color: #0b62a4; }
     .sidebar { background-color: #f8fafc; }
-    .card-hover:hover { transform: translateY(-2px); transition: all 0.2s ease; }
+    .card-hover:hover { transform: translateY(-2px); transition: all 0.2s ease; cursor: pointer; }
   </style>
 </head>
 <body class="flex h-screen overflow-hidden font-sans">
@@ -25,174 +25,161 @@
           </i>
           <span class="font-bold text-blue-700 text-lg">Banco de Alimentos</span>
         </div>
-        <button class="text-gray-400 hover:text-gray-600">&times;</button>
       </div>
 
       <!-- Menú Módulos Principales -->
       <div class="p-3">
         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-2">MÓDULOS PRINCIPALES</p>
         <nav class="space-y-1 text-sm text-gray-600">
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-chart-line text-purple-500 w-5"></i><span>Análisis</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-square-check text-green-500 w-5"></i><span>Calidad</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-box text-amber-600 w-5"></i><span>Inventario</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-users text-purple-600 w-5"></i><span>CRM</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-file-lines text-purple-300 w-5"></i><span>Documentos</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-receipt text-pink-500 w-5"></i><span>Recaudos</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-user-tie text-blue-500 w-5"></i><span>Personal</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-truck-fast text-red-400 w-5"></i><span>Despacho</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-city text-cyan-600 w-5"></i><span>Proveedores</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-inbox text-blue-400 w-5"></i><span>Recepción</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-tags text-green-400 w-5"></i><span>Referencias</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-arrows-rotate text-blue-500 w-5"></i><span>Traslados</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-seedling text-emerald-500 w-5"></i><span>Ambiental</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-wrench text-gray-400 w-5"></i><span>Mantenimiento</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-shield-halved text-red-500 w-5"></i><span>SST</span></a>
+          <button onclick="mostrarSeccion('dashboard')" class="w-full flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 text-left">
+            <i class="fa-solid fa-house text-blue-600 w-5"></i><span>Inicio / Tablero</span>
+          </button>
+          <button onclick="mostrarSeccion('inventario')" class="w-full flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 text-left">
+            <i class="fa-solid fa-box text-amber-600 w-5"></i><span class="font-bold text-amber-700">Inventario / Recepción</span>
+          </button>
+          <button onclick="mostrarSeccion('crm')" class="w-full flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 text-left">
+            <i class="fa-solid fa-users text-purple-600 w-5"></i><span>CRM (Donantes/Benef.)</span>
+          </button>
+          <button onclick="mostrarSeccion('recaudos')" class="w-full flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 text-left">
+            <i class="fa-solid fa-receipt text-pink-500 w-5"></i><span>Recaudos y Entregas</span>
+          </button>
         </nav>
       </div>
     </div>
     <div class="p-4 border-t border-gray-200 text-xs text-gray-400">
-      SISTEMA
+      SISTEMA v2.0 - ONLINE
     </div>
   </aside>
 
   <!-- CONTENIDO PRINCIPAL -->
   <main class="flex-1 flex flex-col justify-between p-8 overflow-y-auto">
-    <div>
-      <!-- Título Superior -->
+    
+    <!-- SECCIÓN 1: DASHBOARD DE INICIO -->
+    <div id="seccion-dashboard">
       <h1 class="text-3xl font-bold text-white mb-8">Banco de Alimentos - Sistema de Gestión</h1>
 
       <!-- Tarjetas Destacadas Superiores -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div class="bg-white p-5 rounded-xl shadow card-hover">
+        <div onclick="mostrarSeccion('inventario')" class="bg-white p-5 rounded-xl shadow card-hover">
           <h3 class="font-bold text-blue-900 text-base mb-1">Gestión de Inventario</h3>
-          <p class="text-xs text-gray-500">Control completo del inventario de alimentos</p>
+          <p class="text-xs text-gray-500">Control completo e ingreso de alimentos</p>
         </div>
-        <div class="bg-white p-5 rounded-xl shadow card-hover">
-          <h3 class="font-bold text-blue-900 text-base mb-1">Análisis de Datos</h3>
-          <p class="text-xs text-gray-500">Reportes y métricas en tiempo real</p>
-        </div>
-        <div class="bg-white p-5 rounded-xl shadow card-hover">
+        <div onclick="mostrarSeccion('crm')" class="bg-white p-5 rounded-xl shadow card-hover">
           <h3 class="font-bold text-blue-900 text-base mb-1">CRM</h3>
           <p class="text-xs text-gray-500">Gestión de donantes y beneficiarios</p>
         </div>
-        <div class="bg-white p-5 rounded-xl shadow card-hover">
-          <h3 class="font-bold text-blue-900 text-base mb-1">Logística</h3>
-          <p class="text-xs text-gray-500">Control de envíos y recepciones</p>
+        <div onclick="mostrarSeccion('recaudos')" class="bg-white p-5 rounded-xl shadow card-hover">
+          <h3 class="font-bold text-blue-900 text-base mb-1">Recaudos</h3>
+          <p class="text-xs text-gray-500">Control de entregas y recaudos</p>
+        </div>
+        <div class="bg-white p-5 rounded-xl shadow">
+          <h3 class="font-bold text-blue-900 text-base mb-1">Estado Base de Datos</h3>
+          <p id="estado-db" class="text-xs font-semibold text-green-600">Conectando a Firebase...</p>
         </div>
       </div>
+    </div>
 
-      <!-- Sección Módulos Disponibles -->
-      <h2 class="text-xl font-bold text-white mb-4">Módulos Disponibles</h2>
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        
-        <!-- Tarjeta Análisis -->
-        <div class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-chart-line text-purple-500 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Análisis</h3>
-            <p class="text-xs text-gray-400">Métricas de rendimiento del banco</p>
-          </div>
+    <!-- SECCIÓN 2: MÓDULO DE INVENTARIO / RECEPCIÓN DE ALIMENTOS -->
+    <div id="seccion-inventario" class="hidden">
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <h1 class="text-3xl font-bold text-white">Gestión de Inventario y Recepción</h1>
+          <p class="text-blue-100 text-sm">Registro de entradas, stock de víveres y productos</p>
         </div>
+        <button onclick="abrirModalInventario()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-bold shadow flex items-center space-x-2">
+          <i class="fa-solid fa-plus"></i>
+          <span>Registrar Entrante / Producto</span>
+        </button>
+      </div>
 
-        <!-- Tarjeta Calidad -->
-        <div class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-square-check text-green-500 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Calidad</h3>
-            <p class="text-xs text-gray-400">Control de calidad de productos</p>
-          </div>
+      <!-- Tabla de Productos en Inventario -->
+      <div class="bg-white rounded-xl shadow p-6 mb-8">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">Stock en Tiempo Real</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-gray-600">
+            <thead class="bg-gray-100 text-gray-700 uppercase text-xs border-b">
+              <tr>
+                <th class="p-3">Producto / Alimento</th>
+                <th class="p-3">Categoría</th>
+                <th class="p-3">Cantidad</th>
+                <th class="p-3">Fecha de Vencimiento</th>
+                <th class="p-3">Origen / Donante</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-inventario">
+              <tr>
+                <td colspan="5" class="text-center py-6 text-gray-400">Cargando registros de alimentos...</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
+      </div>
+    </div>
 
-        <!-- Tarjeta Inventario -->
-        <div class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-box text-amber-600 text-3xl mb-3"></i>
+    <!-- SECCIÓN 3: MÓDULO CRM -->
+    <div id="seccion-crm" class="hidden">
+      <h1 class="text-3xl font-bold text-white mb-4">Módulo CRM - Donantes y Beneficiarios</h1>
+      <div class="bg-white p-6 rounded-xl shadow">
+        <p class="text-gray-600">Módulo CRM listo para integrar sus tablas y registros.</p>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 4: MÓDULO RECAUDOS -->
+    <div id="seccion-recaudos" class="hidden">
+      <h1 class="text-3xl font-bold text-white mb-4">Módulo de Recaudos y Entregas</h1>
+      <div class="bg-white p-6 rounded-xl shadow">
+        <p class="text-gray-600">Módulo de entregas y recaudos listo para configurar.</p>
+      </div>
+    </div>
+
+    <!-- MODAL REGISTRAR ALIMENTO EN INVENTARIO -->
+    <div id="modal-inventario" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+      <div class="bg-white rounded-xl p-6 max-w-md w-full shadow-2xl">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Ingresar Nuevo Alimento / Producto</h3>
+        <form id="form-inventario" class="space-y-4">
           <div>
-            <h3 class="font-bold text-blue-900 text-base">Inventario</h3>
-            <p class="text-xs text-gray-400">Carga masiva de inventario</p>
+            <label class="block text-xs font-bold text-gray-700 uppercase">Nombre del Producto</label>
+            <input type="text" id="inv-nombre" required placeholder="Ej. Arroz, Leche en Polvo" class="w-full border p-2 rounded mt-1 text-sm">
           </div>
-        </div>
-
-        <!-- Tarjeta CRM -->
-        <div class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-users text-purple-600 text-3xl mb-3"></i>
           <div>
-            <h3 class="font-bold text-blue-900 text-base">CRM</h3>
-            <p class="text-xs text-gray-400">Gestión de relaciones con clientes</p>
+            <label class="block text-xs font-bold text-gray-700 uppercase">Categoría</label>
+            <select id="inv-categoria" class="w-full border p-2 rounded mt-1 text-sm">
+              <option value="Granos y Cereales">Granos y Cereales</option>
+              <option value="Lácteos">Lácteos</option>
+              <option value="Enlatados y Conservas">Enlatados y Conservas</option>
+              <option value="Frutas y Verduras">Frutas y Verduras</option>
+              <option value="Bebidas / Líquidos">Bebidas / Líquidos</option>
+              <option value="Aseo / Otros">Aseo / Otros</option>
+            </select>
           </div>
-        </div>
-
-        <!-- Tarjeta Documentos -->
-        <div class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-file-lines text-purple-300 text-3xl mb-3"></i>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 uppercase">Cantidad</label>
+              <input type="number" id="inv-cantidad" required placeholder="100" class="w-full border p-2 rounded mt-1 text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 uppercase">Unidad</label>
+              <select id="inv-unidad" class="w-full border p-2 rounded mt-1 text-sm">
+                <option value="Kg">Kilos (Kg)</option>
+                <option value="Unidades">Unidades</option>
+                <option value="Cajas">Cajas</option>
+                <option value="Litros">Litros</option>
+              </select>
+            </div>
+          </div>
           <div>
-            <h3 class="font-bold text-blue-900 text-base">Documentos</h3>
-            <p class="text-xs text-gray-400">Gestión documental</p>
+            <label class="block text-xs font-bold text-gray-700 uppercase">Fecha de Vencimiento</label>
+            <input type="date" id="inv-vencimiento" required class="w-full border p-2 rounded mt-1 text-sm">
           </div>
-        </div>
-
-        <!-- Tarjeta Recaudos -->
-        <div class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-truck-arrow-right text-red-400 text-3xl mb-3"></i>
           <div>
-            <h3 class="font-bold text-blue-900 text-base">Recaudos</h3>
-            <p class="text-xs text-gray-400">Control de recaudos y entregas</p>
+            <label class="block text-xs font-bold text-gray-700 uppercase">Donante / Proveedor</label>
+            <input type="text" id="inv-origen" placeholder="Ej. Éxito, Donante Anónimo" class="w-full border p-2 rounded mt-1 text-sm">
           </div>
-        </div>
-
-        <!-- Tarjeta Personal -->
-        <div class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-user text-purple-800 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Personal</h3>
-            <p class="text-xs text-gray-400">Administración de personal</p>
+          <div class="flex justify-end space-x-3 pt-4 border-t">
+            <button type="button" onclick="cerrarModalInventario()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm">Cancelar</button>
+            <button type="submit" class="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg text-sm shadow">Guardar en Firebase</button>
           </div>
-        </div>
-
-        <!-- Tarjeta Despacho -->
-        <div class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-box-archive text-blue-500 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Despacho</h3>
-            <p class="text-xs text-gray-400">Despacho de productos</p>
-          </div>
-        </div>
-
-        <!-- Tarjeta Proveedores -->
-        <div class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-city text-cyan-600 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Proveedores</h3>
-            <p class="text-xs text-gray-400">Gestión de proveedores</p>
-          </div>
-        </div>
-
-        <!-- Tarjeta Recepción -->
-        <div class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-inbox text-blue-400 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Recepción</h3>
-            <p class="text-xs text-gray-400">Recepción de donaciones</p>
-          </div>
-        </div>
-
-        <!-- Tarjeta Referencias -->
-        <div class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-layer-group text-green-400 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Referencias</h3>
-            <p class="text-xs text-gray-400">Referencias del sistema</p>
-          </div>
-        </div>
-
-        <!-- Tarjeta Traslados -->
-        <div class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-arrows-rotate text-blue-500 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Traslados</h3>
-            <p class="text-xs text-gray-400">Control de traslados</p>
-          </div>
-        </div>
-
+        </form>
       </div>
     </div>
 
@@ -208,12 +195,13 @@
       </div>
     </footer>
   </main>
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-  import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-  // Reemplaza estos valores con las claves exactas de tu Consola de Firebase
+  <!-- FIREBASE & SCRIPT DE LÓGICA -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // Coloca aquí tus claves reales de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyCIY2_rx2mEyn6U5ym-QYhd5xWM78Y2GEM",
   authDomain: "crmfubam-61e45.firebaseapp.com",
@@ -224,12 +212,94 @@ const firebaseConfig = {
   measurementId: "G-L6D908N8EK"
 };
 
-  // Inicializar Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const auth = getAuth(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-  console.log("¡Conexión a Firebase establecida con éxito!");
-</script>
+    const elEstado = document.getElementById('estado-db');
+    if (elEstado) {
+      elEstado.innerText = "✓ Conectado a Firestore";
+      elEstado.className = "text-xs font-bold text-green-600";
+    }
+
+    async function cargarInventario() {
+      const tabla = document.getElementById('tabla-inventario');
+      if(!tabla) return;
+      try {
+        const querySnapshot = await getDocs(collection(db, "inventario"));
+        if(querySnapshot.empty) {
+          tabla.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-gray-400">No hay productos registrados aún. Presiona "Registrar Entrante" para añadir uno.</td></tr>`;
+          return;
+        }
+
+        tabla.innerHTML = "";
+        querySnapshot.forEach((doc) => {
+          const item = doc.data();
+          tabla.innerHTML += `
+            <tr class="border-b hover:bg-gray-50">
+              <td class="p-3 font-semibold text-blue-900">${item.nombre}</td>
+              <td class="p-3"><span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">${item.categoria}</span></td>
+              <td class="p-3 font-bold">${item.cantidad} ${item.unidad}</td>
+              <td class="p-3 text-red-600 font-medium">${item.vencimiento}</td>
+              <td class="p-3 text-gray-500">${item.origen || 'N/A'}</td>
+            </tr>
+          `;
+        });
+      } catch (error) {
+        console.error("Error al cargar inventario: ", error);
+        tabla.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-red-500">Error al conectar con Firebase. Revisa las credenciales.</td></tr>`;
+      }
+    }
+
+    const formInv = document.getElementById('form-inventario');
+    if (formInv) {
+      formInv.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const nuevoProducto = {
+          nombre: document.getElementById('inv-nombre').value,
+          categoria: document.getElementById('inv-categoria').value,
+          cantidad: Number(document.getElementById('inv-cantidad').value),
+          unidad: document.getElementById('inv-unidad').value,
+          vencimiento: document.getElementById('inv-vencimiento').value,
+          origen: document.getElementById('inv-origen').value,
+          fechaIngreso: new Date().toISOString()
+        };
+
+        try {
+          await addDoc(collection(db, "inventario"), nuevoProducto);
+          alert("¡Alimento registrado exitosamente!");
+          formInv.reset();
+          cerrarModalInventario();
+          cargarInventario();
+        } catch (error) {
+          alert("Error al guardar: " + error.message);
+        }
+      });
+    }
+
+    cargarInventario();
+  </script>
+
+  <!-- SCRIPT PARA NAVEGACIÓN DE SECCIONES Y MODALES -->
+  <script>
+    function mostrarSeccion(seccion) {
+      document.getElementById('seccion-dashboard').classList.add('hidden');
+      document.getElementById('seccion-inventario').classList.add('hidden');
+      document.getElementById('seccion-crm').classList.add('hidden');
+      document.getElementById('seccion-recaudos').classList.add('hidden');
+
+      const objetivo = document.getElementById('seccion-' + seccion);
+      if (objetivo) {
+        objetivo.classList.remove('hidden');
+      }
+    }
+
+    function abrirModalInventario() {
+      document.getElementById('modal-inventario').classList.remove('hidden');
+    }
+
+    function cerrarModalInventario() {
+      document.getElementById('modal-inventario').classList.add('hidden');
+    }
+  </script>
 </body>
 </html>
