@@ -4,297 +4,225 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Banco de Alimentos - Sistema de Gestión</title>
+
+  <!-- Tailwind CSS CDN Principal -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Fallback/Respaldo de FontAwesome e Iconos nativos -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- ESTILOS AUTÓNOMOS DE RESPALDO (POR SI LA RED BLOQUEA LOS CDN) -->
   <style>
-    body { background-color: #0b62a4; }
-    .sidebar { background-color: #f8fafc; }
-    .card-hover:hover { transform: translateY(-2px); transition: all 0.2s ease; cursor: pointer; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: #0b62a4 !important; font-family: system-ui, -apple-system, sans-serif; display: flex; height: 100vh; overflow: hidden; }
+    aside.sidebar { width: 260px; background-color: #f8fafc; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between; overflow-y: auto; flex-shrink: 0; }
+    main { flex: 1; padding: 2rem; overflow-y: auto; display: flex; flex-direction: column; justify-content: space-between; }
+    
+    .nav-btn { width: 100%; display: flex; items-center; space-x-3; padding: 0.5rem 0.75rem; border-radius: 0.375rem; border: none; background: transparent; text-align: left; font-size: 0.875rem; color: #475569; cursor: pointer; }
+    .nav-btn:hover { background-color: #eff6ff; color: #2563eb; }
+    
+    .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+    .card-mod { background: white; padding: 1.25rem; border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.2s; }
+    .card-mod:hover { transform: translateY(-2px); }
+    
+    .hidden { display: none !important; }
+    .text-white { color: #ffffff !important; }
+    .bg-white { background-color: #ffffff !important; }
+    .table-custom { width: 100%; text-align: left; border-collapse: collapse; font-size: 0.875rem; }
+    .table-custom th { background-color: #f1f5f9; padding: 0.75rem; color: #334155; font-size: 0.75rem; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; }
+    .table-custom td { padding: 0.75rem; border-bottom: 1px solid #f1f5f9; }
   </style>
 </head>
 <body class="flex h-screen overflow-hidden font-sans">
 
-  <!-- BARRA LATERAL (SIDEBAR FOTOGRÁFICO FIEL) -->
+  <!-- BARRA LATERAL (SIDEBAR) -->
   <aside class="w-64 sidebar border-r border-gray-200 flex flex-col justify-between overflow-y-auto">
     <div>
-      <!-- Logo y Título Sidebar -->
       <div class="p-4 border-b border-gray-200 flex items-center justify-between">
         <div class="flex items-center space-x-2">
-          <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
-          </svg>
-          <span class="font-bold text-blue-700 text-lg">Banco de Alimentos</span>
+          <span class="font-bold text-blue-700 text-lg">🐟 Banco de Alimentos</span>
         </div>
-        <button class="text-gray-400 hover:text-gray-600">&times;</button>
       </div>
 
-      <!-- Menú Completo de Módulos Principales -->
       <div class="p-3">
-        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-2">MÓDULOS PRINCIPALES</p>
+        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-2" style="font-size: 0.7rem; color: #94a3b8; font-weight: bold; margin-bottom: 0.5rem;">MÓDULOS PRINCIPALES</p>
         <nav class="space-y-1 text-sm text-gray-600">
-          <button onclick="mostrarSeccion('dashboard')" class="w-full flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 text-left">
-            <i class="fa-solid fa-house text-blue-600 w-5"></i><span>Inicio / Tablero</span>
-          </button>
-          <button onclick="mostrarSeccion('analisis')" class="w-full flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 text-left">
-            <i class="fa-solid fa-chart-line text-purple-500 w-5"></i><span>Análisis</span>
-          </button>
-          <button onclick="mostrarSeccion('calidad')" class="w-full flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 text-left">
-            <i class="fa-solid fa-square-check text-green-500 w-5"></i><span>Calidad</span>
-          </button>
-          <button onclick="mostrarSeccion('inventario')" class="w-full flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 text-left">
-            <i class="fa-solid fa-box text-amber-600 w-5"></i><span class="font-bold text-amber-700">Inventario</span>
-          </button>
-          <button onclick="mostrarSeccion('crm')" class="w-full flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 text-left">
-            <i class="fa-solid fa-users text-purple-600 w-5"></i><span>CRM</span>
-          </button>
-          <button onclick="mostrarSeccion('documentos')" class="w-full flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 text-left">
-            <i class="fa-solid fa-file-lines text-purple-300 w-5"></i><span>Documentos</span>
-          </button>
-          <button onclick="mostrarSeccion('recaudos')" class="w-full flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 text-left">
-            <i class="fa-solid fa-receipt text-pink-500 w-5"></i><span>Recaudos</span>
-          </button>
-          <button onclick="mostrarSeccion('personal')" class="w-full flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 text-left">
-            <i class="fa-solid fa-user-tie text-blue-500 w-5"></i><span>Personal</span>
-          </button>
-          <button onclick="mostrarSeccion('despacho')" class="w-full flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 text-left">
-            <i class="fa-solid fa-truck-fast text-red-400 w-5"></i><span>Despacho</span>
-          </button>
-          <button onclick="mostrarSeccion('proveedores')" class="w-full flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 text-left">
-            <i class="fa-solid fa-city text-cyan-600 w-5"></i><span>Proveedores</span>
-          </button>
-          <button onclick="mostrarSeccion('recepcion')" class="w-full flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 text-left">
-            <i class="fa-solid fa-inbox text-blue-400 w-5"></i><span>Recepción</span>
-          </button>
-          <button onclick="mostrarSeccion('referencias')" class="w-full flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 text-left">
-            <i class="fa-solid fa-tags text-green-400 w-5"></i><span>Referencias</span>
-          </button>
-          <button onclick="mostrarSeccion('traslados')" class="w-full flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 text-left">
-            <i class="fa-solid fa-arrows-rotate text-blue-500 w-5"></i><span>Traslados</span>
-          </button>
-          <button onclick="mostrarSeccion('ambiental')" class="w-full flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 text-left">
-            <i class="fa-solid fa-seedling text-emerald-500 w-5"></i><span>Ambiental</span>
-          </button>
-          <button onclick="mostrarSeccion('mantenimiento')" class="w-full flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 text-left">
-            <i class="fa-solid fa-wrench text-gray-400 w-5"></i><span>Mantenimiento</span>
-          </button>
-          <button onclick="mostrarSeccion('sst')" class="w-full flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 text-left">
-            <i class="fa-solid fa-shield-halved text-red-500 w-5"></i><span>SST</span>
-          </button>
+          <button onclick="mostrarSeccion('dashboard')" class="nav-btn"><i class="fa-solid fa-house text-blue-600 w-5"></i><span>Inicio / Tablero</span></button>
+          <button onclick="mostrarSeccion('analisis')" class="nav-btn"><i class="fa-solid fa-chart-line text-purple-500 w-5"></i><span>Análisis</span></button>
+          <button onclick="mostrarSeccion('calidad')" class="nav-btn"><i class="fa-solid fa-square-check text-green-500 w-5"></i><span>Calidad</span></button>
+          <button onclick="mostrarSeccion('inventario')" class="nav-btn"><i class="fa-solid fa-box text-amber-600 w-5"></i><span style="font-weight: bold; color: #b45309;">Inventario</span></button>
+          <button onclick="mostrarSeccion('crm')" class="nav-btn"><i class="fa-solid fa-users text-purple-600 w-5"></i><span>CRM</span></button>
+          <button onclick="mostrarSeccion('documentos')" class="nav-btn"><i class="fa-solid fa-file-lines text-purple-300 w-5"></i><span>Documentos</span></button>
+          <button onclick="mostrarSeccion('recaudos')" class="nav-btn"><i class="fa-solid fa-receipt text-pink-500 w-5"></i><span>Recaudos</span></button>
+          <button onclick="mostrarSeccion('personal')" class="nav-btn"><i class="fa-solid fa-user-tie text-blue-500 w-5"></i><span>Personal</span></button>
+          <button onclick="mostrarSeccion('despacho')" class="nav-btn"><i class="fa-solid fa-truck-fast text-red-400 w-5"></i><span>Despacho</span></button>
+          <button onclick="mostrarSeccion('proveedores')" class="nav-btn"><i class="fa-solid fa-city text-cyan-600 w-5"></i><span>Proveedores</span></button>
+          <button onclick="mostrarSeccion('recepcion')" class="nav-btn"><i class="fa-solid fa-inbox text-blue-400 w-5"></i><span>Recepción</span></button>
+          <button onclick="mostrarSeccion('referencias')" class="nav-btn"><i class="fa-solid fa-tags text-green-400 w-5"></i><span>Referencias</span></button>
+          <button onclick="mostrarSeccion('traslados')" class="nav-btn"><i class="fa-solid fa-arrows-rotate text-blue-500 w-5"></i><span>Traslados</span></button>
+          <button onclick="mostrarSeccion('ambiental')" class="nav-btn"><i class="fa-solid fa-seedling text-emerald-500 w-5"></i><span>Ambiental</span></button>
+          <button onclick="mostrarSeccion('mantenimiento')" class="nav-btn"><i class="fa-solid fa-wrench text-gray-400 w-5"></i><span>Mantenimiento</span></button>
+          <button onclick="mostrarSeccion('sst')" class="nav-btn"><i class="fa-solid fa-shield-halved text-red-500 w-5"></i><span>SST</span></button>
         </nav>
       </div>
     </div>
-    <div class="p-4 border-t border-gray-200 text-xs text-gray-400">
+    <div style="padding: 1rem; border-top: 1px solid #e2e8f0; font-size: 0.75rem; color: #94a3b8;">
       SISTEMA
     </div>
   </aside>
 
   <!-- CONTENIDO PRINCIPAL -->
-  <main class="flex-1 flex flex-col justify-between p-8 overflow-y-auto">
+  <main>
     
-    <!-- SECCIÓN DASHBOARD (RÉPLICA EXACTA) -->
+    <!-- DASHBOARD -->
     <div id="seccion-dashboard">
-      <h1 class="text-3xl font-bold text-white mb-8">Banco de Alimentos - Sistema de Gestión</h1>
+      <h1 class="text-3xl font-bold text-white mb-8" style="font-size: 1.875rem; font-weight: bold; color: white; margin-bottom: 2rem;">Banco de Alimentos - Sistema de Gestión</h1>
 
-      <!-- Destacados Superiores -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div onclick="mostrarSeccion('inventario')" class="bg-white p-5 rounded-xl shadow card-hover">
-          <h3 class="font-bold text-blue-900 text-base mb-1">Gestión de Inventario</h3>
-          <p class="text-xs text-gray-500">Control completo del inventario de alimentos</p>
+      <div class="grid-cards" style="margin-bottom: 2rem;">
+        <div onclick="mostrarSeccion('inventario')" class="card-mod">
+          <h3 style="font-weight: bold; color: #1e3a8a; font-size: 1rem;">Gestión de Inventario</h3>
+          <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">Control completo del inventario de alimentos</p>
         </div>
-        <div onclick="mostrarSeccion('analisis')" class="bg-white p-5 rounded-xl shadow card-hover">
-          <h3 class="font-bold text-blue-900 text-base mb-1">Análisis de Datos</h3>
-          <p class="text-xs text-gray-500">Reportes y métricas en tiempo real</p>
+        <div onclick="mostrarSeccion('analisis')" class="card-mod">
+          <h3 style="font-weight: bold; color: #1e3a8a; font-size: 1rem;">Análisis de Datos</h3>
+          <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">Reportes y métricas en tiempo real</p>
         </div>
-        <div onclick="mostrarSeccion('crm')" class="bg-white p-5 rounded-xl shadow card-hover">
-          <h3 class="font-bold text-blue-900 text-base mb-1">CRM</h3>
-          <p class="text-xs text-gray-500">Gestión de donantes y beneficiarios</p>
+        <div onclick="mostrarSeccion('crm')" class="card-mod">
+          <h3 style="font-weight: bold; color: #1e3a8a; font-size: 1rem;">CRM</h3>
+          <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">Gestión de donantes y beneficiarios</p>
         </div>
-        <div onclick="mostrarSeccion('despacho')" class="bg-white p-5 rounded-xl shadow card-hover">
-          <h3 class="font-bold text-blue-900 text-base mb-1">Logística</h3>
-          <p class="text-xs text-gray-500">Control de envíos y recepciones</p>
+        <div onclick="mostrarSeccion('despacho')" class="card-mod">
+          <h3 style="font-weight: bold; color: #1e3a8a; font-size: 1rem;">Logística</h3>
+          <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">Control de envíos y recepciones</p>
         </div>
       </div>
 
-      <!-- Cuadrícula Módulos Disponibles -->
-      <h2 class="text-xl font-bold text-white mb-4">Módulos Disponibles</h2>
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        
-        <div onclick="mostrarSeccion('analisis')" class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-chart-line text-purple-500 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Análisis</h3>
-            <p class="text-xs text-gray-400">Métricas de rendimiento del banco</p>
-          </div>
+      <h2 style="font-size: 1.25rem; font-weight: bold; color: white; margin-bottom: 1rem;">Módulos Disponibles</h2>
+      <div class="grid-cards">
+        <div onclick="mostrarSeccion('analisis')" class="card-mod">
+          <h3 style="font-weight: bold; color: #1e3a8a;">Análisis</h3>
+          <p style="font-size: 0.75rem; color: #9ca3af;">Métricas de rendimiento del banco</p>
         </div>
-
-        <div onclick="mostrarSeccion('calidad')" class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-square-check text-green-500 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Calidad</h3>
-            <p class="text-xs text-gray-400">Control de calidad de productos</p>
-          </div>
+        <div onclick="mostrarSeccion('calidad')" class="card-mod">
+          <h3 style="font-weight: bold; color: #1e3a8a;">Calidad</h3>
+          <p style="font-size: 0.75rem; color: #9ca3af;">Control de calidad de productos</p>
         </div>
-
-        <div onclick="mostrarSeccion('inventario')" class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-box text-amber-600 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Inventario</h3>
-            <p class="text-xs text-gray-400">Carga masiva de inventario</p>
-          </div>
+        <div onclick="mostrarSeccion('inventario')" class="card-mod">
+          <h3 style="font-weight: bold; color: #1e3a8a;">Inventario</h3>
+          <p style="font-size: 0.75rem; color: #9ca3af;">Carga masiva de inventario</p>
         </div>
-
-        <div onclick="mostrarSeccion('crm')" class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-users text-purple-600 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">CRM</h3>
-            <p class="text-xs text-gray-400">Gestión de relaciones con clientes</p>
-          </div>
+        <div onclick="mostrarSeccion('crm')" class="card-mod">
+          <h3 style="font-weight: bold; color: #1e3a8a;">CRM</h3>
+          <p style="font-size: 0.75rem; color: #9ca3af;">Gestión de relaciones con clientes</p>
         </div>
-
-        <div onclick="mostrarSeccion('documentos')" class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-file-lines text-purple-300 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Documentos</h3>
-            <p class="text-xs text-gray-400">Gestión documental</p>
-          </div>
+        <div onclick="mostrarSeccion('documentos')" class="card-mod">
+          <h3 style="font-weight: bold; color: #1e3a8a;">Documentos</h3>
+          <p style="font-size: 0.75rem; color: #9ca3af;">Gestión documental</p>
         </div>
-
-        <div onclick="mostrarSeccion('recaudos')" class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-truck-arrow-right text-red-400 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Recaudos</h3>
-            <p class="text-xs text-gray-400">Control de recaudos y entregas</p>
-          </div>
+        <div onclick="mostrarSeccion('recaudos')" class="card-mod">
+          <h3 style="font-weight: bold; color: #1e3a8a;">Recaudos</h3>
+          <p style="font-size: 0.75rem; color: #9ca3af;">Control de recaudos y entregas</p>
         </div>
-
-        <div onclick="mostrarSeccion('personal')" class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-user text-purple-800 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Personal</h3>
-            <p class="text-xs text-gray-400">Administración de personal</p>
-          </div>
+        <div onclick="mostrarSeccion('personal')" class="card-mod">
+          <h3 style="font-weight: bold; color: #1e3a8a;">Personal</h3>
+          <p style="font-size: 0.75rem; color: #9ca3af;">Administración de personal</p>
         </div>
-
-        <div onclick="mostrarSeccion('despacho')" class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-box-archive text-blue-500 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Despacho</h3>
-            <p class="text-xs text-gray-400">Despacho de productos</p>
-          </div>
+        <div onclick="mostrarSeccion('despacho')" class="card-mod">
+          <h3 style="font-weight: bold; color: #1e3a8a;">Despacho</h3>
+          <p style="font-size: 0.75rem; color: #9ca3af;">Despacho de productos</p>
         </div>
-
-        <div onclick="mostrarSeccion('proveedores')" class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-city text-cyan-600 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Proveedores</h3>
-            <p class="text-xs text-gray-400">Gestión de proveedores</p>
-          </div>
+        <div onclick="mostrarSeccion('proveedores')" class="card-mod">
+          <h3 style="font-weight: bold; color: #1e3a8a;">Proveedores</h3>
+          <p style="font-size: 0.75rem; color: #9ca3af;">Gestión de proveedores</p>
         </div>
-
-        <div onclick="mostrarSeccion('recepcion')" class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-inbox text-blue-400 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Recepción</h3>
-            <p class="text-xs text-gray-400">Recepción de donaciones</p>
-          </div>
+        <div onclick="mostrarSeccion('recepcion')" class="card-mod">
+          <h3 style="font-weight: bold; color: #1e3a8a;">Recepción</h3>
+          <p style="font-size: 0.75rem; color: #9ca3af;">Recepción de donaciones</p>
         </div>
-
-        <div onclick="mostrarSeccion('referencias')" class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-layer-group text-green-400 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Referencias</h3>
-            <p class="text-xs text-gray-400">Referencias del sistema</p>
-          </div>
+        <div onclick="mostrarSeccion('referencias')" class="card-mod">
+          <h3 style="font-weight: bold; color: #1e3a8a;">Referencias</h3>
+          <p style="font-size: 0.75rem; color: #9ca3af;">Referencias del sistema</p>
         </div>
-
-        <div onclick="mostrarSeccion('traslados')" class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-arrows-rotate text-blue-500 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Traslados</h3>
-            <p class="text-xs text-gray-400">Control de traslados</p>
-          </div>
+        <div onclick="mostrarSeccion('traslados')" class="card-mod">
+          <h3 style="font-weight: bold; color: #1e3a8a;">Traslados</h3>
+          <p style="font-size: 0.75rem; color: #9ca3af;">Control de traslados</p>
         </div>
-
       </div>
     </div>
 
-    <!-- SECCIÓN INVENTARIO CONECTADA A FIREBASE -->
+    <!-- SECCIÓN INVENTARIO -->
     <div id="seccion-inventario" class="hidden">
-      <div class="flex justify-between items-center mb-6">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
         <div>
-          <h1 class="text-3xl font-bold text-white">Módulo de Inventario</h1>
-          <p class="text-blue-100 text-sm">Control de stock de alimentos guardados en la nube</p>
+          <h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Módulo de Inventario</h1>
+          <p style="color: #bfdbfe; font-size: 0.875rem;">Control de stock de alimentos guardados en la nube</p>
         </div>
-        <button onclick="abrirModalInventario()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-bold shadow flex items-center space-x-2">
-          <i class="fa-solid fa-plus"></i>
-          <span>Registrar Producto</span>
+        <button onclick="abrirModalInventario()" style="background-color: #22c55e; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer;">
+          + Registrar Producto
         </button>
       </div>
 
-      <div class="bg-white rounded-xl shadow p-6">
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-sm text-gray-600">
-            <thead class="bg-gray-100 text-gray-700 uppercase text-xs border-b">
-              <tr>
-                <th class="p-3">Producto / Alimento</th>
-                <th class="p-3">Categoría</th>
-                <th class="p-3">Cantidad</th>
-                <th class="p-3">Vencimiento</th>
-                <th class="p-3">Donante</th>
-              </tr>
-            </thead>
-            <tbody id="tabla-inventario">
-              <tr>
-                <td colspan="5" class="text-center py-6 text-gray-400">Cargando datos desde Firebase...</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <table class="table-custom">
+          <thead>
+            <tr>
+              <th>Producto / Alimento</th>
+              <th>Categoría</th>
+              <th>Cantidad</th>
+              <th>Vencimiento</th>
+              <th>Donante</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-inventario">
+            <tr>
+              <td colspan="5" style="text-center; padding: 1.5rem; color: #9ca3af;">Cargando datos desde Firebase...</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
-    <!-- SECCIONES GENÉRICAS DE CADA MÓDULO (LISTAS PARA AMPLIAR) -->
-    <div id="seccion-analisis" class="hidden bg-white p-6 rounded-xl shadow"><h2 class="text-2xl font-bold text-blue-900 mb-2">Módulo Análisis</h2><p class="text-gray-600">Métricas y estadísticas del banco de alimentos.</p></div>
-    <div id="seccion-calidad" class="hidden bg-white p-6 rounded-xl shadow"><h2 class="text-2xl font-bold text-blue-900 mb-2">Módulo Calidad</h2><p class="text-gray-600">Revisión e inspección de alimentos.</p></div>
-    <div id="seccion-crm" class="hidden bg-white p-6 rounded-xl shadow"><h2 class="text-2xl font-bold text-blue-900 mb-2">Módulo CRM</h2><p class="text-gray-600">Gestión de relaciones con Donantes y Beneficiarios.</p></div>
-    <div id="seccion-documentos" class="hidden bg-white p-6 rounded-xl shadow"><h2 class="text-2xl font-bold text-blue-900 mb-2">Módulo Documentos</h2><p class="text-gray-600">Gestión documental y archivos digitalizados.</p></div>
-    <div id="seccion-recaudos" class="hidden bg-white p-6 rounded-xl shadow"><h2 class="text-2xl font-bold text-blue-900 mb-2">Módulo Recaudos</h2><p class="text-gray-600">Gestión de cobros y entregas.</p></div>
-    <div id="seccion-personal" class="hidden bg-white p-6 rounded-xl shadow"><h2 class="text-2xl font-bold text-blue-900 mb-2">Módulo Personal</h2><p class="text-gray-600">Gestión de empleados y voluntarios.</p></div>
-    <div id="seccion-despacho" class="hidden bg-white p-6 rounded-xl shadow"><h2 class="text-2xl font-bold text-blue-900 mb-2">Módulo Despacho</h2><p class="text-gray-600">Envío de insumos y productos.</p></div>
-    <div id="seccion-proveedores" class="hidden bg-white p-6 rounded-xl shadow"><h2 class="text-2xl font-bold text-blue-900 mb-2">Módulo Proveedores</h2><p class="text-gray-600">Directorio de proveedores registrados.</p></div>
-    <div id="seccion-recepcion" class="hidden bg-white p-6 rounded-xl shadow"><h2 class="text-2xl font-bold text-blue-900 mb-2">Módulo Recepción</h2><p class="text-gray-600">Recepción y llegada de donaciones.</p></div>
-    <div id="seccion-referencias" class="hidden bg-white p-6 rounded-xl shadow"><h2 class="text-2xl font-bold text-blue-900 mb-2">Módulo Referencias</h2><p class="text-gray-600">Catálogo de referencias del sistema.</p></div>
-    <div id="seccion-traslados" class="hidden bg-white p-6 rounded-xl shadow"><h2 class="text-2xl font-bold text-blue-900 mb-2">Módulo Traslados</h2><p class="text-gray-600">Movimiento interno de productos.</p></div>
-    <div id="seccion-ambiental" class="hidden bg-white p-6 rounded-xl shadow"><h2 class="text-2xl font-bold text-blue-900 mb-2">Módulo Ambiental</h2><p class="text-gray-600">Gestión de residuos y aprovechamiento.</p></div>
-    <div id="seccion-mantenimiento" class="hidden bg-white p-6 rounded-xl shadow"><h2 class="text-2xl font-bold text-blue-900 mb-2">Módulo Mantenimiento</h2><p class="text-gray-600">Mantenimiento de vehículos y bodegas.</p></div>
-    <div id="seccion-sst" class="hidden bg-white p-6 rounded-xl shadow"><h2 class="text-2xl font-bold text-blue-900 mb-2">Módulo SST</h2><p class="text-gray-600">Seguridad y Salud en el Trabajo.</p></div>
+    <!-- SECCIONES SECUNDARIAS -->
+    <div id="seccion-analisis" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Análisis</h2><p>Métricas y estadísticas del banco de alimentos.</p></div>
+    <div id="seccion-calidad" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Calidad</h2><p>Revisión e inspección de alimentos.</p></div>
+    <div id="seccion-crm" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo CRM</h2><p>Gestión de Donantes y Beneficiarios.</p></div>
+    <div id="seccion-documentos" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Documentos</h2><p>Gestión documental.</p></div>
+    <div id="seccion-recaudos" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Recaudos</h2><p>Cobros y entregas.</p></div>
+    <div id="seccion-personal" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Personal</h2><p>Personal y voluntarios.</p></div>
+    <div id="seccion-despacho" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Despacho</h2><p>Despacho de productos.</p></div>
+    <div id="seccion-proveedores" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Proveedores</h2><p>Directorio de proveedores.</p></div>
+    <div id="seccion-recepcion" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Recepción</h2><p>Recepción de donaciones.</p></div>
+    <div id="seccion-referencias" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Referencias</h2><p>Referencias del sistema.</p></div>
+    <div id="seccion-traslados" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Traslados</h2><p>Movimiento de productos.</p></div>
+    <div id="seccion-ambiental" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Ambiental</h2><p>Gestión ambiental.</p></div>
+    <div id="seccion-mantenimiento" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Mantenimiento</h2><p>Mantenimiento de infraestructura.</p></div>
+    <div id="seccion-sst" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo SST</h2><p>Seguridad y Salud en el Trabajo.</p></div>
 
-    <!-- MODAL INVENTARIO -->
-    <div id="modal-inventario" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-      <div class="bg-white rounded-xl p-6 max-w-md w-full shadow-2xl">
-        <h3 class="text-xl font-bold text-gray-800 mb-4">Ingresar Nuevo Alimento</h3>
-        <form id="form-inventario" class="space-y-4">
+    <!-- MODAL -->
+    <div id="modal-inventario" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 50;">
+      <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; max-width: 400px; width: 100%;">
+        <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem;">Ingresar Nuevo Alimento</h3>
+        <form id="form-inventario" style="display: flex; flex-direction: column; gap: 0.75rem;">
           <div>
-            <label class="block text-xs font-bold text-gray-700 uppercase">Nombre del Producto</label>
-            <input type="text" id="inv-nombre" required placeholder="Ej. Arroz" class="w-full border p-2 rounded mt-1 text-sm">
+            <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">NOMBRE DEL PRODUCTO</label>
+            <input type="text" id="inv-nombre" required placeholder="Ej. Arroz" style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.25rem;">
           </div>
           <div>
-            <label class="block text-xs font-bold text-gray-700 uppercase">Categoría</label>
-            <select id="inv-categoria" class="w-full border p-2 rounded mt-1 text-sm">
+            <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">CATEGORÍA</label>
+            <select id="inv-categoria" style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.25rem;">
               <option value="Granos y Cereales">Granos y Cereales</option>
               <option value="Lácteos">Lácteos</option>
               <option value="Enlatados">Enlatados</option>
               <option value="Frutas y Verduras">Frutas y Verduras</option>
             </select>
           </div>
-          <div class="grid grid-cols-2 gap-2">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
             <div>
-              <label class="block text-xs font-bold text-gray-700 uppercase">Cantidad</label>
-              <input type="number" id="inv-cantidad" required placeholder="100" class="w-full border p-2 rounded mt-1 text-sm">
+              <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">CANTIDAD</label>
+              <input type="number" id="inv-cantidad" required placeholder="100" style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.25rem;">
             </div>
             <div>
-              <label class="block text-xs font-bold text-gray-700 uppercase">Unidad</label>
-              <select id="inv-unidad" class="w-full border p-2 rounded mt-1 text-sm">
+              <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">UNIDAD</label>
+              <select id="inv-unidad" style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.25rem;">
                 <option value="Kg">Kg</option>
                 <option value="Unidades">Unidades</option>
                 <option value="Cajas">Cajas</option>
@@ -302,30 +230,30 @@
             </div>
           </div>
           <div>
-            <label class="block text-xs font-bold text-gray-700 uppercase">Vencimiento</label>
-            <input type="date" id="inv-vencimiento" required class="w-full border p-2 rounded mt-1 text-sm">
+            <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">VENCIMIENTO</label>
+            <input type="date" id="inv-vencimiento" required style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.25rem;">
           </div>
           <div>
-            <label class="block text-xs font-bold text-gray-700 uppercase">Donante</label>
-            <input type="text" id="inv-origen" placeholder="Ej. Éxito" class="w-full border p-2 rounded mt-1 text-sm">
+            <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">DONANTE</label>
+            <input type="text" id="inv-origen" placeholder="Ej. Éxito" style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.25rem;">
           </div>
-          <div class="flex justify-end space-x-3 pt-4 border-t">
-            <button type="button" onclick="cerrarModalInventario()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm">Cancelar</button>
-            <button type="submit" class="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg text-sm shadow">Guardar</button>
+          <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem; border-top: 1px solid #e5e7eb; padding-top: 0.75rem;">
+            <button type="button" onclick="cerrarModalInventario()" style="padding: 0.5rem 1rem; background: #e5e7eb; color: #374151; border-radius: 0.375rem; border: none; cursor: pointer;">Cancelar</button>
+            <button type="submit" style="padding: 0.5rem 1rem; background: #2563eb; color: white; font-weight: bold; border-radius: 0.375rem; border: none; cursor: pointer;">Guardar</button>
           </div>
         </form>
       </div>
     </div>
 
-    <!-- Pie de página -->
-    <footer class="mt-8 text-xs text-blue-200 flex justify-between items-center">
+    <!-- PIE DE PÁGINA -->
+    <footer style="margin-top: 2rem; font-size: 0.75rem; color: #bfdbfe; display: flex; justify-content: space-between; align-items: center;">
       <div>
         <p>© 2026 Banco de Alimentos de Medellín</p>
-        <p class="text-blue-300 font-semibold">Sistema de Gestión Integral</p>
+        <p style="color: #93c5fd; font-weight: 600;">Sistema de Gestión Integral</p>
       </div>
-      <div class="text-right">
-        <span class="font-bold text-sm block">Banco Arquidiocesano</span>
-        <span class="text-xs text-blue-300">DE ALIMENTOS DE MEDELLÍN</span>
+      <div style="text-align: right;">
+        <span style="font-weight: bold; font-size: 0.875rem; display: block;">Banco Arquidiocesano</span>
+        <span style="font-size: 0.75rem; color: #93c5fd;">DE ALIMENTOS DE MEDELLÍN</span>
       </div>
     </footer>
   </main>
@@ -335,7 +263,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // Coloca tus claves de Firebase aquí
+    // Reemplaza con tus claves reales
 const firebaseConfig = {
   apiKey: "AIzaSyCIY2_rx2mEyn6U5ym-QYhd5xWM78Y2GEM",
   authDomain: "crmfubam-61e45.firebaseapp.com",
@@ -355,7 +283,7 @@ const firebaseConfig = {
       try {
         const querySnapshot = await getDocs(collection(db, "inventario"));
         if(querySnapshot.empty) {
-          tabla.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-gray-400">No hay productos registrados. Presiona "Registrar Producto".</td></tr>`;
+          tabla.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: #9ca3af;">No hay productos registrados. Presiona "Registrar Producto".</td></tr>`;
           return;
         }
 
@@ -363,17 +291,17 @@ const firebaseConfig = {
         querySnapshot.forEach((doc) => {
           const item = doc.data();
           tabla.innerHTML += `
-            <tr class="border-b hover:bg-gray-50">
-              <td class="p-3 font-semibold text-blue-900">${item.nombre}</td>
-              <td class="p-3"><span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">${item.categoria}</span></td>
-              <td class="p-3 font-bold">${item.cantidad} ${item.unidad}</td>
-              <td class="p-3 text-red-600 font-medium">${item.vencimiento}</td>
-              <td class="p-3 text-gray-500">${item.origen || 'N/A'}</td>
+            <tr style="border-bottom: 1px solid #f3f4f6;">
+              <td style="padding: 0.75rem; font-weight: 600; color: #1e3a8a;">${item.nombre}</td>
+              <td style="padding: 0.75rem;"><span style="background: #dbeafe; color: #1e40af; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">${item.categoria}</span></td>
+              <td style="padding: 0.75rem; font-weight: bold;">${item.cantidad} ${item.unidad}</td>
+              <td style="padding: 0.75rem; color: #dc2626; font-weight: 500;">${item.vencimiento}</td>
+              <td style="padding: 0.75rem; color: #6b7280;">${item.origen || 'N/A'}</td>
             </tr>
           `;
         });
       } catch (error) {
-        tabla.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-red-500">Error conectando a Firebase. Configura la API Key.</td></tr>`;
+        tabla.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: #ef4444;">Error conectando a Firebase. Configura la API Key.</td></tr>`;
       }
     }
 
@@ -420,11 +348,15 @@ const firebaseConfig = {
     }
 
     function abrirModalInventario() {
-      document.getElementById('modal-inventario').classList.remove('hidden');
+      const m = document.getElementById('modal-inventario');
+      m.classList.remove('hidden');
+      m.style.display = 'flex';
     }
 
     function cerrarModalInventario() {
-      document.getElementById('modal-inventario').classList.add('hidden');
+      const m = document.getElementById('modal-inventario');
+      m.classList.add('hidden');
+      m.style.display = 'none';
     }
   </script>
 </body>
