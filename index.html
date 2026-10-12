@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRM Fundación</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans min-h-screen flex flex-col justify-between">
+
+  <!-- Encabezado / Menú Superior -->
+  <header class="bg-blue-800 text-white shadow-md p-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold">CRM Fundación - Sistema de Gestión</h1>
+    <nav class="space-x-4">
+      <a href="#" class="hover:underline">Inicio</a>
+      <a href="#" class="hover:underline">Beneficiarios</a>
+      <a href="#" class="hover:underline">Donaciones</a>
+      <a href="#" class="hover:underline">Reportes</a>
+    </nav>
+  </header>
+
+  <!-- Contenido Principal -->
+  <main class="container mx-auto my-8 p-6 bg-white shadow-lg rounded-lg max-w-4xl">
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">Bienvenido al nuevo CRM</h2>
+    <p class="text-gray-600 mb-6">
+      Sistema v2.0 diseñado para gestionar los módulos de la fundación de forma ágil, segura y gratuita.
+    </p>
+
+    <!-- Tarjetas de Acceso Rápido a Módulos -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="border p-4 rounded-lg bg-blue-50 text-center hover:shadow-md transition">
+        <h3 class="font-semibold text-blue-900 text-lg">Beneficiarios</h3>
+        <p class="text-xs text-gray-500 my-2">Gestión y registro de personas atendidas.</p>
+        <button class="bg-blue-600 text-white px-3 py-1 text-sm rounded">Ingresar</button>
+      </div>
+
+      <div class="border p-4 rounded-lg bg-green-50 text-center hover:shadow-md transition">
+        <h3 class="font-semibold text-green-900 text-lg">Donaciones</h3>
+        <p class="text-xs text-gray-500 my-2">Control de ingresos y donantes.</p>
+        <button class="bg-green-600 text-white px-3 py-1 text-sm rounded">Ingresar</button>
+      </div>
+
+      <div class="border p-4 rounded-lg bg-purple-50 text-center hover:shadow-md transition">
+        <h3 class="font-semibold text-purple-900 text-lg">Inventario / Alimentos</h3>
+        <p class="text-xs text-gray-500 my-2">Stock de suministros y entregas.</p>
+        <button class="bg-purple-600 text-white px-3 py-1 text-sm rounded">Ingresar</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Pie de página -->
+  <footer class="bg-gray-800 text-white text-center p-4 text-sm">
+    CRM Fundación &copy; 2026 - Todos los derechos reservados
+  </footer>
+
+</body>
+</html>
