@@ -66,7 +66,7 @@
     </div>
   </div>
 
-  <!-- 2. APLICACIÓN PRINCIPAL (OCULTA HASTA AUTENTICAR) -->
+  <!-- 2. APLICACIÓN PRINCIPAL -->
   <div id="app-principal" class="hidden">
 
     <!-- BARRA LATERAL (SIDEBAR) -->
@@ -86,7 +86,7 @@
             <button onclick="mostrarSeccion('analisis')" class="nav-btn"><i class="fa-solid fa-chart-line text-purple-500 w-5"></i><span>Análisis</span></button>
             <button onclick="mostrarSeccion('calidad')" class="nav-btn"><i class="fa-solid fa-square-check text-green-500 w-5"></i><span>Calidad</span></button>
             <button onclick="mostrarSeccion('inventario')" class="nav-btn"><i class="fa-solid fa-box text-amber-600 w-5"></i><span style="font-weight: bold; color: #b45309;">Inventario</span></button>
-            <button onclick="mostrarSeccion('crm')" class="nav-btn"><i class="fa-solid fa-users text-purple-600 w-5"></i><span>CRM (Donates)</span></button>
+            <button onclick="mostrarSeccion('crm')" class="nav-btn"><i class="fa-solid fa-users text-purple-600 w-5"></i><span>CRM</span></button>
             <button onclick="mostrarSeccion('documentos')" class="nav-btn"><i class="fa-solid fa-file-lines text-purple-300 w-5"></i><span>Documentos</span></button>
             <button onclick="mostrarSeccion('recaudos')" class="nav-btn"><i class="fa-solid fa-receipt text-pink-500 w-5"></i><span>Recaudos</span></button>
             <button onclick="mostrarSeccion('personal')" class="nav-btn"><i class="fa-solid fa-user-tie text-blue-500 w-5"></i><span>Personal</span></button>
@@ -102,7 +102,7 @@
         </div>
       </div>
 
-      <!-- BOTÓN CERRAR SESIÓN Y USUARIO -->
+      <!-- BOTÓN CERRAR SESIÓN -->
       <div style="padding: 1rem; border-top: 1px solid #e2e8f0; font-size: 0.75rem; color: #94a3b8;">
         <p id="user-display" style="font-weight: bold; color: #334155; margin-bottom: 0.5rem; word-break: break-all;"></p>
         <button id="btn-logout" style="width: 100%; padding: 0.4rem; background-color: #fee2e2; color: #dc2626; border-radius: 0.25rem; font-weight: bold; border: none; cursor: pointer;">
@@ -185,7 +185,7 @@
         </div>
       </div>
 
-      <!-- MÓDULO CRM (EMBEBIDO) -->
+      <!-- MÓDULO CRM (EMBEBIDO - GESTIÓN DONANTES) -->
       <div id="seccion-crm" class="hidden" style="height: 100%;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
           <div>
@@ -201,29 +201,44 @@
         </div>
       </div>
 
-      <!-- MÓDULO RECEPCIÓN (EMBEBIDO) -->
+      <!-- MÓDULO RECEPCIÓN (UBICACIÓN PRIMARIA - GESTIÓN DE TURNOS) -->
       <div id="seccion-recepcion" class="hidden" style="height: 100%;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
           <div>
-            <h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Módulo de Recepción de Donaciones</h1>
-            <p style="color: #bfdbfe; font-size: 0.875rem;">Ingreso e inspección de insumos recibidos</p>
+            <h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Módulo de Recepción y Gestión de Turnos</h1>
+            <p style="color: #bfdbfe; font-size: 0.875rem;">Control primario de colas de espera, ingreso y atención FUBAM</p>
           </div>
-          <a href="https://gestion-donantes-fubam.web.app/" target="_blank" style="background-color: #2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; text-decoration: none; font-size: 0.875rem; display: inline-flex; align-items: center; gap: 0.5rem;">
-            <i class="fa-solid fa-up-right-from-square"></i> Abrir en pantalla completa
+          <a href="https://turnos-fubam.netlify.app/" target="_blank" style="background-color: #2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; text-decoration: none; font-size: 0.875rem; display: inline-flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-desktop"></i> Proyectar / Monitor Exterior
           </a>
         </div>
         <div style="width: 100%; height: calc(100vh - 180px); background: white; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-          <iframe src="https://gestion-donantes-fubam.web.app/" style="width: 100%; height: 100%; border: none;"></iframe>
+          <iframe src="https://turnos-fubam.netlify.app/" style="width: 100%; height: 100%; border: none;"></iframe>
         </div>
       </div>
 
-      <!-- SECCIONES SECUNDARIAS -->
+      <!-- MÓDULO DESPACHO (UBICACIÓN SECUNDARIA - LOGÍSTICA DE TURNOS) -->
+      <div id="seccion-despacho" class="hidden" style="height: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <div>
+            <h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Módulo de Despacho y Logística</h1>
+            <p style="color: #bfdbfe; font-size: 0.875rem;">Consulta secundaria de turnos y entregas a beneficiarios</p>
+          </div>
+          <a href="https://turnos-fubam.netlify.app/" target="_blank" style="background-color: #2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; text-decoration: none; font-size: 0.875rem; display: inline-flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-up-right-from-square"></i> Abrir Turnos en Pestaña
+          </a>
+        </div>
+        <div style="width: 100%; height: calc(100vh - 180px); background: white; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+          <iframe src="https://turnos-fubam.netlify.app/" style="width: 100%; height: 100%; border: none;"></iframe>
+        </div>
+      </div>
+
+      <!-- SECCIONES SECUNDARIAS RESTANTES -->
       <div id="seccion-analisis" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Análisis</h2><p>Métricas y estadísticas del banco de alimentos.</p></div>
       <div id="seccion-calidad" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Calidad</h2><p>Revisión e inspección de alimentos.</p></div>
       <div id="seccion-documentos" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Documentos</h2><p>Gestión documental.</p></div>
       <div id="seccion-recaudos" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Recaudos</h2><p>Cobros y entregas.</p></div>
       <div id="seccion-personal" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Personal</h2><p>Personal y voluntarios.</p></div>
-      <div id="seccion-despacho" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Despacho</h2><p>Despacho de productos.</p></div>
       <div id="seccion-proveedores" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Proveedores</h2><p>Directorio de proveedores.</p></div>
       <div id="seccion-referencias" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Referencias</h2><p>Referencias del sistema.</p></div>
       <div id="seccion-traslados" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Traslados</h2><p>Movimiento de productos.</p></div>
@@ -231,7 +246,7 @@
       <div id="seccion-mantenimiento" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Mantenimiento</h2><p>Mantenimiento de infraestructura.</p></div>
       <div id="seccion-sst" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo SST</h2><p>Seguridad y Salud en el Trabajo.</p></div>
 
-      <!-- MODAL REGISTRO -->
+      <!-- MODAL REGISTRO DE INVENTARIO -->
       <div id="modal-inventario" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 50;">
         <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; max-width: 400px; width: 100%;">
           <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem;">Ingresar Nuevo Alimento</h3>
