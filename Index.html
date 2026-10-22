@@ -7,6 +7,10 @@
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Librería jsPDF para generación automática de PDF en el navegador -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -34,6 +38,9 @@
     .table-custom { width: 100%; text-align: left; border-collapse: collapse; font-size: 0.875rem; }
     .table-custom th { background-color: #f1f5f9; padding: 0.75rem; color: #334155; font-size: 0.75rem; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; }
     .table-custom td { padding: 0.75rem; border-bottom: 1px solid #f1f5f9; }
+
+    /* CANVAS DE FIRMA */
+    #canvas-firma { border: 2px dashed #cbd5e1; border-radius: 0.5rem; background: #fafafa; cursor: crosshair; touch-action: none; }
   </style>
 </head>
 <body>
@@ -153,16 +160,23 @@
         </div>
       </div>
 
-      <!-- MÓDULO INVENTARIO -->
+      <!-- MÓDULO INVENTARIO CON DOS BOTONES -->
       <div id="seccion-inventario" class="hidden">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
           <div>
             <h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Módulo de Inventario (Kárdex)</h1>
             <p style="color: #bfdbfe; font-size: 0.875rem;">Entradas (16), Salidas - Compras (30) y Salidas Generales (17)</p>
           </div>
-          <button onclick="abrirModalInventario()" style="background-color: #22c55e; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
-            <i class="fa-solid fa-plus"></i> Registrar Documento / Multilínea
-          </button>
+          <div style="display: flex; gap: 0.75rem;">
+            <!-- BOTÓN 1: REGISTRO ESTÁNDAR MULTILÍNEA -->
+            <button onclick="abrirModalInventario(false)" style="background-color: #22c55e; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fa-solid fa-plus"></i> Registrar Documento
+            </button>
+            <!-- BOTÓN 2: REGISTRO DE RECOGIDA CON FIRMA Y PDF -->
+            <button onclick="abrirModalInventario(true)" style="background-color: #0284c7; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.15);">
+              <i class="fa-solid fa-signature"></i> Recogida (Firma & PDF)
+            </button>
+          </div>
         </div>
 
         <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
@@ -252,16 +266,16 @@
       <div id="seccion-mantenimiento" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Mantenimiento</h2><p>Mantenimiento de infraestructura.</p></div>
       <div id="seccion-sst" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo SST</h2><p>Seguridad y Salud en el Trabajo.</p></div>
 
-      <!-- MODAL GRID MULTILÍNEA COMPLETO Y MEJORADO -->
+      <!-- MODAL GRID UNIFICADO CON SECCIÓN DE FIRMA Y PDF -->
       <div id="modal-inventario" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 1rem;">
-        <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; max-width: 880px; width: 100%; max-height: 92vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+        <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; max-width: 900px; width: 100%; max-height: 94vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
           
           <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.75rem; margin-bottom: 1rem;">
-            <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937;">Registrar Documento / Movimiento en Lote</h3>
+            <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937;" id="modal-titulo">Registrar Documento / Movimiento en Lote</h3>
             <button onclick="cerrarModalInventario()" style="background: none; border: none; font-size: 1.25rem; color: #6b7280; cursor: pointer;">&times;</button>
           </div>
           
-          <!-- ENCABEZADO CON CONSECUTIVO Y 3 BODEGAS SOLAMENTE -->
+          <!-- ENCABEZADO CON CONSECUTIVO Y BODEGAS -->
           <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.75rem; background: #f8fafc; padding: 1rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; margin-bottom: 1rem;">
             <div>
               <label style="font-size: 0.7rem; font-weight: bold; color: #374151; display: block;">CONSECUTIVO DOC #</label>
@@ -293,7 +307,7 @@
             </div>
           </div>
 
-          <!-- AGREGAR / EDITAR ÍTEM AL GRID CON MULTIPLICACIÓN AUTOMÁTICA -->
+          <!-- AGREGAR / EDITAR ÍTEM AL GRID -->
           <div style="border: 1px solid #e2e8f0; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem; background: #ffffff;">
             <p style="font-size: 0.75rem; font-weight: bold; color: #1e3a8a; margin-bottom: 0.5rem;" id="titulo-form-item">AGREGAR PRODUCTO AL GRID</p>
             <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 0.5rem;">
@@ -358,14 +372,36 @@
             </table>
           </div>
 
+          <!-- BLOQUE EXCLUSIVO PARA RECOGIDA: FIRMA DIGITAL -->
+          <div id="bloque-firma-recogida" class="hidden" style="border: 1px solid #e2e8f0; padding: 1rem; border-radius: 0.5rem; background: #f8fafc; margin-bottom: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <label style="font-size: 0.8rem; font-weight: bold; color: #1e3a8a;">
+                <i class="fa-solid fa-pen-nib"></i> FIRMA DE RECIBIDO / ENTREGA
+              </label>
+              <button type="button" onclick="limpiarFirma()" style="background: #fee2e2; color: #dc2626; border: none; padding: 0.25rem 0.6rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: bold; cursor: pointer;">
+                <i class="fa-solid fa-eraser"></i> Limpiar Firma
+              </button>
+            </div>
+            <canvas id="canvas-firma" width="820" height="130"></canvas>
+            <p style="font-size: 0.7rem; color: #64748b; margin-top: 0.25rem;">Firme en el recuadro superior usando el ratón o pantalla táctil.</p>
+          </div>
+
+          <!-- RESUMEN Y BOTONES DE GUARDADO -->
           <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e5e7eb; padding-top: 0.75rem;">
             <div style="font-size: 0.85rem; font-weight: bold; color: #1e3a8a;">
               Total Ítems: <span id="resumen-cant-items">0</span> | Total Valor: $<span id="resumen-valor-total">0</span>
             </div>
             <div style="display: flex; gap: 0.5rem;">
               <button type="button" onclick="cerrarModalInventario()" style="padding: 0.5rem 1rem; background: #e5e7eb; color: #374151; border-radius: 0.375rem; border: none; cursor: pointer; font-size: 0.85rem;">Cancelar</button>
-              <button type="button" onclick="guardarGridEnKardex()" style="padding: 0.5rem 1rem; background: #2563eb; color: white; font-weight: bold; border-radius: 0.375rem; border: none; cursor: pointer; font-size: 0.85rem;">
+              
+              <!-- BOTÓN NORMAL -->
+              <button type="button" id="btn-guardar-kardex-std" onclick="guardarGridEnKardex(false)" style="padding: 0.5rem 1rem; background: #2563eb; color: white; font-weight: bold; border-radius: 0.375rem; border: none; cursor: pointer; font-size: 0.85rem;">
                 Guardar en Kárdex
+              </button>
+              
+              <!-- BOTÓN RECOGIDA CON PDF -->
+              <button type="button" id="btn-guardar-kardex-recogida" onclick="guardarGridEnKardex(true)" class="hidden" style="padding: 0.5rem 1rem; background: #0284c7; color: white; font-weight: bold; border-radius: 0.375rem; border: none; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
+                <i class="fa-solid fa-file-pdf"></i> Guardar y Generar PDF
               </button>
             </div>
           </div>
@@ -454,14 +490,15 @@
       try {
         const querySnapshot = await getDocs(collection(window.db, "inventario"));
         if(querySnapshot.empty) {
-          tabla.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 1.5rem; color: #9ca3af;">No hay movimientos registrados en el Kárdex. Presiona "Registrar Documento / Multilínea".</td></tr>`;
+          tabla.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 1.5rem; color: #9ca3af;">No hay movimientos registrados en el Kárdex. Presiona "Registrar Documento" o "Recogida".</td></tr>`;
           return;
         }
 
         tabla.innerHTML = "";
         querySnapshot.forEach((doc) => {
           const item = doc.data();
-          const tipoBadge = item.tipo == "16" ? `<span style="background: #dcfce7; color: #15803d; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">16 - Entrada</span>`
+          const tipoBadge = item.esRecogida ? `<span style="background: #e0f2fe; color: #0369a1; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;"><i class="fa-solid fa-truck-pickup"></i> Recogida</span>`
+                          : item.tipo == "16" ? `<span style="background: #dcfce7; color: #15803d; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">16 - Entrada</span>`
                           : item.tipo == "30" ? `<span style="background: #fef3c7; color: #b45309; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">30 - Salida Compras</span>`
                           : `<span style="background: #fee2e2; color: #b91c1c; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">17 - Salida</span>`;
 
@@ -504,31 +541,88 @@
     }
   </script>
 
-  <!-- LÓGICA DE NAVEGACIÓN, EDICIÓN Y GRID MULTILÍNEA -->
+  <!-- LÓGICA DE FIRMA, PDF, NAVEGACIÓN Y GRID MULTILÍNEA -->
   <script>
     let itemsGrid = [];
     let editIndex = -1;
+    let modoRecogida = false;
+    
+    // Canvas para firma
+    let canvas, ctx, dibujando = false;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      canvas = document.getElementById('canvas-firma');
+      if (canvas) {
+        ctx = canvas.getContext('2d');
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#0f172a';
+
+        // Mouse Events
+        canvas.addEventListener('mousedown', (e) => { dibujando = true; ctx.beginPath(); ctx.moveTo(e.offsetX, e.offsetY); });
+        canvas.addEventListener('mousemove', (e) => { if (dibujando) { ctx.lineTo(e.offsetX, e.offsetY); ctx.stroke(); } });
+        canvas.addEventListener('mouseup', () => dibujando = false);
+
+        // Touch Events (Móviles / Tablets)
+        canvas.addEventListener('touchstart', (e) => {
+          dibujando = true;
+          const rect = canvas.getBoundingClientRect();
+          ctx.beginPath();
+          ctx.moveTo(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
+          e.preventDefault();
+        });
+        canvas.addEventListener('touchmove', (e) => {
+          if (dibujando) {
+            const rect = canvas.getBoundingClientRect();
+            ctx.lineTo(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
+            ctx.stroke();
+          }
+          e.preventDefault();
+        });
+        canvas.addEventListener('touchend', () => dibujando = false);
+      }
+    });
+
+    function limpiarFirma() {
+      if (ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
 
     function mostrarSeccion(seccion) {
       const secciones = ['dashboard', 'analisis', 'calidad', 'inventario', 'crm', 'documentos', 'recaudos', 'personal', 'despacho', 'proveedores', 'recepcion', 'referencias', 'traslados', 'ambiental', 'mantenimiento', 'sst'];
-      
       secciones.forEach(sec => {
         const el = document.getElementById('seccion-' + sec);
         if (el) el.classList.add('hidden');
       });
-
       const objetivo = document.getElementById('seccion-' + seccion);
       if (objetivo) objetivo.classList.remove('hidden');
     }
 
-    function abrirModalInventario() {
+    function abrirModalInventario(esRecogida = false) {
+      modoRecogida = esRecogida;
       const m = document.getElementById('modal-inventario');
       m.classList.remove('hidden');
       m.style.display = 'flex';
 
-      // Generar Consecutivo
+      // Consecutivo
       const numCons = Math.floor(100000 + Math.random() * 900000);
-      document.getElementById('doc-consecutivo').value = "DOC-" + numCons;
+      document.getElementById('doc-consecutivo').value = (esRecogida ? "REC-" : "DOC-") + numCons;
+
+      const titulo = document.getElementById('modal-titulo');
+      const bloqueFirma = document.getElementById('bloque-firma-recogida');
+      const btnStd = document.getElementById('btn-guardar-kardex-std');
+      const btnRec = document.getElementById('btn-guardar-kardex-recogida');
+
+      if (esRecogida) {
+        titulo.innerText = "Registrar Recogida de Alimentos (Firma & PDF)";
+        bloqueFirma.classList.remove('hidden');
+        btnStd.classList.add('hidden');
+        btnRec.classList.remove('hidden');
+        limpiarFirma();
+      } else {
+        titulo.innerText = "Registrar Documento / Movimiento en Lote";
+        bloqueFirma.classList.add('hidden');
+        btnStd.classList.remove('hidden');
+        btnRec.classList.add('hidden');
+      }
     }
 
     function cerrarModalInventario() {
@@ -558,27 +652,12 @@
       }
 
       if(editIndex >= 0) {
-        // Actualizar fila editada
-        itemsGrid[editIndex] = {
-          referencia: ref,
-          unidad: unidad,
-          cantidad: cant,
-          valUnit: valUnit,
-          valor: valTotal
-        };
+        itemsGrid[editIndex] = { referencia: ref, unidad: unidad, cantidad: cant, valUnit: valUnit, valor: valTotal };
         cancelarEdicionGrid();
       } else {
-        // Nuevo ítem
-        itemsGrid.push({
-          referencia: ref,
-          unidad: unidad,
-          cantidad: cant,
-          valUnit: valUnit,
-          valor: valTotal
-        });
+        itemsGrid.push({ referencia: ref, unidad: unidad, cantidad: cant, valUnit: valUnit, valor: valTotal });
       }
 
-      // Limpiar campos del ítem
       document.getElementById('item-referencia').value = "";
       document.getElementById('item-cantidad').value = "";
       document.getElementById('item-val-unit').value = "";
@@ -590,7 +669,6 @@
     function editarItemGrid(index) {
       editIndex = index;
       const item = itemsGrid[index];
-
       document.getElementById('item-referencia').value = item.referencia;
       document.getElementById('item-unidad').value = item.unidad;
       document.getElementById('item-cantidad').value = item.cantidad;
@@ -657,7 +735,73 @@
       valSpan.innerText = totalVal.toLocaleString('es-CO');
     }
 
-    async function guardarGridEnKardex() {
+    // GENERAR COMPROBANTE EN PDF
+    function generarPDFComprobante(consecutivo, tipo, bodega, nit, tercero, firmaDataURL) {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      // Encabezado
+      doc.setFillColor(11, 98, 164);
+      doc.rect(0, 0, 210, 28, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text("BANCO DE ALIMENTOS DE MEDELLÍN", 14, 12);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text("Comprobante de Recogida / Entrada de Alimentos", 14, 20);
+
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`N° ${consecutivo}`, 160, 16);
+
+      // Datos del Documento
+      doc.setTextColor(30, 41, 59);
+      doc.setFontSize(10);
+      doc.text(`Fecha: ${new Date().toLocaleDateString('es-CO')} ${new Date().toLocaleTimeString('es-CO')}`, 14, 38);
+      doc.text(`Tercero / Donante: ${tercero}`, 14, 45);
+      doc.text(`NIT / Cédula: ${nit || 'N/A'}`, 14, 52);
+      doc.text(`Bodega Destino: ${bodega}`, 130, 45);
+      doc.text(`Tipo Transacción: ${tipo}`, 130, 52);
+
+      // Tabla de Productos
+      const tableData = itemsGrid.map(item => [
+        item.referencia,
+        item.cantidad,
+        item.unidad,
+        `$${item.valUnit.toLocaleString('es-CO')}`,
+        `$${item.valor.toLocaleString('es-CO')}`
+      ]);
+
+      let totalVal = itemsGrid.reduce((sum, item) => sum + item.valor, 0);
+
+      doc.autoTable({
+        startY: 60,
+        head: [['Referencia / Insumo', 'Cantidad', 'Unidad', 'Val. Unitario', 'Val. Total']],
+        body: tableData,
+        theme: 'striped',
+        headStyles: { fillColor: [2, 132, 199] },
+        foot: [['', '', '', 'TOTAL:', `$${totalVal.toLocaleString('es-CO')}`]],
+        footStyles: { fillColor: [241, 245, 249], textColor: [15, 23, 42], fontStyle: 'bold' }
+      });
+
+      // Estampar Firma Digital
+      const finalY = doc.lastAutoTable.finalY + 15;
+      if (firmaDataURL) {
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'bold');
+        doc.text("Firma de Conformidad / Entrega:", 14, finalY);
+        doc.addImage(firmaDataURL, 'PNG', 14, finalY + 4, 70, 25);
+        doc.line(14, finalY + 32, 90, finalY + 32);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Recibido por: ${tercero}`, 14, finalY + 37);
+      }
+
+      // Descargar PDF
+      doc.save(`${consecutivo}_Recogida_FUBAM.pdf`);
+    }
+
+    async function guardarGridEnKardex(esRecogida) {
       const consecutivo = document.getElementById('doc-consecutivo').value;
       const tipo = document.getElementById('doc-tipo').value;
       const bodega = document.getElementById('doc-bodega').value;
@@ -672,6 +816,11 @@
       if(!tercero) {
         alert("Por favor ingresa el nombre del tercero (donante o beneficiario).");
         return;
+      }
+
+      let firmaDataURL = null;
+      if (esRecogida) {
+        firmaDataURL = canvas.toDataURL();
       }
 
       try {
@@ -689,11 +838,19 @@
             cantidad: item.cantidad,
             valUnit: item.valUnit,
             valor: item.valor,
+            esRecogida: esRecogida,
             fecha: new Date().toISOString()
           });
         }
 
-        alert(`¡Éxito! Se registraron ${itemsGrid.length} productos bajo el consecutivo ${consecutivo} en el Kárdex.`);
+        // Si es Recogida, generar PDF automáticamente
+        if (esRecogida) {
+          generarPDFComprobante(consecutivo, tipo, bodega, nit, tercero, firmaDataURL);
+          alert(`¡Exito! Se registró la Recogida ${consecutivo} en el Kárdex y se descargó el PDF con firma.`);
+        } else {
+          alert(`¡Exito! Se registraron ${itemsGrid.length} productos bajo el consecutivo ${consecutivo} en el Kárdex.`);
+        }
+
         itemsGrid = [];
         renderizarGrid();
         cerrarModalInventario();
