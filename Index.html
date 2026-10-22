@@ -169,6 +169,7 @@
           <table class="table-custom">
             <thead>
               <tr>
+                <th>Doc #</th>
                 <th>Tipo Tx</th>
                 <th>NIT</th>
                 <th>Nombre Tercero</th>
@@ -176,13 +177,14 @@
                 <th>Referencia</th>
                 <th>Cantidad</th>
                 <th>Unidad</th>
-                <th>Valor ($)</th>
+                <th>Val. Unit. ($)</th>
+                <th>Val. Total ($)</th>
                 <th>Fecha</th>
               </tr>
             </thead>
             <tbody id="tabla-inventario">
               <tr>
-                <td colspan="9" style="text-align: center; padding: 1.5rem; color: #9ca3af;">Cargando kárdex desde Firebase...</td>
+                <td colspan="11" style="text-align: center; padding: 1.5rem; color: #9ca3af;">Cargando kárdex desde Firebase...</td>
               </tr>
             </tbody>
           </table>
@@ -250,17 +252,21 @@
       <div id="seccion-mantenimiento" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Mantenimiento</h2><p>Mantenimiento de infraestructura.</p></div>
       <div id="seccion-sst" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo SST</h2><p>Seguridad y Salud en el Trabajo.</p></div>
 
-      <!-- MODAL GRID MULTILÍNEA COMPLETO -->
+      <!-- MODAL GRID MULTILÍNEA COMPLETO Y MEJORADO -->
       <div id="modal-inventario" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 1rem;">
-        <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; max-width: 800px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+        <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; max-width: 880px; width: 100%; max-height: 92vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
           
           <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.75rem; margin-bottom: 1rem;">
             <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937;">Registrar Documento / Movimiento en Lote</h3>
             <button onclick="cerrarModalInventario()" style="background: none; border: none; font-size: 1.25rem; color: #6b7280; cursor: pointer;">&times;</button>
           </div>
           
-          <!-- ENCABEZADO DEL DOCUMENTO -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; background: #f8fafc; padding: 1rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; margin-bottom: 1rem;">
+          <!-- ENCABEZADO CON CONSECUTIVO Y 3 BODEGAS SOLAMENTE -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.75rem; background: #f8fafc; padding: 1rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; margin-bottom: 1rem;">
+            <div>
+              <label style="font-size: 0.7rem; font-weight: bold; color: #374151; display: block;">CONSECUTIVO DOC #</label>
+              <input type="text" id="doc-consecutivo" readonly style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.85rem; font-weight: bold; background: #e2e8f0; color: #1e3a8a;">
+            </div>
             <div>
               <label style="font-size: 0.7rem; font-weight: bold; color: #374151; display: block;">TIPO TRANSACCIÓN</label>
               <select id="doc-tipo" style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.85rem;">
@@ -275,23 +281,22 @@
                 <option value="PA">PA - Compras</option>
                 <option value="SA">SA - Con certificado</option>
                 <option value="SC">SC - Sin certificado</option>
-                <option value="01">01 - Bodega Auxiliar</option>
               </select>
             </div>
             <div>
               <label style="font-size: 0.7rem; font-weight: bold; color: #374151; display: block;">NIT / CÉDULA TERCERO</label>
-              <input type="text" id="doc-nit" placeholder="Ej. 830002366" onchange="autocompletarNombreTercero()" style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.85rem;">
+              <input type="text" id="doc-nit" placeholder="Ej. 830002366" style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.85rem;">
             </div>
-            <div style="grid-column: span 3;">
+            <div style="grid-column: span 4;">
               <label style="font-size: 0.7rem; font-weight: bold; color: #374151; display: block;">NOMBRE TERCERO (DONANTE / BENEFICIARIO)</label>
               <input type="text" id="doc-nombre-tercero" placeholder="Ej. BIMBO DE COLOMBIA S.A." style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.85rem;">
             </div>
           </div>
 
-          <!-- AGREGAR ÍTEM AL GRID -->
+          <!-- AGREGAR / EDITAR ÍTEM AL GRID CON MULTIPLICACIÓN AUTOMÁTICA -->
           <div style="border: 1px solid #e2e8f0; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem; background: #ffffff;">
-            <p style="font-size: 0.75rem; font-weight: bold; color: #1e3a8a; margin-bottom: 0.5rem;">AGREGAR PRODUCTO AL GRID</p>
-            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 0.5rem;">
+            <p style="font-size: 0.75rem; font-weight: bold; color: #1e3a8a; margin-bottom: 0.5rem;" id="titulo-form-item">AGREGAR PRODUCTO AL GRID</p>
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 0.5rem;">
               <div>
                 <label style="font-size: 0.7rem; color: #6b7280;">REFERENCIA / INSUMO</label>
                 <input type="text" id="item-referencia" list="lista-referencias" placeholder="Buscar producto..." style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; font-size: 0.85rem;">
@@ -310,16 +315,26 @@
               </div>
               <div>
                 <label style="font-size: 0.7rem; color: #6b7280;">CANTIDAD</label>
-                <input type="number" step="0.01" id="item-cantidad" placeholder="10.00" style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; font-size: 0.85rem;">
+                <input type="number" step="0.01" id="item-cantidad" oninput="calcularValorTotalItem()" placeholder="10.00" style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; font-size: 0.85rem;">
               </div>
               <div>
-                <label style="font-size: 0.7rem; color: #6b7280;">VALOR TOTAL ($)</label>
-                <input type="number" step="0.01" id="item-valor" placeholder="150000" style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; font-size: 0.85rem;">
+                <label style="font-size: 0.7rem; color: #6b7280;">VAL. UNITARIO ($)</label>
+                <input type="number" step="0.01" id="item-val-unit" oninput="calcularValorTotalItem()" placeholder="15000" style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; font-size: 0.85rem;">
+              </div>
+              <div>
+                <label style="font-size: 0.7rem; color: #6b7280;">VAL. TOTAL ($)</label>
+                <input type="number" step="0.01" id="item-val-total" readonly placeholder="Calculado..." style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; font-size: 0.85rem; background: #f1f5f9; font-weight: bold; color: #059669;">
               </div>
             </div>
-            <button type="button" onclick="agregarItemAlGrid()" style="margin-top: 0.5rem; width: 100%; background: #0284c7; color: white; border: none; padding: 0.4rem; border-radius: 0.25rem; font-size: 0.85rem; font-weight: bold; cursor: pointer;">
-              + Agregar Ítem al Grid
-            </button>
+            
+            <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+              <button type="button" id="btn-agregar-item" onclick="agregarItemAlGrid()" style="flex: 1; background: #0284c7; color: white; border: none; padding: 0.4rem; border-radius: 0.25rem; font-size: 0.85rem; font-weight: bold; cursor: pointer;">
+                + Agregar Ítem al Grid
+              </button>
+              <button type="button" id="btn-cancelar-edit" onclick="cancelarEdicionGrid()" class="hidden" style="background: #94a3b8; color: white; border: none; padding: 0.4rem 1rem; border-radius: 0.25rem; font-size: 0.85rem; font-weight: bold; cursor: pointer;">
+                Cancelar Edición
+              </button>
+            </div>
           </div>
 
           <!-- TABLA GRID DE ARTÍCULOS EN EL DOCUMENTO -->
@@ -330,13 +345,14 @@
                   <th>Referencia</th>
                   <th>Cant.</th>
                   <th>Unidad</th>
-                  <th>Valor Total</th>
-                  <th style="width: 40px;"></th>
+                  <th>Val. Unit. ($)</th>
+                  <th>Val. Total ($)</th>
+                  <th style="width: 80px; text-align: center;">Acciones</th>
                 </tr>
               </thead>
               <tbody id="grid-items-body">
                 <tr>
-                  <td colspan="5" style="text-align: center; color: #9ca3af; padding: 1rem;">No hay ítems agregados al grid aún.</td>
+                  <td colspan="6" style="text-align: center; color: #9ca3af; padding: 1rem;">No hay ítems agregados al grid aún.</td>
                 </tr>
               </tbody>
             </table>
@@ -431,14 +447,14 @@
       signOut(auth);
     });
 
-    // CARGAR KÁRDEX / INVENTARIO REAL
+    // CARGAR KÁRDEX REAL
     window.cargarInventario = async function() {
       const tabla = document.getElementById('tabla-inventario');
       if(!tabla) return;
       try {
         const querySnapshot = await getDocs(collection(window.db, "inventario"));
         if(querySnapshot.empty) {
-          tabla.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 1.5rem; color: #9ca3af;">No hay movimientos registrados en el Kárdex. Presiona "Registrar Documento / Multilínea".</td></tr>`;
+          tabla.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 1.5rem; color: #9ca3af;">No hay movimientos registrados en el Kárdex. Presiona "Registrar Documento / Multilínea".</td></tr>`;
           return;
         }
 
@@ -451,6 +467,7 @@
 
           tabla.innerHTML += `
             <tr style="border-bottom: 1px solid #f3f4f6;">
+              <td style="padding: 0.75rem; font-weight: bold; color: #1e3a8a;">${item.consecutivo || '000001'}</td>
               <td style="padding: 0.75rem;">${tipoBadge}</td>
               <td style="padding: 0.75rem; font-size: 0.75rem; color: #475569;">${item.nit || 'N/A'}</td>
               <td style="padding: 0.75rem; font-weight: 600; color: #1e3a8a;">${item.tercero}</td>
@@ -458,17 +475,18 @@
               <td style="padding: 0.75rem;">${item.referencia}</td>
               <td style="padding: 0.75rem; font-weight: bold;">${item.cantidad}</td>
               <td style="padding: 0.75rem; font-size: 0.75rem; color: #64748b;">${item.unidad || 'Kg'}</td>
+              <td style="padding: 0.75rem; color: #3b82f6;">$${Number(item.valUnit || 0).toLocaleString('es-CO')}</td>
               <td style="padding: 0.75rem; color: #059669; font-weight: bold;">$${Number(item.valor).toLocaleString('es-CO')}</td>
               <td style="padding: 0.75rem; color: #6b7280; font-size: 0.75rem;">${item.fecha ? new Date(item.fecha).toLocaleDateString() : 'N/A'}</td>
             </tr>
           `;
         });
       } catch (error) {
-        tabla.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 1.5rem; color: #ef4444;">Error de acceso a Firebase.</td></tr>`;
+        tabla.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 1.5rem; color: #ef4444;">Error de acceso a Firebase.</td></tr>`;
       }
     };
 
-    // CARGAR CATÁLOGOS
+    // CARGAR CATÁLOGOS AUXILIARES
     async function cargarCatalogosAuxiliares() {
       try {
         const refSnap = await getDocs(query(collection(window.db, "referencias"), limit(200)));
@@ -486,9 +504,10 @@
     }
   </script>
 
-  <!-- LÓGICA DE NAVEGACIÓN Y GRID EN MEMORIA -->
+  <!-- LÓGICA DE NAVEGACIÓN, EDICIÓN Y GRID MULTILÍNEA -->
   <script>
     let itemsGrid = [];
+    let editIndex = -1;
 
     function mostrarSeccion(seccion) {
       const secciones = ['dashboard', 'analisis', 'calidad', 'inventario', 'crm', 'documentos', 'recaudos', 'personal', 'despacho', 'proveedores', 'recepcion', 'referencias', 'traslados', 'ambiental', 'mantenimiento', 'sst'];
@@ -506,38 +525,95 @@
       const m = document.getElementById('modal-inventario');
       m.classList.remove('hidden');
       m.style.display = 'flex';
+
+      // Generar Consecutivo
+      const numCons = Math.floor(100000 + Math.random() * 900000);
+      document.getElementById('doc-consecutivo').value = "DOC-" + numCons;
     }
 
     function cerrarModalInventario() {
       const m = document.getElementById('modal-inventario');
       m.classList.add('hidden');
       m.style.display = 'none';
+      cancelarEdicionGrid();
+    }
+
+    function calcularValorTotalItem() {
+      const cant = Number(document.getElementById('item-cantidad').value) || 0;
+      const unit = Number(document.getElementById('item-val-unit').value) || 0;
+      const total = cant * unit;
+      document.getElementById('item-val-total').value = total ? total.toFixed(2) : "";
     }
 
     function agregarItemAlGrid() {
       const ref = document.getElementById('item-referencia').value;
       const unidad = document.getElementById('item-unidad').value;
       const cant = Number(document.getElementById('item-cantidad').value);
-      const val = Number(document.getElementById('item-valor').value);
+      const valUnit = Number(document.getElementById('item-val-unit').value);
+      const valTotal = cant * valUnit;
 
-      if(!ref || !cant) {
-        alert("Por favor selecciona una referencia y una cantidad válida.");
+      if(!ref || !cant || !valUnit) {
+        alert("Por favor ingresa Referencia, Cantidad y Valor Unitario válidos.");
         return;
       }
 
-      itemsGrid.push({
-        referencia: ref,
-        unidad: unidad,
-        cantidad: cant,
-        valor: val || 0
-      });
+      if(editIndex >= 0) {
+        // Actualizar fila editada
+        itemsGrid[editIndex] = {
+          referencia: ref,
+          unidad: unidad,
+          cantidad: cant,
+          valUnit: valUnit,
+          valor: valTotal
+        };
+        cancelarEdicionGrid();
+      } else {
+        // Nuevo ítem
+        itemsGrid.push({
+          referencia: ref,
+          unidad: unidad,
+          cantidad: cant,
+          valUnit: valUnit,
+          valor: valTotal
+        });
+      }
 
       // Limpiar campos del ítem
       document.getElementById('item-referencia').value = "";
       document.getElementById('item-cantidad').value = "";
-      document.getElementById('item-valor').value = "";
+      document.getElementById('item-val-unit').value = "";
+      document.getElementById('item-val-total').value = "";
 
       renderizarGrid();
+    }
+
+    function editarItemGrid(index) {
+      editIndex = index;
+      const item = itemsGrid[index];
+
+      document.getElementById('item-referencia').value = item.referencia;
+      document.getElementById('item-unidad').value = item.unidad;
+      document.getElementById('item-cantidad').value = item.cantidad;
+      document.getElementById('item-val-unit').value = item.valUnit;
+      document.getElementById('item-val-total').value = item.valor;
+
+      document.getElementById('titulo-form-item').innerText = "EDITAR PRODUCTO EN EL GRID";
+      document.getElementById('btn-agregar-item').innerText = "✓ Actualizar Ítem en Grid";
+      document.getElementById('btn-agregar-item').style.background = "#059669";
+      document.getElementById('btn-cancelar-edit').classList.remove('hidden');
+    }
+
+    function cancelarEdicionGrid() {
+      editIndex = -1;
+      document.getElementById('item-referencia').value = "";
+      document.getElementById('item-cantidad').value = "";
+      document.getElementById('item-val-unit').value = "";
+      document.getElementById('item-val-total').value = "";
+
+      document.getElementById('titulo-form-item').innerText = "AGREGAR PRODUCTO AL GRID";
+      document.getElementById('btn-agregar-item').innerText = "+ Agregar Ítem al Grid";
+      document.getElementById('btn-agregar-item').style.background = "#0284c7";
+      document.getElementById('btn-cancelar-edit').classList.add('hidden');
     }
 
     function eliminarItemGrid(index) {
@@ -551,7 +627,7 @@
       const valSpan = document.getElementById('resumen-valor-total');
 
       if(itemsGrid.length === 0) {
-        body.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #9ca3af; padding: 1rem;">No hay ítems agregados al grid aún.</td></tr>`;
+        body.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #9ca3af; padding: 1rem;">No hay ítems agregados al grid aún.</td></tr>`;
         cantSpan.innerText = "0";
         valSpan.innerText = "0";
         return;
@@ -567,9 +643,11 @@
             <td style="padding: 0.5rem; font-weight: 600;">${item.referencia}</td>
             <td style="padding: 0.5rem;">${item.cantidad}</td>
             <td style="padding: 0.5rem; font-size: 0.75rem; color: #64748b;">${item.unidad}</td>
+            <td style="padding: 0.5rem; color: #3b82f6;">$${item.valUnit.toLocaleString('es-CO')}</td>
             <td style="padding: 0.5rem; color: #059669; font-weight: bold;">$${item.valor.toLocaleString('es-CO')}</td>
             <td style="padding: 0.5rem; text-align: center;">
-              <button onclick="eliminarItemGrid(${idx})" style="color: #dc2626; border: none; background: none; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
+              <button onclick="editarItemGrid(${idx})" style="color: #0284c7; border: none; background: none; cursor: pointer; margin-right: 0.5rem;" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
+              <button onclick="eliminarItemGrid(${idx})" style="color: #dc2626; border: none; background: none; cursor: pointer;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
             </td>
           </tr>
         `;
@@ -580,6 +658,7 @@
     }
 
     async function guardarGridEnKardex() {
+      const consecutivo = document.getElementById('doc-consecutivo').value;
       const tipo = document.getElementById('doc-tipo').value;
       const bodega = document.getElementById('doc-bodega').value;
       const nit = document.getElementById('doc-nit').value;
@@ -600,6 +679,7 @@
         
         for (let item of itemsGrid) {
           await addDoc(collection(window.db, "inventario"), {
+            consecutivo: consecutivo,
             tipo: tipo,
             bodega: bodega,
             nit: nit || 'N/A',
@@ -607,12 +687,13 @@
             referencia: item.referencia,
             unidad: item.unidad,
             cantidad: item.cantidad,
+            valUnit: item.valUnit,
             valor: item.valor,
             fecha: new Date().toISOString()
           });
         }
 
-        alert(`¡Exito! Se registraron ${itemsGrid.length} productos en el Kárdex.`);
+        alert(`¡Éxito! Se registraron ${itemsGrid.length} productos bajo el consecutivo ${consecutivo} en el Kárdex.`);
         itemsGrid = [];
         renderizarGrid();
         cerrarModalInventario();
