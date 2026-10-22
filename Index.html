@@ -157,11 +157,11 @@
       <div id="seccion-inventario" class="hidden">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
           <div>
-            <h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Módulo de Inventario</h1>
-            <p style="color: #bfdbfe; font-size: 0.875rem;">Control de stock de alimentos guardados en la nube</p>
+            <h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Módulo de Inventario (Kárdex)</h1>
+            <p style="color: #bfdbfe; font-size: 0.875rem;">Control de Entradas (Tipo 16), Salidas (Tipo 30) y Traslados (Tipo 17)</p>
           </div>
-          <button onclick="abrirModalInventario()" style="background-color: #22c55e; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer;">
-            + Registrar Producto
+          <button onclick="abrirModalInventario()" style="background-color: #22c55e; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-plus"></i> Registrar Movimiento
           </button>
         </div>
 
@@ -169,16 +169,18 @@
           <table class="table-custom">
             <thead>
               <tr>
-                <th>Producto / Alimento</th>
-                <th>Categoría</th>
+                <th>Tipo Tx</th>
+                <th>Tercero (Donante/Benef.)</th>
+                <th>Bodega</th>
+                <th>Referencia / Insumo</th>
                 <th>Cantidad</th>
-                <th>Vencimiento</th>
-                <th>Donante</th>
+                <th>Valor ($)</th>
+                <th>Fecha</th>
               </tr>
             </thead>
             <tbody id="tabla-inventario">
               <tr>
-                <td colspan="5" style="text-align: center; padding: 1.5rem; color: #9ca3af;">Cargando datos desde Firebase...</td>
+                <td colspan="7" style="text-align: center; padding: 1.5rem; color: #9ca3af;">Cargando kárdex desde Firebase...</td>
               </tr>
             </tbody>
           </table>
@@ -246,49 +248,63 @@
       <div id="seccion-mantenimiento" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Mantenimiento</h2><p>Mantenimiento de infraestructura.</p></div>
       <div id="seccion-sst" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo SST</h2><p>Seguridad y Salud en el Trabajo.</p></div>
 
-      <!-- MODAL REGISTRO DE INVENTARIO -->
+      <!-- MODAL COMPLETO: ENTRADAS, SALIDAS Y TRASLADOS -->
       <div id="modal-inventario" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 50;">
-        <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; max-width: 400px; width: 100%;">
-          <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem;">Ingresar Nuevo Alimento</h3>
+        <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; max-width: 480px; width: 100%; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+          <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem;">Registrar Movimiento de Inventario</h3>
+          
           <form id="form-inventario" style="display: flex; flex-direction: column; gap: 0.75rem;">
-            <div>
-              <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">NOMBRE DEL PRODUCTO</label>
-              <input type="text" id="inv-nombre" required placeholder="Ej. Arroz" style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.25rem;">
-            </div>
-            <div>
-              <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">CATEGORÍA</label>
-              <select id="inv-categoria" style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.25rem;">
-                <option value="Granos y Cereales">Granos y Cereales</option>
-                <option value="Lácteos">Lácteos</option>
-                <option value="Enlatados">Enlatados</option>
-                <option value="Frutas y Verduras">Frutas y Verduras</option>
-              </select>
-            </div>
+            
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
               <div>
-                <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">CANTIDAD</label>
-                <input type="number" id="inv-cantidad" required placeholder="100" style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.25rem;">
+                <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">TIPO TRANSACCIÓN</label>
+                <select id="inv-tipo" required style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.875rem;">
+                  <option value="16">16 - Entrada / Donación</option>
+                  <option value="30">30 - Salida / Recaudo</option>
+                  <option value="17">17 - Traslado Interno</option>
+                </select>
               </div>
               <div>
-                <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">UNIDAD</label>
-                <select id="inv-unidad" style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.25rem;">
-                  <option value="Kg">Kg</option>
-                  <option value="Unidades">Unidades</option>
-                  <option value="Cajas">Cajas</option>
+                <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">BODEGA</label>
+                <select id="inv-bodega" required style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.875rem;">
+                  <option value="PA">PA - Bodega Principal</option>
+                  <option value="SA">SA - Sede San Antonio</option>
+                  <option value="SC">SC - Sede C / Despacho</option>
+                  <option value="01">01 - Bodega Auxiliar</option>
                 </select>
               </div>
             </div>
+
             <div>
-              <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">VENCIMIENTO</label>
-              <input type="date" id="inv-vencimiento" required style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.25rem;">
+              <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">TERCERO (DONANTE / BENEFICIARIO)</label>
+              <input type="text" id="inv-tercero" list="lista-terceros" required placeholder="Buscar por Nombre o NIT..." style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.875rem;">
+              <datalist id="lista-terceros">
+                <!-- Se poblará dinámicamente desde Firebase -->
+              </datalist>
             </div>
+
             <div>
-              <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">DONANTE</label>
-              <input type="text" id="inv-origen" placeholder="Ej. Éxito" style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.25rem;">
+              <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">REFERENCIA / INSUMO</label>
+              <input type="text" id="inv-referencia" list="lista-referencias" required placeholder="Buscar por Código o Descripción..." style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.875rem;">
+              <datalist id="lista-referencias">
+                <!-- Se poblará dinámicamente desde Firebase -->
+              </datalist>
             </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+              <div>
+                <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">CANTIDAD</label>
+                <input type="number" step="0.01" id="inv-cantidad" required placeholder="100.00" style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.875rem;">
+              </div>
+              <div>
+                <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">VALOR TOTAL ($)</label>
+                <input type="number" step="0.01" id="inv-valor" required placeholder="500000" style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.875rem;">
+              </div>
+            </div>
+
             <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem; border-top: 1px solid #e5e7eb; padding-top: 0.75rem;">
               <button type="button" onclick="cerrarModalInventario()" style="padding: 0.5rem 1rem; background: #e5e7eb; color: #374151; border-radius: 0.375rem; border: none; cursor: pointer;">Cancelar</button>
-              <button type="submit" style="padding: 0.5rem 1rem; background: #2563eb; color: white; font-weight: bold; border-radius: 0.375rem; border: none; cursor: pointer;">Guardar</button>
+              <button type="submit" style="padding: 0.5rem 1rem; background: #2563eb; color: white; font-weight: bold; border-radius: 0.375rem; border: none; cursor: pointer;">Guardar en Kárdex</button>
             </div>
           </form>
         </div>
@@ -311,7 +327,7 @@
   <!-- FIREBASE & AUTH ENGINE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, query, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = {
@@ -339,13 +355,14 @@
         appPrincipal.classList.remove('hidden');
         if(userDisplay) userDisplay.innerText = user.email;
         cargarInventario();
+        cargarCatalogosAuxiliares();
       } else {
         pantallaLogin.classList.remove('hidden');
         appPrincipal.classList.add('hidden');
       }
     });
 
-    // PROCESO DE LOGIN
+    // LOGIN
     document.getElementById('form-login').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('login-email').value;
@@ -367,57 +384,91 @@
       signOut(auth);
     });
 
-    // CARGAR INVENTARIO
+    // CARGAR KÁRDEX / INVENTARIO REAL
     async function cargarInventario() {
       const tabla = document.getElementById('tabla-inventario');
       if(!tabla) return;
       try {
         const querySnapshot = await getDocs(collection(db, "inventario"));
         if(querySnapshot.empty) {
-          tabla.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: #9ca3af;">No hay productos registrados. Presiona "Registrar Producto".</td></tr>`;
+          tabla.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 1.5rem; color: #9ca3af;">No hay movimientos registrados en el Kárdex. Presiona "Registrar Movimiento".</td></tr>`;
           return;
         }
 
         tabla.innerHTML = "";
         querySnapshot.forEach((doc) => {
           const item = doc.data();
+          const tipoBadge = item.tipo == "16" ? `<span style="background: #dcfce7; color: #15803d; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">16 - Entrada</span>`
+                          : item.tipo == "30" ? `<span style="background: #fee2e2; color: #b91c1c; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">30 - Salida</span>`
+                          : `<span style="background: #e0f2fe; color: #0369a1; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">17 - Traslado</span>`;
+
           tabla.innerHTML += `
             <tr style="border-bottom: 1px solid #f3f4f6;">
-              <td style="padding: 0.75rem; font-weight: 600; color: #1e3a8a;">${item.nombre}</td>
-              <td style="padding: 0.75rem;"><span style="background: #dbeafe; color: #1e40af; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">${item.categoria}</span></td>
-              <td style="padding: 0.75rem; font-weight: bold;">${item.cantidad} ${item.unidad}</td>
-              <td style="padding: 0.75rem; color: #dc2626; font-weight: 500;">${item.vencimiento}</td>
-              <td style="padding: 0.75rem; color: #6b7280;">${item.origen || 'N/A'}</td>
+              <td style="padding: 0.75rem;">${tipoBadge}</td>
+              <td style="padding: 0.75rem; font-weight: 600; color: #1e3a8a;">${item.tercero}</td>
+              <td style="padding: 0.75rem; font-weight: bold; color: #374151;">${item.bodega}</td>
+              <td style="padding: 0.75rem;">${item.referencia}</td>
+              <td style="padding: 0.75rem; font-weight: bold;">${item.cantidad}</td>
+              <td style="padding: 0.75rem; color: #059669; font-weight: bold;">$${Number(item.valor).toLocaleString('es-CO')}</td>
+              <td style="padding: 0.75rem; color: #6b7280; font-size: 0.75rem;">${item.fecha ? new Date(item.fecha).toLocaleDateString() : 'N/A'}</td>
             </tr>
           `;
         });
       } catch (error) {
-        tabla.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: #ef4444;">Error de acceso a Firebase.</td></tr>`;
+        tabla.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 1.5rem; color: #ef4444;">Error de acceso a Firebase.</td></tr>`;
       }
     }
 
-    // REGISTRAR INVENTARIO
+    // CARGAR BÚSQUEDAS DINÁMICAS (DATALISTS)
+    async function cargarCatalogosAuxiliares() {
+      try {
+        const refSnap = await getDocs(query(collection(db, "referencias"), limit(200)));
+        const refList = document.getElementById('lista-referencias');
+        if(refList && !refSnap.empty) {
+          refList.innerHTML = "";
+          refSnap.forEach(doc => {
+            const data = doc.data();
+            refList.innerHTML += `<option value="${data.codigo} - ${data.descripcion}">`;
+          });
+        }
+
+        const terSnap = await getDocs(query(collection(db, "terceros"), limit(200)));
+        const terList = document.getElementById('lista-terceros');
+        if(terList && !terSnap.empty) {
+          terList.innerHTML = "";
+          terSnap.forEach(doc => {
+            const data = doc.data();
+            terList.innerHTML += `<option value="${data.nit} - ${data.nombre}">`;
+          });
+        }
+      } catch (e) {
+        console.log("Cargando catálogo en primer arranque...", e);
+      }
+    }
+
+    // GUARDAR MOVIMIENTO EN INVENTARIO
     const formInv = document.getElementById('form-inventario');
     if (formInv) {
       formInv.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const nuevoProducto = {
-          nombre: document.getElementById('inv-nombre').value,
-          categoria: document.getElementById('inv-categoria').value,
+        const nuevoMovimiento = {
+          tipo: document.getElementById('inv-tipo').value,
+          bodega: document.getElementById('inv-bodega').value,
+          tercero: document.getElementById('inv-tercero').value,
+          referencia: document.getElementById('inv-referencia').value,
           cantidad: Number(document.getElementById('inv-cantidad').value),
-          unidad: document.getElementById('inv-unidad').value,
-          vencimiento: document.getElementById('inv-vencimiento').value,
-          origen: document.getElementById('inv-origen').value
+          valor: Number(document.getElementById('inv-valor').value),
+          fecha: new Date().toISOString()
         };
 
         try {
-          await addDoc(collection(db, "inventario"), nuevoProducto);
-          alert("¡Alimento guardado!");
+          await addDoc(collection(db, "inventario"), nuevoMovimiento);
+          alert("¡Movimiento registrado correctamente en el Kárdex!");
           formInv.reset();
           cerrarModalInventario();
           cargarInventario();
         } catch (error) {
-          alert("Error: " + error.message);
+          alert("Error al guardar: " + error.message);
         }
       });
     }
