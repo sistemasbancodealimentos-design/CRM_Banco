@@ -158,10 +158,10 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
           <div>
             <h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Módulo de Inventario (Kárdex)</h1>
-            <p style="color: #bfdbfe; font-size: 0.875rem;">Control de Entradas (Tipo 16), Salidas (Tipo 30) y Traslados (Tipo 17)</p>
+            <p style="color: #bfdbfe; font-size: 0.875rem;">Entradas (16), Salidas - Compras (30) y Salidas Generales (17)</p>
           </div>
           <button onclick="abrirModalInventario()" style="background-color: #22c55e; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
-            <i class="fa-solid fa-plus"></i> Registrar Movimiento
+            <i class="fa-solid fa-plus"></i> Registrar Documento / Multilínea
           </button>
         </div>
 
@@ -170,24 +170,26 @@
             <thead>
               <tr>
                 <th>Tipo Tx</th>
-                <th>Tercero (Donante/Benef.)</th>
+                <th>NIT</th>
+                <th>Nombre Tercero</th>
                 <th>Bodega</th>
-                <th>Referencia / Insumo</th>
+                <th>Referencia</th>
                 <th>Cantidad</th>
+                <th>Unidad</th>
                 <th>Valor ($)</th>
                 <th>Fecha</th>
               </tr>
             </thead>
             <tbody id="tabla-inventario">
               <tr>
-                <td colspan="7" style="text-align: center; padding: 1.5rem; color: #9ca3af;">Cargando kárdex desde Firebase...</td>
+                <td colspan="9" style="text-align: center; padding: 1.5rem; color: #9ca3af;">Cargando kárdex desde Firebase...</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- MÓDULO CRM (EMBEBIDO - GESTIÓN DONANTES) -->
+      <!-- MÓDULO CRM (EMBEBIDO) -->
       <div id="seccion-crm" class="hidden" style="height: 100%;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
           <div>
@@ -203,7 +205,7 @@
         </div>
       </div>
 
-      <!-- MÓDULO RECEPCIÓN (UBICACIÓN PRIMARIA - GESTIÓN DE TURNOS) -->
+      <!-- MÓDULO RECEPCIÓN -->
       <div id="seccion-recepcion" class="hidden" style="height: 100%;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
           <div>
@@ -219,7 +221,7 @@
         </div>
       </div>
 
-      <!-- MÓDULO DESPACHO (UBICACIÓN SECUNDARIA - LOGÍSTICA DE TURNOS) -->
+      <!-- MÓDULO DESPACHO -->
       <div id="seccion-despacho" class="hidden" style="height: 100%;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
           <div>
@@ -248,65 +250,109 @@
       <div id="seccion-mantenimiento" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Mantenimiento</h2><p>Mantenimiento de infraestructura.</p></div>
       <div id="seccion-sst" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo SST</h2><p>Seguridad y Salud en el Trabajo.</p></div>
 
-      <!-- MODAL COMPLETO: ENTRADAS, SALIDAS Y TRASLADOS -->
-      <div id="modal-inventario" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 50;">
-        <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; max-width: 480px; width: 100%; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
-          <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem;">Registrar Movimiento de Inventario</h3>
+      <!-- MODAL GRID MULTILÍNEA COMPLETO -->
+      <div id="modal-inventario" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 1rem;">
+        <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; max-width: 800px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
           
-          <form id="form-inventario" style="display: flex; flex-direction: column; gap: 0.75rem;">
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.75rem; margin-bottom: 1rem;">
+            <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937;">Registrar Documento / Movimiento en Lote</h3>
+            <button onclick="cerrarModalInventario()" style="background: none; border: none; font-size: 1.25rem; color: #6b7280; cursor: pointer;">&times;</button>
+          </div>
+          
+          <!-- ENCABEZADO DEL DOCUMENTO -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; background: #f8fafc; padding: 1rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; margin-bottom: 1rem;">
+            <div>
+              <label style="font-size: 0.7rem; font-weight: bold; color: #374151; display: block;">TIPO TRANSACCIÓN</label>
+              <select id="doc-tipo" style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.85rem;">
+                <option value="16">16 - Entrada</option>
+                <option value="30">30 - Salida - Compras</option>
+                <option value="17">17 - Salidas Generales</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size: 0.7rem; font-weight: bold; color: #374151; display: block;">BODEGA</label>
+              <select id="doc-bodega" style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.85rem;">
+                <option value="PA">PA - Compras</option>
+                <option value="SA">SA - Con certificado</option>
+                <option value="SC">SC - Sin certificado</option>
+                </select>
+            </div>
+            <div>
+              <label style="font-size: 0.7rem; font-weight: bold; color: #374151; display: block;">NIT / CÉDULA TERCERO</label>
+              <input type="text" id="doc-nit" placeholder="Ej. 830002366" onchange="autocompletarNombreTercero()" style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.85rem;">
+            </div>
+            <div style="grid-column: span 3;">
+              <label style="font-size: 0.7rem; font-weight: bold; color: #374151; display: block;">NOMBRE TERCERO (DONANTE / BENEFICIARIO)</label>
+              <input type="text" id="doc-nombre-tercero" placeholder="Ej. BIMBO DE COLOMBIA S.A." style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.85rem;">
+            </div>
+          </div>
+
+          <!-- AGREGAR ÍTEM AL GRID -->
+          <div style="border: 1px solid #e2e8f0; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem; background: #ffffff;">
+            <p style="font-size: 0.75rem; font-weight: bold; color: #1e3a8a; margin-bottom: 0.5rem;">AGREGAR PRODUCTO AL GRID</p>
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 0.5rem;">
               <div>
-                <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">TIPO TRANSACCIÓN</label>
-                <select id="inv-tipo" required style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.875rem;">
-                  <option value="16">16 - Entrada / Donación</option>
-                  <option value="30">30 - Salida / Recaudo</option>
-                  <option value="17">17 - Traslado Interno</option>
+                <label style="font-size: 0.7rem; color: #6b7280;">REFERENCIA / INSUMO</label>
+                <input type="text" id="item-referencia" list="lista-referencias" placeholder="Buscar producto..." style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; font-size: 0.85rem;">
+                <datalist id="lista-referencias"></datalist>
+              </div>
+              <div>
+                <label style="font-size: 0.7rem; color: #6b7280;">UNIDAD MEDIDA</label>
+                <select id="item-unidad" style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; font-size: 0.85rem;">
+                  <option value="Kilos">Kilos (Kg)</option>
+                  <option value="Gramos">Gramos (Gr)</option>
+                  <option value="Unidades">Unidades</option>
+                  <option value="Litros">Litros</option>
+                  <option value="Cajas">Cajas</option>
+                  <option value="Cubetas">Cubetas/Pistas</option>
                 </select>
               </div>
               <div>
-                <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">BODEGA</label>
-                <select id="inv-bodega" required style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.875rem;">
-                  <option value="PA">PA - Bodega Principal</option>
-                  <option value="SA">SA - Sede San Antonio</option>
-                  <option value="SC">SC - Sede C / Despacho</option>
-                  <option value="01">01 - Bodega Auxiliar</option>
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">TERCERO (DONANTE / BENEFICIARIO)</label>
-              <input type="text" id="inv-tercero" list="lista-terceros" required placeholder="Buscar por Nombre o NIT..." style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.875rem;">
-              <datalist id="lista-terceros">
-                <!-- Se poblará dinámicamente desde Firebase -->
-              </datalist>
-            </div>
-
-            <div>
-              <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">REFERENCIA / INSUMO</label>
-              <input type="text" id="inv-referencia" list="lista-referencias" required placeholder="Buscar por Código o Descripción..." style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.875rem;">
-              <datalist id="lista-referencias">
-                <!-- Se poblará dinámicamente desde Firebase -->
-              </datalist>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
-              <div>
-                <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">CANTIDAD</label>
-                <input type="number" step="0.01" id="inv-cantidad" required placeholder="100.00" style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.875rem;">
+                <label style="font-size: 0.7rem; color: #6b7280;">CANTIDAD</label>
+                <input type="number" step="0.01" id="item-cantidad" placeholder="10.00" style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; font-size: 0.85rem;">
               </div>
               <div>
-                <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">VALOR TOTAL ($)</label>
-                <input type="number" step="0.01" id="inv-valor" required placeholder="500000" style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.875rem;">
+                <label style="font-size: 0.7rem; color: #6b7280;">VALOR TOTAL ($)</label>
+                <input type="number" step="0.01" id="item-valor" placeholder="150000" style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; font-size: 0.85rem;">
               </div>
             </div>
+            <button type="button" onclick="agregarItemAlGrid()" style="margin-top: 0.5rem; width: 100%; background: #0284c7; color: white; border: none; padding: 0.4rem; border-radius: 0.25rem; font-size: 0.85rem; font-weight: bold; cursor: pointer;">
+              + Agregar Ítem al Grid
+            </button>
+          </div>
 
-            <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem; border-top: 1px solid #e5e7eb; padding-top: 0.75rem;">
-              <button type="button" onclick="cerrarModalInventario()" style="padding: 0.5rem 1rem; background: #e5e7eb; color: #374151; border-radius: 0.375rem; border: none; cursor: pointer;">Cancelar</button>
-              <button type="submit" style="padding: 0.5rem 1rem; background: #2563eb; color: white; font-weight: bold; border-radius: 0.375rem; border: none; cursor: pointer;">Guardar en Kárdex</button>
+          <!-- TABLA GRID DE ARTÍCULOS EN EL DOCUMENTO -->
+          <div style="border: 1px solid #e2e8f0; border-radius: 0.5rem; overflow: hidden; margin-bottom: 1rem;">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th>Referencia</th>
+                  <th>Cant.</th>
+                  <th>Unidad</th>
+                  <th>Valor Total</th>
+                  <th style="width: 40px;"></th>
+                </tr>
+              </thead>
+              <tbody id="grid-items-body">
+                <tr>
+                  <td colspan="5" style="text-align: center; color: #9ca3af; padding: 1rem;">No hay ítems agregados al grid aún.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e5e7eb; padding-top: 0.75rem;">
+            <div style="font-size: 0.85rem; font-weight: bold; color: #1e3a8a;">
+              Total Ítems: <span id="resumen-cant-items">0</span> | Total Valor: $<span id="resumen-valor-total">0</span>
             </div>
-          </form>
+            <div style="display: flex; gap: 0.5rem;">
+              <button type="button" onclick="cerrarModalInventario()" style="padding: 0.5rem 1rem; background: #e5e7eb; color: #374151; border-radius: 0.375rem; border: none; cursor: pointer; font-size: 0.85rem;">Cancelar</button>
+              <button type="button" onclick="guardarGridEnKardex()" style="padding: 0.5rem 1rem; background: #2563eb; color: white; font-weight: bold; border-radius: 0.375rem; border: none; cursor: pointer; font-size: 0.85rem;">
+                Guardar en Kárdex
+              </button>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -341,7 +387,7 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    window.db = getFirestore(app);
     const auth = getAuth(app);
 
     // ESCUCHAR ESTADO DE SESIÓN
@@ -385,13 +431,13 @@
     });
 
     // CARGAR KÁRDEX / INVENTARIO REAL
-    async function cargarInventario() {
+    window.cargarInventario = async function() {
       const tabla = document.getElementById('tabla-inventario');
       if(!tabla) return;
       try {
-        const querySnapshot = await getDocs(collection(db, "inventario"));
+        const querySnapshot = await getDocs(collection(window.db, "inventario"));
         if(querySnapshot.empty) {
-          tabla.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 1.5rem; color: #9ca3af;">No hay movimientos registrados en el Kárdex. Presiona "Registrar Movimiento".</td></tr>`;
+          tabla.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 1.5rem; color: #9ca3af;">No hay movimientos registrados en el Kárdex. Presiona "Registrar Documento / Multilínea".</td></tr>`;
           return;
         }
 
@@ -399,30 +445,32 @@
         querySnapshot.forEach((doc) => {
           const item = doc.data();
           const tipoBadge = item.tipo == "16" ? `<span style="background: #dcfce7; color: #15803d; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">16 - Entrada</span>`
-                          : item.tipo == "30" ? `<span style="background: #fee2e2; color: #b91c1c; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">30 - Salida</span>`
-                          : `<span style="background: #e0f2fe; color: #0369a1; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">17 - Traslado</span>`;
+                          : item.tipo == "30" ? `<span style="background: #fef3c7; color: #b45309; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">30 - Salida Compras</span>`
+                          : `<span style="background: #fee2e2; color: #b91c1c; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">17 - Salida</span>`;
 
           tabla.innerHTML += `
             <tr style="border-bottom: 1px solid #f3f4f6;">
               <td style="padding: 0.75rem;">${tipoBadge}</td>
+              <td style="padding: 0.75rem; font-size: 0.75rem; color: #475569;">${item.nit || 'N/A'}</td>
               <td style="padding: 0.75rem; font-weight: 600; color: #1e3a8a;">${item.tercero}</td>
               <td style="padding: 0.75rem; font-weight: bold; color: #374151;">${item.bodega}</td>
               <td style="padding: 0.75rem;">${item.referencia}</td>
               <td style="padding: 0.75rem; font-weight: bold;">${item.cantidad}</td>
+              <td style="padding: 0.75rem; font-size: 0.75rem; color: #64748b;">${item.unidad || 'Kg'}</td>
               <td style="padding: 0.75rem; color: #059669; font-weight: bold;">$${Number(item.valor).toLocaleString('es-CO')}</td>
               <td style="padding: 0.75rem; color: #6b7280; font-size: 0.75rem;">${item.fecha ? new Date(item.fecha).toLocaleDateString() : 'N/A'}</td>
             </tr>
           `;
         });
       } catch (error) {
-        tabla.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 1.5rem; color: #ef4444;">Error de acceso a Firebase.</td></tr>`;
+        tabla.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 1.5rem; color: #ef4444;">Error de acceso a Firebase.</td></tr>`;
       }
-    }
+    };
 
-    // CARGAR BÚSQUEDAS DINÁMICAS (DATALISTS)
+    // CARGAR CATÁLOGOS
     async function cargarCatalogosAuxiliares() {
       try {
-        const refSnap = await getDocs(query(collection(db, "referencias"), limit(200)));
+        const refSnap = await getDocs(query(collection(window.db, "referencias"), limit(200)));
         const refList = document.getElementById('lista-referencias');
         if(refList && !refSnap.empty) {
           refList.innerHTML = "";
@@ -431,51 +479,16 @@
             refList.innerHTML += `<option value="${data.codigo} - ${data.descripcion}">`;
           });
         }
-
-        const terSnap = await getDocs(query(collection(db, "terceros"), limit(200)));
-        const terList = document.getElementById('lista-terceros');
-        if(terList && !terSnap.empty) {
-          terList.innerHTML = "";
-          terSnap.forEach(doc => {
-            const data = doc.data();
-            terList.innerHTML += `<option value="${data.nit} - ${data.nombre}">`;
-          });
-        }
       } catch (e) {
-        console.log("Cargando catálogo en primer arranque...", e);
+        console.log("Cargando catálogo auxiliares...", e);
       }
-    }
-
-    // GUARDAR MOVIMIENTO EN INVENTARIO
-    const formInv = document.getElementById('form-inventario');
-    if (formInv) {
-      formInv.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const nuevoMovimiento = {
-          tipo: document.getElementById('inv-tipo').value,
-          bodega: document.getElementById('inv-bodega').value,
-          tercero: document.getElementById('inv-tercero').value,
-          referencia: document.getElementById('inv-referencia').value,
-          cantidad: Number(document.getElementById('inv-cantidad').value),
-          valor: Number(document.getElementById('inv-valor').value),
-          fecha: new Date().toISOString()
-        };
-
-        try {
-          await addDoc(collection(db, "inventario"), nuevoMovimiento);
-          alert("¡Movimiento registrado correctamente en el Kárdex!");
-          formInv.reset();
-          cerrarModalInventario();
-          cargarInventario();
-        } catch (error) {
-          alert("Error al guardar: " + error.message);
-        }
-      });
     }
   </script>
 
-  <!-- NAVEGACIÓN DE SECCIONES -->
+  <!-- LÓGICA DE NAVEGACIÓN Y GRID EN MEMORIA -->
   <script>
+    let itemsGrid = [];
+
     function mostrarSeccion(seccion) {
       const secciones = ['dashboard', 'analisis', 'calidad', 'inventario', 'crm', 'documentos', 'recaudos', 'personal', 'despacho', 'proveedores', 'recepcion', 'referencias', 'traslados', 'ambiental', 'mantenimiento', 'sst'];
       
@@ -498,6 +511,115 @@
       const m = document.getElementById('modal-inventario');
       m.classList.add('hidden');
       m.style.display = 'none';
+    }
+
+    function agregarItemAlGrid() {
+      const ref = document.getElementById('item-referencia').value;
+      const unidad = document.getElementById('item-unidad').value;
+      const cant = Number(document.getElementById('item-cantidad').value);
+      const val = Number(document.getElementById('item-valor').value);
+
+      if(!ref || !cant) {
+        alert("Por favor selecciona una referencia y una cantidad válida.");
+        return;
+      }
+
+      itemsGrid.push({
+        referencia: ref,
+        unidad: unidad,
+        cantidad: cant,
+        valor: val || 0
+      });
+
+      // Limpiar campos del ítem
+      document.getElementById('item-referencia').value = "";
+      document.getElementById('item-cantidad').value = "";
+      document.getElementById('item-valor').value = "";
+
+      renderizarGrid();
+    }
+
+    function eliminarItemGrid(index) {
+      itemsGrid.splice(index, 1);
+      renderizarGrid();
+    }
+
+    function renderizarGrid() {
+      const body = document.getElementById('grid-items-body');
+      const cantSpan = document.getElementById('resumen-cant-items');
+      const valSpan = document.getElementById('resumen-valor-total');
+
+      if(itemsGrid.length === 0) {
+        body.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #9ca3af; padding: 1rem;">No hay ítems agregados al grid aún.</td></tr>`;
+        cantSpan.innerText = "0";
+        valSpan.innerText = "0";
+        return;
+      }
+
+      body.innerHTML = "";
+      let totalVal = 0;
+
+      itemsGrid.forEach((item, idx) => {
+        totalVal += item.valor;
+        body.innerHTML += `
+          <tr>
+            <td style="padding: 0.5rem; font-weight: 600;">${item.referencia}</td>
+            <td style="padding: 0.5rem;">${item.cantidad}</td>
+            <td style="padding: 0.5rem; font-size: 0.75rem; color: #64748b;">${item.unidad}</td>
+            <td style="padding: 0.5rem; color: #059669; font-weight: bold;">$${item.valor.toLocaleString('es-CO')}</td>
+            <td style="padding: 0.5rem; text-align: center;">
+              <button onclick="eliminarItemGrid(${idx})" style="color: #dc2626; border: none; background: none; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
+            </td>
+          </tr>
+        `;
+      });
+
+      cantSpan.innerText = itemsGrid.length;
+      valSpan.innerText = totalVal.toLocaleString('es-CO');
+    }
+
+    async function guardarGridEnKardex() {
+      const tipo = document.getElementById('doc-tipo').value;
+      const bodega = document.getElementById('doc-bodega').value;
+      const nit = document.getElementById('doc-nit').value;
+      const tercero = document.getElementById('doc-nombre-tercero').value;
+
+      if(itemsGrid.length === 0) {
+        alert("Debes agregar al menos 1 producto al grid antes de guardar.");
+        return;
+      }
+
+      if(!tercero) {
+        alert("Por favor ingresa el nombre del tercero (donante o beneficiario).");
+        return;
+      }
+
+      try {
+        const { collection, addDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+        
+        for (let item of itemsGrid) {
+          await addDoc(collection(window.db, "inventario"), {
+            tipo: tipo,
+            bodega: bodega,
+            nit: nit || 'N/A',
+            tercero: tercero,
+            referencia: item.referencia,
+            unidad: item.unidad,
+            cantidad: item.cantidad,
+            valor: item.valor,
+            fecha: new Date().toISOString()
+          });
+        }
+
+        alert(`¡Exito! Se registraron ${itemsGrid.length} productos en el Kárdex.`);
+        itemsGrid = [];
+        renderizarGrid();
+        cerrarModalInventario();
+        if(window.cargarInventario) window.cargarInventario();
+
+      } catch (e) {
+        alert("Error guardando en Firebase: " + e.message);
+      }
     }
   </script>
 </body>
