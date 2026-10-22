@@ -160,7 +160,7 @@
         </div>
       </div>
 
-      <!-- MÓDULO INVENTARIO CON DOS BOTONES -->
+      <!-- MÓDULO INVENTARIO CON DOS BOTONES INDEPENDIENTES -->
       <div id="seccion-inventario" class="hidden">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
           <div>
@@ -266,7 +266,7 @@
       <div id="seccion-mantenimiento" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Mantenimiento</h2><p>Mantenimiento de infraestructura.</p></div>
       <div id="seccion-sst" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo SST</h2><p>Seguridad y Salud en el Trabajo.</p></div>
 
-      <!-- MODAL GRID UNIFICADO CON SECCIÓN DE FIRMA Y PDF -->
+      <!-- MODAL GRID UNIFICADO CON AISLAMIENTO DE ESTADO -->
       <div id="modal-inventario" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 1rem;">
         <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; max-width: 900px; width: 100%; max-height: 94vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
           
@@ -541,7 +541,7 @@
     }
   </script>
 
-  <!-- LÓGICA DE FIRMA, PDF, NAVEGACIÓN Y GRID MULTILÍNEA -->
+  <!-- LÓGICA DE AISLAMIENTO DE FORMULARIO, FIRMA, PDF Y GRID -->
   <script>
     let itemsGrid = [];
     let editIndex = -1;
@@ -586,6 +586,23 @@
       if (ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
+    // RESETEAR TODO EL ESTADO PARA INDEPENDIZAR LOS FORMULARIOS
+    function resetearFormularioModal() {
+      itemsGrid = [];
+      editIndex = -1;
+      
+      document.getElementById('doc-nit').value = "";
+      document.getElementById('doc-nombre-tercero').value = "";
+      document.getElementById('item-referencia').value = "";
+      document.getElementById('item-cantidad').value = "";
+      document.getElementById('item-val-unit').value = "";
+      document.getElementById('item-val-total').value = "";
+      
+      limpiarFirma();
+      cancelarEdicionGrid();
+      renderizarGrid();
+    }
+
     function mostrarSeccion(seccion) {
       const secciones = ['dashboard', 'analisis', 'calidad', 'inventario', 'crm', 'documentos', 'recaudos', 'personal', 'despacho', 'proveedores', 'recepcion', 'referencias', 'traslados', 'ambiental', 'mantenimiento', 'sst'];
       secciones.forEach(sec => {
@@ -597,12 +614,15 @@
     }
 
     function abrirModalInventario(esRecogida = false) {
+      // 1. Limpiar completamente los datos anteriores
+      resetearFormularioModal();
+
       modoRecogida = esRecogida;
       const m = document.getElementById('modal-inventario');
       m.classList.remove('hidden');
       m.style.display = 'flex';
 
-      // Consecutivo
+      // 2. Asignar nuevo Consecutivo independiente
       const numCons = Math.floor(100000 + Math.random() * 900000);
       document.getElementById('doc-consecutivo').value = (esRecogida ? "REC-" : "DOC-") + numCons;
 
@@ -611,12 +631,12 @@
       const btnStd = document.getElementById('btn-guardar-kardex-std');
       const btnRec = document.getElementById('btn-guardar-kardex-recogida');
 
+      // 3. Ajustar vista según la opción seleccionada
       if (esRecogida) {
         titulo.innerText = "Registrar Recogida de Alimentos (Firma & PDF)";
         bloqueFirma.classList.remove('hidden');
         btnStd.classList.add('hidden');
         btnRec.classList.remove('hidden');
-        limpiarFirma();
       } else {
         titulo.innerText = "Registrar Documento / Movimiento en Lote";
         bloqueFirma.classList.add('hidden');
@@ -629,7 +649,7 @@
       const m = document.getElementById('modal-inventario');
       m.classList.add('hidden');
       m.style.display = 'none';
-      cancelarEdicionGrid();
+      resetearFormularioModal();
     }
 
     function calcularValorTotalItem() {
@@ -846,13 +866,11 @@
         // Si es Recogida, generar PDF automáticamente
         if (esRecogida) {
           generarPDFComprobante(consecutivo, tipo, bodega, nit, tercero, firmaDataURL);
-          alert(`¡Exito! Se registró la Recogida ${consecutivo} en el Kárdex y se descargó el PDF con firma.`);
+          alert(`¡Éxito! Se registró la Recogida ${consecutivo} en el Kárdex y se descargó el PDF con firma.`);
         } else {
-          alert(`¡Exito! Se registraron ${itemsGrid.length} productos bajo el consecutivo ${consecutivo} en el Kárdex.`);
+          alert(`¡Éxito! Se registraron ${itemsGrid.length} productos bajo el consecutivo ${consecutivo} en el Kárdex.`);
         }
 
-        itemsGrid = [];
-        renderizarGrid();
         cerrarModalInventario();
         if(window.cargarInventario) window.cargarInventario();
 
