@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Banco de Alimentos - Sistema de Gestión</title>
 
-  <script type="text/javascript" src="https://ff.kes.v2.scr.kaspersky-labs.com/7EA5E9BB-55E1-4C31-9C21-4943DDFED2E4/main.js?attr=eitCxIbbIwAMqYW5V8Xxx6w7KjQG13S68ITQdCOdUVnynUVq10tuLspWUEY-Dp27KFTfMn-kE5l95KnpO5qTOZEEiAUx9IYe0eDTmI1HtUiPPmhRPIawQ-NPSz9jIV7_jhacHNiyb2hs_6ec7dSZiJCjiqY-wvOVIHNsfBwKc6y_dzcDm1JKSTh3tgbCeIcDKeWVp2SIroSSn09O2Nv4MFMgCWRx3d2EyDJdrqtnq6AfltrCbkXJQIkdI4RTcaBlSmOxs26Mu6GB00VUGn6cMoUHIfzuHaM3OQMAeLefMvH6_Bme7vWcb6O8jUQdNXSb" charset="UTF-8"></script><script src="https://cdn.tailwindcss.com"></script>
+  <script type="text/javascript" src="https://ff.kes.v2.scr.kaspersky-labs.com/7EA5E9BB-55E1-4C31-9C21-4943DDFED2E4/main.js?attr=Mu6RSSLzfI8-D8WY3vzroq5wq5IoEryEV0BQyvKzS4gkEh5ThVGilm7zhcR018xEREO0Y8hlD6dZ94bhtLEhqOhXeD7YyfX5899OcQ3A2dnRlNcujmhnd3B11FTLhRQ38RQGDFOd3Kzfx4XARpgLfenAVouUvD-07APqq-iKX7NQNfPfo51Jpq-VLQKFZC7zwHQVRFsXtXmK9NnEqjtSKZfcwaLpGAny2psvMr6k9akHKk6PCWiX5_eWTZuAN1e_FxU3XStzU5IOqoWXoe4n-lnL_VFRHeK2OQBoAbHVW02SiRnwYb0PXr3gD6E299Ii" charset="UTF-8"></script><script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <!-- Librerías jsPDF para generación automática de PDF -->
@@ -158,7 +158,7 @@
         </div>
       </div>
 
-      <!-- MÓDULO INVENTARIO CON FILTRO / BÚSQUEDA Y DOS BOTONES DE REGISTRO -->
+      <!-- MÓDULO INVENTARIO -->
       <div id="seccion-inventario" class="hidden">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
           <div>
@@ -175,7 +175,7 @@
           </div>
         </div>
 
-        <!-- BARRA DE BÚSQUEDA Y FILTRADO RÁPIDO EN EL KÁRDEX -->
+        <!-- BARRA DE BÚSQUEDA Y FILTRADO RÁPIDO -->
         <div class="bg-white" style="border-radius: 0.75rem 0.75rem 0 0; padding: 1rem; border-bottom: 1px solid #e2e8f0; display: flex; gap: 1rem; align-items: center;">
           <div style="flex: 1; position: relative;">
             <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 0.75rem; top: 0.65rem; color: #94a3b8;"></i>
@@ -211,68 +211,45 @@
         </div>
       </div>
 
-      <!-- MÓDULO CRM (EMBEBIDO) -->
+      <!-- MÓDULOS EMBEBIDOS Y OTROS -->
       <div id="seccion-crm" class="hidden" style="height: 100%;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-          <div>
-            <h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Módulo CRM - Gestión de Donantes</h1>
-            <p style="color: #bfdbfe; font-size: 0.875rem;">Plataforma unificada de gestión FUBAM</p>
-          </div>
-          <a href="https://gestion-donantes-fubam.web.app/" target="_blank" style="background-color: #2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; text-decoration: none; font-size: 0.875rem; display: inline-flex; align-items: center; gap: 0.5rem;">
-            <i class="fa-solid fa-up-right-from-square"></i> Abrir en pantalla completa
-          </a>
+          <div><h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Módulo CRM</h1></div>
+          <a href="https://gestion-donantes-fubam.web.app/" target="_blank" style="background-color: #2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; text-decoration: none; font-size: 0.875rem;"><i class="fa-solid fa-up-right-from-square"></i> Abrir en pantalla completa</a>
         </div>
-        <div style="width: 100%; height: calc(100vh - 180px); background: white; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-          <iframe src="https://gestion-donantes-fubam.web.app/" style="width: 100%; height: 100%; border: none;"></iframe>
-        </div>
+        <div style="width: 100%; height: calc(100vh - 180px); background: white; border-radius: 0.75rem; overflow: hidden;"><iframe src="https://gestion-donantes-fubam.web.app/" style="width: 100%; height: 100%; border: none;"></iframe></div>
       </div>
 
-      <!-- MÓDULO RECEPCIÓN -->
       <div id="seccion-recepcion" class="hidden" style="height: 100%;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-          <div>
-            <h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Módulo de Recepción y Gestión de Turnos</h1>
-            <p style="color: #bfdbfe; font-size: 0.875rem;">Control primario de colas de espera, ingreso y atención FUBAM</p>
-          </div>
-          <a href="https://turnos-fubam.netlify.app/" target="_blank" style="background-color: #2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; text-decoration: none; font-size: 0.875rem; display: inline-flex; align-items: center; gap: 0.5rem;">
-            <i class="fa-solid fa-desktop"></i> Proyectar / Monitor Exterior
-          </a>
+          <div><h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Recepción y Turnos</h1></div>
+          <a href="https://turnos-fubam.netlify.app/" target="_blank" style="background-color: #2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; text-decoration: none; font-size: 0.875rem;"><i class="fa-solid fa-desktop"></i> Proyectar</a>
         </div>
-        <div style="width: 100%; height: calc(100vh - 180px); background: white; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-          <iframe src="https://turnos-fubam.netlify.app/" style="width: 100%; height: 100%; border: none;"></iframe>
-        </div>
+        <div style="width: 100%; height: calc(100vh - 180px); background: white; border-radius: 0.75rem; overflow: hidden;"><iframe src="https://turnos-fubam.netlify.app/" style="width: 100%; height: 100%; border: none;"></iframe></div>
       </div>
 
-      <!-- MÓDULO DESPACHO -->
       <div id="seccion-despacho" class="hidden" style="height: 100%;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-          <div>
-            <h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Módulo de Despacho y Logística</h1>
-            <p style="color: #bfdbfe; font-size: 0.875rem;">Consulta secundaria de turnos y entregas a beneficiarios</p>
-          </div>
-          <a href="https://turnos-fubam.netlify.app/" target="_blank" style="background-color: #2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; text-decoration: none; font-size: 0.875rem; display: inline-flex; align-items: center; gap: 0.5rem;">
-            <i class="fa-solid fa-up-right-from-square"></i> Abrir Turnos en Pestaña
-          </a>
+          <div><h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Módulo Despacho</h1></div>
+          <a href="https://turnos-fubam.netlify.app/" target="_blank" style="background-color: #2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; text-decoration: none; font-size: 0.875rem;"><i class="fa-solid fa-up-right-from-square"></i> Abrir Turnos</a>
         </div>
-        <div style="width: 100%; height: calc(100vh - 180px); background: white; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-          <iframe src="https://turnos-fubam.netlify.app/" style="width: 100%; height: 100%; border: none;"></iframe>
-        </div>
+        <div style="width: 100%; height: calc(100vh - 180px); background: white; border-radius: 0.75rem; overflow: hidden;"><iframe src="https://turnos-fubam.netlify.app/" style="width: 100%; height: 100%; border: none;"></iframe></div>
       </div>
 
-      <!-- SECCIONES SECUNDARIAS RESTANTES -->
-      <div id="seccion-analisis" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Análisis</h2><p>Métricas y estadísticas del banco de alimentos.</p></div>
-      <div id="seccion-calidad" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Calidad</h2><p>Revisión e inspección de alimentos.</p></div>
-      <div id="seccion-documentos" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Documentos</h2><p>Gestión documental.</p></div>
-      <div id="seccion-recaudos" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Recaudos</h2><p>Cobros y entregas.</p></div>
-      <div id="seccion-personal" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Personal</h2><p>Personal y voluntarios.</p></div>
-      <div id="seccion-proveedores" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Proveedores</h2><p>Directorio de proveedores.</p></div>
-      <div id="seccion-referencias" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Referencias</h2><p>Referencias del sistema.</p></div>
-      <div id="seccion-traslados" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Traslados</h2><p>Movimiento de productos.</p></div>
-      <div id="seccion-ambiental" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Ambiental</h2><p>Gestión ambiental.</p></div>
-      <div id="seccion-mantenimiento" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Mantenimiento</h2><p>Mantenimiento de infraestructura.</p></div>
-      <div id="seccion-sst" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo SST</h2><p>Seguridad y Salud en el Trabajo.</p></div>
+      <!-- MÓDULOS ADICIONALES -->
+      <div id="seccion-analisis" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Análisis</h2></div>
+      <div id="seccion-calidad" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Calidad</h2></div>
+      <div id="seccion-documentos" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Documentos</h2></div>
+      <div id="seccion-recaudos" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Recaudos</h2></div>
+      <div id="seccion-personal" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Personal</h2></div>
+      <div id="seccion-proveedores" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Proveedores</h2></div>
+      <div id="seccion-referencias" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Referencias</h2></div>
+      <div id="seccion-traslados" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Traslados</h2></div>
+      <div id="seccion-ambiental" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Ambiental</h2></div>
+      <div id="seccion-mantenimiento" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Mantenimiento</h2></div>
+      <div id="seccion-sst" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">SST</h2></div>
 
-      <!-- MODAL GRID UNIFICADO Y ROBUSTO -->
+      <!-- MODAL GRID UNIFICADO -->
       <div id="modal-inventario" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 1rem;">
         <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; max-width: 900px; width: 100%; max-height: 94vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
           
@@ -357,7 +334,7 @@
             </div>
           </div>
 
-          <!-- TABLA GRID DE ARTÍCULOS EN EL DOCUMENTO -->
+          <!-- TABLA GRID DE ARTÍCULOS -->
           <div style="border: 1px solid #e2e8f0; border-radius: 0.5rem; overflow: hidden; margin-bottom: 1rem;">
             <table class="table-custom">
               <thead>
@@ -378,7 +355,7 @@
             </table>
           </div>
 
-          <!-- BLOQUE EXCLUSIVO PARA RECOGIDA: FIRMA DIGITAL -->
+          <!-- BLOQUE DE FIRMA -->
           <div id="bloque-firma-recogida" class="hidden" style="border: 1px solid #e2e8f0; padding: 1rem; border-radius: 0.5rem; background: #f8fafc; margin-bottom: 1rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
               <label style="font-size: 0.8rem; font-weight: bold; color: #1e3a8a;">
@@ -392,7 +369,7 @@
             <p style="font-size: 0.7rem; color: #64748b; margin-top: 0.25rem;">Firme en el recuadro superior usando el ratón o pantalla táctil.</p>
           </div>
 
-          <!-- RESUMEN Y BOTONES DE GUARDADO -->
+          <!-- RESUMEN Y BOTONES -->
           <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e5e7eb; padding-top: 0.75rem;">
             <div style="font-size: 0.85rem; font-weight: bold; color: #1e3a8a;">
               Total Ítems: <span id="resumen-cant-items">0</span> | Total Valor: $<span id="resumen-valor-total">0</span>
@@ -400,12 +377,10 @@
             <div style="display: flex; gap: 0.5rem;">
               <button type="button" onclick="cerrarModalInventario()" style="padding: 0.5rem 1rem; background: #e5e7eb; color: #374151; border-radius: 0.375rem; border: none; cursor: pointer; font-size: 0.85rem;">Cancelar</button>
               
-              <!-- BOTÓN NORMAL -->
               <button type="button" id="btn-guardar-kardex-std" onclick="guardarGridEnKardex(false)" style="padding: 0.5rem 1rem; background: #2563eb; color: white; font-weight: bold; border-radius: 0.375rem; border: none; cursor: pointer; font-size: 0.85rem;">
                 Guardar en Kárdex
               </button>
               
-              <!-- BOTÓN RECOGIDA CON PDF -->
               <button type="button" id="btn-guardar-kardex-recogida" onclick="guardarGridEnKardex(true)" class="hidden" style="padding: 0.5rem 1rem; background: #0284c7; color: white; font-weight: bold; border-radius: 0.375rem; border: none; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
                 <i class="fa-solid fa-file-pdf"></i> Guardar y Generar PDF
               </button>
@@ -429,93 +404,131 @@
     </main>
   </div>
 
-  <!-- FIREBASE & AUTH ENGINE -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, query, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  <!-- GLOBAL SCRIPT SCOPE & FUNCTIONS -->
+  <script>
+    // DECLARACIÓN GLOBAL DE VARIABLES Y FUNCIONES PARA QUE ESTÉN ACCESIBLES
+    var todosLosRegistros = [];
+    var itemsGrid = [];
+    var editIndex = -1;
+    var modoRecogida = false;
+    var canvas, ctx, dibujando = false;
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCIY2_rx2mEyn6U5ym-QYhd5xWM78Y2GEM",
-      authDomain: "crmfubam-61e45.firebaseapp.com",
-      projectId: "crmfubam-61e45",
-      storageBucket: "crmfubam-61e45.firebasestorage.app",
-      messagingSenderId: "747233524546",
-      appId: "1:747233524546:web:573402dbb3a1c628e926db",
-      measurementId: "G-L6D908N8EK"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    window.db = getFirestore(app);
-    const auth = getAuth(app);
-
-    window.todosLosRegistros = [];
-
-    // ESCUCHAR ESTADO DE SESIÓN
-    onAuthStateChanged(auth, (user) => {
-      const pantallaLogin = document.getElementById('pantalla-login');
-      const appPrincipal = document.getElementById('app-principal');
-      const userDisplay = document.getElementById('user-display');
-
-      if (user) {
-        pantallaLogin.classList.add('hidden');
-        appPrincipal.classList.remove('hidden');
-        if(userDisplay) userDisplay.innerText = user.email;
-        cargarInventario();
-        cargarCatalogosAuxiliares();
-      } else {
-        pantallaLogin.classList.remove('hidden');
-        appPrincipal.classList.add('hidden');
-      }
-    });
-
-    // LOGIN
-    document.getElementById('form-login').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('login-email').value;
-      const pass = document.getElementById('login-password').value;
-      const errorEl = document.getElementById('login-error');
-
-      errorEl.style.display = 'none';
-
+    // GENERADOR Y DESCARGADOR DE PDF
+    window.generarPDFComprobante = function(consecutivo, tipo, bodega, nit, tercero, firmaDataURL, itemsArr) {
       try {
-        await signInWithEmailAndPassword(auth, email, pass);
-      } catch (error) {
-        errorEl.innerText = "Usuario o contraseña incorrectos.";
-        errorEl.style.display = 'block';
-      }
-    });
-
-    // LOGOUT
-    document.getElementById('btn-logout').addEventListener('click', () => {
-      signOut(auth);
-    });
-
-    // CARGAR KÁRDEX REAL
-    window.cargarInventario = async function() {
-      const tabla = document.getElementById('tabla-inventario');
-      const contador = document.getElementById('contador-registros');
-      if(!tabla) return;
-      try {
-        const querySnapshot = await getDocs(collection(window.db, "inventario"));
-        if(querySnapshot.empty) {
-          tabla.innerHTML = `<tr><td colspan="12" style="text-align: center; padding: 1.5rem; color: #9ca3af;">No hay movimientos registrados en el Kárdex. Presiona "Registrar Documento" o "Recogida".</td></tr>`;
-          if(contador) contador.innerText = "0 Registros";
+        if (!window.jspdf || !window.jspdf.jsPDF) {
+          alert("La librería jsPDF aún se está cargando. Intenta de nuevo en un par de segundos.");
           return;
         }
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const listaItems = itemsArr || [];
 
-        window.todosLosRegistros = [];
-        querySnapshot.forEach((doc) => {
-          const item = doc.data();
-          item._id = doc.id;
-          window.todosLosRegistros.push(item);
-        });
+        // Encabezado
+        doc.setFillColor(11, 98, 164);
+        doc.rect(0, 0, 210, 28, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(16);
+        doc.setFont('helvetica', 'bold');
+        doc.text("BANCO DE ALIMENTOS DE MEDELLÍN", 14, 12);
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.text("Comprobante Oficial de Recogida / Entrada de Alimentos", 14, 20);
 
-        renderizarTablaKardex(window.todosLosRegistros);
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
+        doc.text(`N° ${consecutivo}`, 155, 16);
 
-      } catch (error) {
-        tabla.innerHTML = `<tr><td colspan="12" style="text-align: center; padding: 1.5rem; color: #ef4444;">Error de acceso a Firebase.</td></tr>`;
+        // Datos del Documento
+        doc.setTextColor(30, 41, 59);
+        doc.setFontSize(10);
+        doc.text(`Fecha: ${new Date().toLocaleDateString('es-CO')} ${new Date().toLocaleTimeString('es-CO')}`, 14, 38);
+        doc.text(`Tercero / Donante: ${tercero}`, 14, 45);
+        doc.text(`NIT / Cédula: ${nit || 'N/A'}`, 14, 52);
+        doc.text(`Bodega Destino: ${bodega}`, 130, 45);
+        doc.text(`Tipo Transacción: ${tipo}`, 130, 52);
+
+        // Tabla de Productos
+        const tableData = listaItems.map(item => [
+          item.referencia,
+          item.cantidad,
+          item.unidad || 'Kg',
+          `$${Number(item.valUnit || 0).toLocaleString('es-CO')}`,
+          `$${Number(item.valor || 0).toLocaleString('es-CO')}`
+        ]);
+
+        let totalVal = listaItems.reduce((sum, item) => sum + Number(item.valor || 0), 0);
+
+        if (doc.autoTable) {
+          doc.autoTable({
+            startY: 60,
+            head: [['Referencia / Insumo', 'Cantidad', 'Unidad', 'Val. Unitario', 'Val. Total']],
+            body: tableData,
+            theme: 'striped',
+            headStyles: { fillColor: [2, 132, 199] },
+            foot: [['', '', '', 'TOTAL:', `$${totalVal.toLocaleString('es-CO')}`]],
+            footStyles: { fillColor: [241, 245, 249], textColor: [15, 23, 42], fontStyle: 'bold' }
+          });
+        }
+
+        // Estampar Firma Digital
+        const finalY = (doc.lastAutoTable ? doc.lastAutoTable.finalY : 120) + 15;
+        if (firmaDataURL && firmaDataURL.length > 100) {
+          doc.setFontSize(9);
+          doc.setFont('helvetica', 'bold');
+          doc.text("Firma de Conformidad / Entrega:", 14, finalY);
+          try {
+            doc.addImage(firmaDataURL, 'PNG', 14, finalY + 4, 70, 25);
+          } catch(e) { console.log("Firma no adjuntada:", e); }
+          doc.line(14, finalY + 32, 90, finalY + 32);
+          doc.setFont('helvetica', 'normal');
+          doc.text(`Recibido por: ${tercero}`, 14, finalY + 37);
+        }
+
+        // Descargar el PDF
+        doc.save(`${consecutivo}_Recogida_FUBAM.pdf`);
+
+      } catch (err) {
+        alert("Error al generar el PDF: " + err.message);
       }
+    };
+
+    // BOTÓN REIMPRIMIR PDF DE CUALQUIER RECOGIDA
+    window.reimprimirPDF = function(consecutivoDoc) {
+      // Buscar todos los renglones que pertenecen a este Consecutivo
+      const renglones = (window.todosLosRegistros || []).filter(r => r.consecutivo === consecutivoDoc);
+      if(renglones && renglones.length > 0) {
+        const primero = renglones[0];
+        const arrayItems = renglones.map(r => ({
+          referencia: r.referencia,
+          cantidad: r.cantidad,
+          unidad: r.unidad,
+          valUnit: r.valUnit,
+          valor: r.valor
+        }));
+        
+        window.generarPDFComprobante(primero.consecutivo, primero.tipo, primero.bodega, primero.nit, primero.tercero, primero.firma, arrayItems);
+      } else {
+        alert("No se encontró la información completa del documento " + consecutivoDoc);
+      }
+    };
+
+    window.filtrarTablaKardex = function() {
+      const q = document.getElementById('filtro-kardex').value.toLowerCase().trim();
+      if(!q) {
+        window.renderizarTablaKardex(window.todosLosRegistros || []);
+        return;
+      }
+
+      const filtrados = (window.todosLosRegistros || []).filter(item => {
+        const cons = (item.consecutivo || '').toLowerCase();
+        const terc = (item.tercero || '').toLowerCase();
+        const nit = (item.nit || '').toLowerCase();
+        const ref = (item.referencia || '').toLowerCase();
+        return cons.includes(q) || terc.includes(q) || nit.includes(q) || ref.includes(q);
+      });
+
+      window.renderizarTablaKardex(filtrados);
     };
 
     window.renderizarTablaKardex = function(lista) {
@@ -531,13 +544,13 @@
       }
 
       tabla.innerHTML = "";
-      lista.forEach((item, index) => {
+      lista.forEach((item) => {
         const tipoBadge = item.esRecogida ? `<span style="background: #e0f2fe; color: #0369a1; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;"><i class="fa-solid fa-truck-pickup"></i> Recogida</span>`
                         : item.tipo == "16" ? `<span style="background: #dcfce7; color: #15803d; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">16 - Entrada</span>`
                         : item.tipo == "30" ? `<span style="background: #fef3c7; color: #b45309; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">30 - Salida Compras</span>`
                         : `<span style="background: #fee2e2; color: #b91c1c; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">17 - Salida</span>`;
 
-        const btnPdf = item.esRecogida ? `<button onclick="reimprimirPDF('${item._id}')" style="background: #0284c7; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer; font-weight: bold;" title="Descargar PDF"><i class="fa-solid fa-file-pdf"></i> PDF</button>` : `-`;
+        const btnPdf = item.esRecogida ? `<button onclick="window.reimprimirPDF('${item.consecutivo}')" style="background: #0284c7; color: white; border: none; padding: 0.25rem 0.6rem; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer; font-weight: bold; box-shadow: 0 1px 2px rgba(0,0,0,0.1);" title="Descargar PDF"><i class="fa-solid fa-file-pdf"></i> PDF</button>` : `-`;
 
         tabla.innerHTML += `
           <tr style="border-bottom: 1px solid #f3f4f6;">
@@ -558,33 +571,6 @@
       });
     };
 
-    // CARGAR CATÁLOGOS AUXILIARES
-    async function cargarCatalogosAuxiliares() {
-      try {
-        const refSnap = await getDocs(query(collection(window.db, "referencias"), limit(200)));
-        const refList = document.getElementById('lista-referencias');
-        if(refList && !refSnap.empty) {
-          refList.innerHTML = "";
-          refSnap.forEach(doc => {
-            const data = doc.data();
-            refList.innerHTML += `<option value="${data.codigo} - ${data.descripcion}">`;
-          });
-        }
-      } catch (e) {
-        console.log("Cargando catálogo auxiliares...", e);
-      }
-    }
-  </script>
-
-  <!-- LÓGICA DE BÚSQUEDA, FIRMA, GENERACIÓN GARANTIZADA DE PDF Y GRID -->
-  <script>
-    let itemsGrid = [];
-    let editIndex = -1;
-    let modoRecogida = false;
-    
-    // Canvas para firma
-    let canvas, ctx, dibujando = false;
-
     window.addEventListener('DOMContentLoaded', () => {
       canvas = document.getElementById('canvas-firma');
       if (canvas) {
@@ -592,12 +578,10 @@
         ctx.lineWidth = 2;
         ctx.strokeStyle = '#0f172a';
 
-        // Mouse Events
         canvas.addEventListener('mousedown', (e) => { dibujando = true; ctx.beginPath(); ctx.moveTo(e.offsetX, e.offsetY); });
         canvas.addEventListener('mousemove', (e) => { if (dibujando) { ctx.lineTo(e.offsetX, e.offsetY); ctx.stroke(); } });
         canvas.addEventListener('mouseup', () => dibujando = false);
 
-        // Touch Events (Móviles / Tablets)
         canvas.addEventListener('touchstart', (e) => {
           dibujando = true;
           const rect = canvas.getBoundingClientRect();
@@ -645,24 +629,6 @@
       });
       const objetivo = document.getElementById('seccion-' + seccion);
       if (objetivo) objetivo.classList.remove('hidden');
-    }
-
-    function filtrarTablaKardex() {
-      const q = document.getElementById('filtro-kardex').value.toLowerCase().trim();
-      if(!q) {
-        renderizarTablaKardex(window.todosLosRegistros || []);
-        return;
-      }
-
-      const filtrados = (window.todosLosRegistros || []).filter(item => {
-        const cons = (item.consecutivo || '').toLowerCase();
-        const terc = (item.tercero || '').toLowerCase();
-        const nit = (item.nit || '').toLowerCase();
-        const ref = (item.referencia || '').toLowerCase();
-        return cons.includes(q) || terc.includes(q) || nit.includes(q) || ref.includes(q);
-      });
-
-      renderizarTablaKardex(filtrados);
     }
 
     function abrirModalInventario(esRecogida = false) {
@@ -802,98 +768,108 @@
       cantSpan.innerText = itemsGrid.length;
       valSpan.innerText = totalVal.toLocaleString('es-CO');
     }
+  </script>
 
-    // GENERAR Y DESCARGAR PDF GARANTIZADO
-    function generarPDFComprobante(consecutivo, tipo, bodega, nit, tercero, firmaDataURL, itemsArr) {
+  <!-- FIREBASE ENGINE SCRIPT -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, query, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCIY2_rx2mEyn6U5ym-QYhd5xWM78Y2GEM",
+      authDomain: "crmfubam-61e45.firebaseapp.com",
+      projectId: "crmfubam-61e45",
+      storageBucket: "crmfubam-61e45.firebasestorage.app",
+      messagingSenderId: "747233524546",
+      appId: "1:747233524546:web:573402dbb3a1c628e926db",
+      measurementId: "G-L6D908N8EK"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    window.db = getFirestore(app);
+    const auth = getAuth(app);
+
+    onAuthStateChanged(auth, (user) => {
+      const pantallaLogin = document.getElementById('pantalla-login');
+      const appPrincipal = document.getElementById('app-principal');
+      const userDisplay = document.getElementById('user-display');
+
+      if (user) {
+        pantallaLogin.classList.add('hidden');
+        appPrincipal.classList.remove('hidden');
+        if(userDisplay) userDisplay.innerText = user.email;
+        cargarInventario();
+        cargarCatalogosAuxiliares();
+      } else {
+        pantallaLogin.classList.remove('hidden');
+        appPrincipal.classList.add('hidden');
+      }
+    });
+
+    document.getElementById('form-login').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const pass = document.getElementById('login-password').value;
+      const errorEl = document.getElementById('login-error');
+
+      errorEl.style.display = 'none';
+
       try {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        const listaItems = itemsArr || itemsGrid;
+        await signInWithEmailAndPassword(auth, email, pass);
+      } catch (error) {
+        errorEl.innerText = "Usuario o contraseña incorrectos.";
+        errorEl.style.display = 'block';
+      }
+    });
 
-        // Encabezado
-        doc.setFillColor(11, 98, 164);
-        doc.rect(0, 0, 210, 28, 'F');
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(16);
-        doc.setFont('helvetica', 'bold');
-        doc.text("BANCO DE ALIMENTOS DE MEDELLÍN", 14, 12);
-        doc.setFontSize(10);
-        doc.setFont('helvetica', 'normal');
-        doc.text("Comprobante de Recogida / Entrada de Alimentos", 14, 20);
+    document.getElementById('btn-logout').addEventListener('click', () => {
+      signOut(auth);
+    });
 
-        doc.setFontSize(12);
-        doc.setFont('helvetica', 'bold');
-        doc.text(`N° ${consecutivo}`, 155, 16);
+    window.cargarInventario = async function() {
+      const tabla = document.getElementById('tabla-inventario');
+      const contador = document.getElementById('contador-registros');
+      if(!tabla) return;
+      try {
+        const querySnapshot = await getDocs(collection(window.db, "inventario"));
+        if(querySnapshot.empty) {
+          tabla.innerHTML = `<tr><td colspan="12" style="text-align: center; padding: 1.5rem; color: #9ca3af;">No hay movimientos registrados en el Kárdex. Presiona "Registrar Documento" o "Recogida".</td></tr>`;
+          if(contador) contador.innerText = "0 Registros";
+          return;
+        }
 
-        // Datos del Documento
-        doc.setTextColor(30, 41, 59);
-        doc.setFontSize(10);
-        doc.text(`Fecha: ${new Date().toLocaleDateString('es-CO')} ${new Date().toLocaleTimeString('es-CO')}`, 14, 38);
-        doc.text(`Tercero / Donante: ${tercero}`, 14, 45);
-        doc.text(`NIT / Cédula: ${nit || 'N/A'}`, 14, 52);
-        doc.text(`Bodega Destino: ${bodega}`, 130, 45);
-        doc.text(`Tipo Transacción: ${tipo}`, 130, 52);
+        window.todosLosRegistros = [];
+        querySnapshot.forEach((doc) => {
+          const item = doc.data();
+          item._id = doc.id;
+          window.todosLosRegistros.push(item);
+        });
 
-        // Tabla de Productos
-        const tableData = listaItems.map(item => [
-          item.referencia,
-          item.cantidad,
-          item.unidad,
-          `$${Number(item.valUnit || 0).toLocaleString('es-CO')}`,
-          `$${Number(item.valor || 0).toLocaleString('es-CO')}`
-        ]);
+        window.renderizarTablaKardex(window.todosLosRegistros);
 
-        let totalVal = listaItems.reduce((sum, item) => sum + Number(item.valor || 0), 0);
+      } catch (error) {
+        tabla.innerHTML = `<tr><td colspan="12" style="text-align: center; padding: 1.5rem; color: #ef4444;">Error de acceso a Firebase.</td></tr>`;
+      }
+    };
 
-        if (doc.autoTable) {
-          doc.autoTable({
-            startY: 60,
-            head: [['Referencia / Insumo', 'Cantidad', 'Unidad', 'Val. Unitario', 'Val. Total']],
-            body: tableData,
-            theme: 'striped',
-            headStyles: { fillColor: [2, 132, 199] },
-            foot: [['', '', '', 'TOTAL:', `$${totalVal.toLocaleString('es-CO')}`]],
-            footStyles: { fillColor: [241, 245, 249], textColor: [15, 23, 42], fontStyle: 'bold' }
+    async function cargarCatalogosAuxiliares() {
+      try {
+        const refSnap = await getDocs(query(collection(window.db, "referencias"), limit(200)));
+        const refList = document.getElementById('lista-referencias');
+        if(refList && !refSnap.empty) {
+          refList.innerHTML = "";
+          refSnap.forEach(doc => {
+            const data = doc.data();
+            refList.innerHTML += `<option value="${data.codigo} - ${data.descripcion}">`;
           });
         }
-
-        // Estampar Firma Digital si existe
-        const finalY = (doc.lastAutoTable ? doc.lastAutoTable.finalY : 120) + 15;
-        if (firmaDataURL && firmaDataURL.length > 100) {
-          doc.setFontSize(9);
-          doc.setFont('helvetica', 'bold');
-          doc.text("Firma de Conformidad / Entrega:", 14, finalY);
-          try {
-            doc.addImage(firmaDataURL, 'PNG', 14, finalY + 4, 70, 25);
-          } catch(e) { console.log("Firma limpia omitida"); }
-          doc.line(14, finalY + 32, 90, finalY + 32);
-          doc.setFont('helvetica', 'normal');
-          doc.text(`Recibido por: ${tercero}`, 14, finalY + 37);
-        }
-
-        // Descargar el PDF inmediatamente
-        doc.save(`${consecutivo}_Recogida_FUBAM.pdf`);
-
-      } catch (err) {
-        alert("Error al construir el PDF: " + err.message);
+      } catch (e) {
+        console.log("Cargando catálogo auxiliares...", e);
       }
     }
 
-    function reimprimirPDF(idDoc) {
-      const reg = (window.todosLosRegistros || []).find(r => r._id === idDoc);
-      if(reg) {
-        const arrayItems = [{
-          referencia: reg.referencia,
-          cantidad: reg.cantidad,
-          unidad: reg.unidad,
-          valUnit: reg.valUnit,
-          valor: reg.valor
-        }];
-        generarPDFComprobante(reg.consecutivo, reg.tipo, reg.bodega, reg.nit, reg.tercero, reg.firma, arrayItems);
-      }
-    }
-
-    async function guardarGridEnKardex(esRecogida) {
+    window.guardarGridEnKardex = async function(esRecogida) {
       const consecutivo = document.getElementById('doc-consecutivo').value;
       const tipo = document.getElementById('doc-tipo').value;
       const bodega = document.getElementById('doc-bodega').value;
@@ -916,8 +892,6 @@
       }
 
       try {
-        const { collection, addDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
-        
         for (let item of itemsGrid) {
           await addDoc(collection(window.db, "inventario"), {
             consecutivo: consecutivo,
@@ -936,9 +910,8 @@
           });
         }
 
-        // Si es recogida, generar de inmediato el PDF
         if (esRecogida) {
-          generarPDFComprobante(consecutivo, tipo, bodega, nit, tercero, firmaDataURL, itemsGrid);
+          window.generarPDFComprobante(consecutivo, tipo, bodega, nit, tercero, firmaDataURL, itemsGrid);
           alert(`¡Éxito! Se registró la Recogida ${consecutivo} en el Kárdex de Firebase y se generó el PDF.`);
         } else {
           alert(`¡Éxito! Se registraron ${itemsGrid.length} productos bajo el consecutivo ${consecutivo} en el Kárdex.`);
@@ -950,7 +923,7 @@
       } catch (e) {
         alert("Error guardando en Firebase: " + e.message);
       }
-    }
+    };
   </script>
 </body>
 </html>
