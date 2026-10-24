@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Banco de Alimentos - Sistema de Gestión</title>
 
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="text/javascript" src="https://ff.kes.v2.scr.kaspersky-labs.com/7EA5E9BB-55E1-4C31-9C21-4943DDFED2E4/main.js?attr=eitCxIbbIwAMqYW5V8Xxx6w7KjQG13S68ITQdCOdUVnynUVq10tuLspWUEY-Dp27KFTfMn-kE5l95KnpO5qTOZEEiAUx9IYe0eDTmI1HtUiPPmhRPIawQ-NPSz9jIV7_jhacHNiyb2hs_6ec7dSZiJCjiqY-wvOVIHNsfBwKc6y_dzcDm1JKSTh3tgbCeIcDKeWVp2SIroSSn09O2Nv4MFMgCWRx3d2EyDJdrqtnq6AfltrCbkXJQIkdI4RTcaBlSmOxs26Mu6GB00VUGn6cMoUHIfzuHaM3OQMAeLefMvH6_Bme7vWcb6O8jUQdNXSb" charset="UTF-8"></script><script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- Librería jsPDF para generación automática de PDF en el navegador -->
+  <!-- Librerías jsPDF para generación automática de PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
@@ -25,7 +25,7 @@
     aside.sidebar { width: 260px; background-color: #f8fafc; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between; overflow-y: auto; flex-shrink: 0; }
     main { flex: 1; padding: 2rem; overflow-y: auto; display: flex; flex-direction: column; justify-content: space-between; }
     
-    .nav-btn { width: 100%; display: flex; align-items: center; space-x: 3px; gap: 0.75rem; padding: 0.5rem 0.75rem; border-radius: 0.375rem; border: none; background: transparent; text-align: left; font-size: 0.875rem; color: #475569; cursor: pointer; }
+    .nav-btn { width: 100%; display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0.75rem; border-radius: 0.375rem; border: none; background: transparent; text-align: left; font-size: 0.875rem; color: #475569; cursor: pointer; }
     .nav-btn:hover { background-color: #eff6ff; color: #2563eb; }
     
     .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
@@ -33,14 +33,12 @@
     .card-mod:hover { transform: translateY(-2px); }
     
     .hidden { display: none !important; }
-    .text-white { color: #ffffff !important; }
-    .bg-white { background-color: #ffffff !important; }
     .table-custom { width: 100%; text-align: left; border-collapse: collapse; font-size: 0.875rem; }
-    .table-custom th { background-color: #f1f5f9; padding: 0.75rem; color: #334155; font-size: 0.75rem; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; }
+    .table-custom th { background-color: #f1f5f9; padding: 0.75rem; color: #334155; font-size: 0.75rem; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; }
     .table-custom td { padding: 0.75rem; border-bottom: 1px solid #f1f5f9; }
 
     /* CANVAS DE FIRMA */
-    #canvas-firma { border: 2px dashed #cbd5e1; border-radius: 0.5rem; background: #fafafa; cursor: crosshair; touch-action: none; }
+    #canvas-firma { border: 2px dashed #cbd5e1; border-radius: 0.5rem; background: #fafafa; cursor: crosshair; touch-action: none; width: 100%; height: 130px; }
   </style>
 </head>
 <body>
@@ -160,26 +158,33 @@
         </div>
       </div>
 
-      <!-- MÓDULO INVENTARIO CON DOS BOTONES INDEPENDIENTES -->
+      <!-- MÓDULO INVENTARIO CON FILTRO / BÚSQUEDA Y DOS BOTONES DE REGISTRO -->
       <div id="seccion-inventario" class="hidden">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
           <div>
             <h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Módulo de Inventario (Kárdex)</h1>
-            <p style="color: #bfdbfe; font-size: 0.875rem;">Entradas (16), Salidas - Compras (30) y Salidas Generales (17)</p>
+            <p style="color: #bfdbfe; font-size: 0.875rem;">Consulta global, Entradas (16), Salidas - Compras (30) y Recogidas</p>
           </div>
           <div style="display: flex; gap: 0.75rem;">
-            <!-- BOTÓN 1: REGISTRO ESTÁNDAR MULTILÍNEA -->
             <button onclick="abrirModalInventario(false)" style="background-color: #22c55e; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
               <i class="fa-solid fa-plus"></i> Registrar Documento
             </button>
-            <!-- BOTÓN 2: REGISTRO DE RECOGIDA CON FIRMA Y PDF -->
             <button onclick="abrirModalInventario(true)" style="background-color: #0284c7; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.15);">
               <i class="fa-solid fa-signature"></i> Recogida (Firma & PDF)
             </button>
           </div>
         </div>
 
-        <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <!-- BARRA DE BÚSQUEDA Y FILTRADO RÁPIDO EN EL KÁRDEX -->
+        <div class="bg-white" style="border-radius: 0.75rem 0.75rem 0 0; padding: 1rem; border-bottom: 1px solid #e2e8f0; display: flex; gap: 1rem; align-items: center;">
+          <div style="flex: 1; position: relative;">
+            <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 0.75rem; top: 0.65rem; color: #94a3b8;"></i>
+            <input type="text" id="filtro-kardex" onkeyup="filtrarTablaKardex()" placeholder="Buscar por Consecutivo, Tercero, NIT o Referencia..." style="width: 100%; border: 1px solid #cbd5e1; padding: 0.5rem 0.5rem 0.5rem 2.2rem; border-radius: 0.375rem; font-size: 0.85rem;">
+          </div>
+          <span id="contador-registros" style="font-size: 0.8rem; font-weight: bold; color: #475569;">Cargando...</span>
+        </div>
+
+        <div class="bg-white" style="border-radius: 0 0 0.75rem 0.75rem; padding: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-height: 70vh; overflow-y: auto;">
           <table class="table-custom">
             <thead>
               <tr>
@@ -194,11 +199,12 @@
                 <th>Val. Unit. ($)</th>
                 <th>Val. Total ($)</th>
                 <th>Fecha</th>
+                <th style="text-align: center;">Acción</th>
               </tr>
             </thead>
             <tbody id="tabla-inventario">
               <tr>
-                <td colspan="11" style="text-align: center; padding: 1.5rem; color: #9ca3af;">Cargando kárdex desde Firebase...</td>
+                <td colspan="12" style="text-align: center; padding: 1.5rem; color: #9ca3af;">Cargando kárdex desde Firebase...</td>
               </tr>
             </tbody>
           </table>
@@ -266,7 +272,7 @@
       <div id="seccion-mantenimiento" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo Mantenimiento</h2><p>Mantenimiento de infraestructura.</p></div>
       <div id="seccion-sst" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Módulo SST</h2><p>Seguridad y Salud en el Trabajo.</p></div>
 
-      <!-- MODAL GRID UNIFICADO CON AISLAMIENTO DE ESTADO -->
+      <!-- MODAL GRID UNIFICADO Y ROBUSTO -->
       <div id="modal-inventario" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 1rem;">
         <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; max-width: 900px; width: 100%; max-height: 94vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
           
@@ -443,6 +449,8 @@
     window.db = getFirestore(app);
     const auth = getAuth(app);
 
+    window.todosLosRegistros = [];
+
     // ESCUCHAR ESTADO DE SESIÓN
     onAuthStateChanged(auth, (user) => {
       const pantallaLogin = document.getElementById('pantalla-login');
@@ -486,41 +494,68 @@
     // CARGAR KÁRDEX REAL
     window.cargarInventario = async function() {
       const tabla = document.getElementById('tabla-inventario');
+      const contador = document.getElementById('contador-registros');
       if(!tabla) return;
       try {
         const querySnapshot = await getDocs(collection(window.db, "inventario"));
         if(querySnapshot.empty) {
-          tabla.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 1.5rem; color: #9ca3af;">No hay movimientos registrados en el Kárdex. Presiona "Registrar Documento" o "Recogida".</td></tr>`;
+          tabla.innerHTML = `<tr><td colspan="12" style="text-align: center; padding: 1.5rem; color: #9ca3af;">No hay movimientos registrados en el Kárdex. Presiona "Registrar Documento" o "Recogida".</td></tr>`;
+          if(contador) contador.innerText = "0 Registros";
           return;
         }
 
-        tabla.innerHTML = "";
+        window.todosLosRegistros = [];
         querySnapshot.forEach((doc) => {
           const item = doc.data();
-          const tipoBadge = item.esRecogida ? `<span style="background: #e0f2fe; color: #0369a1; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;"><i class="fa-solid fa-truck-pickup"></i> Recogida</span>`
-                          : item.tipo == "16" ? `<span style="background: #dcfce7; color: #15803d; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">16 - Entrada</span>`
-                          : item.tipo == "30" ? `<span style="background: #fef3c7; color: #b45309; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">30 - Salida Compras</span>`
-                          : `<span style="background: #fee2e2; color: #b91c1c; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">17 - Salida</span>`;
-
-          tabla.innerHTML += `
-            <tr style="border-bottom: 1px solid #f3f4f6;">
-              <td style="padding: 0.75rem; font-weight: bold; color: #1e3a8a;">${item.consecutivo || '000001'}</td>
-              <td style="padding: 0.75rem;">${tipoBadge}</td>
-              <td style="padding: 0.75rem; font-size: 0.75rem; color: #475569;">${item.nit || 'N/A'}</td>
-              <td style="padding: 0.75rem; font-weight: 600; color: #1e3a8a;">${item.tercero}</td>
-              <td style="padding: 0.75rem; font-weight: bold; color: #374151;">${item.bodega}</td>
-              <td style="padding: 0.75rem;">${item.referencia}</td>
-              <td style="padding: 0.75rem; font-weight: bold;">${item.cantidad}</td>
-              <td style="padding: 0.75rem; font-size: 0.75rem; color: #64748b;">${item.unidad || 'Kg'}</td>
-              <td style="padding: 0.75rem; color: #3b82f6;">$${Number(item.valUnit || 0).toLocaleString('es-CO')}</td>
-              <td style="padding: 0.75rem; color: #059669; font-weight: bold;">$${Number(item.valor).toLocaleString('es-CO')}</td>
-              <td style="padding: 0.75rem; color: #6b7280; font-size: 0.75rem;">${item.fecha ? new Date(item.fecha).toLocaleDateString() : 'N/A'}</td>
-            </tr>
-          `;
+          item._id = doc.id;
+          window.todosLosRegistros.push(item);
         });
+
+        renderizarTablaKardex(window.todosLosRegistros);
+
       } catch (error) {
-        tabla.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 1.5rem; color: #ef4444;">Error de acceso a Firebase.</td></tr>`;
+        tabla.innerHTML = `<tr><td colspan="12" style="text-align: center; padding: 1.5rem; color: #ef4444;">Error de acceso a Firebase.</td></tr>`;
       }
+    };
+
+    window.renderizarTablaKardex = function(lista) {
+      const tabla = document.getElementById('tabla-inventario');
+      const contador = document.getElementById('contador-registros');
+      if(!tabla) return;
+
+      if(contador) contador.innerText = `${lista.length} Registros`;
+
+      if(lista.length === 0) {
+        tabla.innerHTML = `<tr><td colspan="12" style="text-align: center; padding: 1.5rem; color: #9ca3af;">No se encontraron registros que coincidan con la búsqueda.</td></tr>`;
+        return;
+      }
+
+      tabla.innerHTML = "";
+      lista.forEach((item, index) => {
+        const tipoBadge = item.esRecogida ? `<span style="background: #e0f2fe; color: #0369a1; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;"><i class="fa-solid fa-truck-pickup"></i> Recogida</span>`
+                        : item.tipo == "16" ? `<span style="background: #dcfce7; color: #15803d; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">16 - Entrada</span>`
+                        : item.tipo == "30" ? `<span style="background: #fef3c7; color: #b45309; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">30 - Salida Compras</span>`
+                        : `<span style="background: #fee2e2; color: #b91c1c; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">17 - Salida</span>`;
+
+        const btnPdf = item.esRecogida ? `<button onclick="reimprimirPDF('${item._id}')" style="background: #0284c7; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer; font-weight: bold;" title="Descargar PDF"><i class="fa-solid fa-file-pdf"></i> PDF</button>` : `-`;
+
+        tabla.innerHTML += `
+          <tr style="border-bottom: 1px solid #f3f4f6;">
+            <td style="padding: 0.75rem; font-weight: bold; color: #1e3a8a;">${item.consecutivo || '000001'}</td>
+            <td style="padding: 0.75rem;">${tipoBadge}</td>
+            <td style="padding: 0.75rem; font-size: 0.75rem; color: #475569;">${item.nit || 'N/A'}</td>
+            <td style="padding: 0.75rem; font-weight: 600; color: #1e3a8a;">${item.tercero}</td>
+            <td style="padding: 0.75rem; font-weight: bold; color: #374151;">${item.bodega}</td>
+            <td style="padding: 0.75rem;">${item.referencia}</td>
+            <td style="padding: 0.75rem; font-weight: bold;">${item.cantidad}</td>
+            <td style="padding: 0.75rem; font-size: 0.75rem; color: #64748b;">${item.unidad || 'Kg'}</td>
+            <td style="padding: 0.75rem; color: #3b82f6;">$${Number(item.valUnit || 0).toLocaleString('es-CO')}</td>
+            <td style="padding: 0.75rem; color: #059669; font-weight: bold;">$${Number(item.valor || 0).toLocaleString('es-CO')}</td>
+            <td style="padding: 0.75rem; color: #6b7280; font-size: 0.75rem;">${item.fecha ? new Date(item.fecha).toLocaleDateString() : 'N/A'}</td>
+            <td style="padding: 0.75rem; text-align: center;">${btnPdf}</td>
+          </tr>
+        `;
+      });
     };
 
     // CARGAR CATÁLOGOS AUXILIARES
@@ -541,7 +576,7 @@
     }
   </script>
 
-  <!-- LÓGICA DE AISLAMIENTO DE FORMULARIO, FIRMA, PDF Y GRID -->
+  <!-- LÓGICA DE BÚSQUEDA, FIRMA, GENERACIÓN GARANTIZADA DE PDF Y GRID -->
   <script>
     let itemsGrid = [];
     let editIndex = -1;
@@ -586,7 +621,6 @@
       if (ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-    // RESETEAR TODO EL ESTADO PARA INDEPENDIZAR LOS FORMULARIOS
     function resetearFormularioModal() {
       itemsGrid = [];
       editIndex = -1;
@@ -613,16 +647,31 @@
       if (objetivo) objetivo.classList.remove('hidden');
     }
 
-    function abrirModalInventario(esRecogida = false) {
-      // 1. Limpiar completamente los datos anteriores
-      resetearFormularioModal();
+    function filtrarTablaKardex() {
+      const q = document.getElementById('filtro-kardex').value.toLowerCase().trim();
+      if(!q) {
+        renderizarTablaKardex(window.todosLosRegistros || []);
+        return;
+      }
 
+      const filtrados = (window.todosLosRegistros || []).filter(item => {
+        const cons = (item.consecutivo || '').toLowerCase();
+        const terc = (item.tercero || '').toLowerCase();
+        const nit = (item.nit || '').toLowerCase();
+        const ref = (item.referencia || '').toLowerCase();
+        return cons.includes(q) || terc.includes(q) || nit.includes(q) || ref.includes(q);
+      });
+
+      renderizarTablaKardex(filtrados);
+    }
+
+    function abrirModalInventario(esRecogida = false) {
+      resetearFormularioModal();
       modoRecogida = esRecogida;
       const m = document.getElementById('modal-inventario');
       m.classList.remove('hidden');
       m.style.display = 'flex';
 
-      // 2. Asignar nuevo Consecutivo independiente
       const numCons = Math.floor(100000 + Math.random() * 900000);
       document.getElementById('doc-consecutivo').value = (esRecogida ? "REC-" : "DOC-") + numCons;
 
@@ -631,7 +680,6 @@
       const btnStd = document.getElementById('btn-guardar-kardex-std');
       const btnRec = document.getElementById('btn-guardar-kardex-recogida');
 
-      // 3. Ajustar vista según la opción seleccionada
       if (esRecogida) {
         titulo.innerText = "Registrar Recogida de Alimentos (Firma & PDF)";
         bloqueFirma.classList.remove('hidden');
@@ -755,70 +803,94 @@
       valSpan.innerText = totalVal.toLocaleString('es-CO');
     }
 
-    // GENERAR COMPROBANTE EN PDF
-    function generarPDFComprobante(consecutivo, tipo, bodega, nit, tercero, firmaDataURL) {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
+    // GENERAR Y DESCARGAR PDF GARANTIZADO
+    function generarPDFComprobante(consecutivo, tipo, bodega, nit, tercero, firmaDataURL, itemsArr) {
+      try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const listaItems = itemsArr || itemsGrid;
 
-      // Encabezado
-      doc.setFillColor(11, 98, 164);
-      doc.rect(0, 0, 210, 28, 'F');
-      doc.setTextColor(255, 255, 255);
-      doc.setFontSize(16);
-      doc.setFont('helvetica', 'bold');
-      doc.text("BANCO DE ALIMENTOS DE MEDELLÍN", 14, 12);
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'normal');
-      doc.text("Comprobante de Recogida / Entrada de Alimentos", 14, 20);
-
-      doc.setFontSize(12);
-      doc.setFont('helvetica', 'bold');
-      doc.text(`N° ${consecutivo}`, 160, 16);
-
-      // Datos del Documento
-      doc.setTextColor(30, 41, 59);
-      doc.setFontSize(10);
-      doc.text(`Fecha: ${new Date().toLocaleDateString('es-CO')} ${new Date().toLocaleTimeString('es-CO')}`, 14, 38);
-      doc.text(`Tercero / Donante: ${tercero}`, 14, 45);
-      doc.text(`NIT / Cédula: ${nit || 'N/A'}`, 14, 52);
-      doc.text(`Bodega Destino: ${bodega}`, 130, 45);
-      doc.text(`Tipo Transacción: ${tipo}`, 130, 52);
-
-      // Tabla de Productos
-      const tableData = itemsGrid.map(item => [
-        item.referencia,
-        item.cantidad,
-        item.unidad,
-        `$${item.valUnit.toLocaleString('es-CO')}`,
-        `$${item.valor.toLocaleString('es-CO')}`
-      ]);
-
-      let totalVal = itemsGrid.reduce((sum, item) => sum + item.valor, 0);
-
-      doc.autoTable({
-        startY: 60,
-        head: [['Referencia / Insumo', 'Cantidad', 'Unidad', 'Val. Unitario', 'Val. Total']],
-        body: tableData,
-        theme: 'striped',
-        headStyles: { fillColor: [2, 132, 199] },
-        foot: [['', '', '', 'TOTAL:', `$${totalVal.toLocaleString('es-CO')}`]],
-        footStyles: { fillColor: [241, 245, 249], textColor: [15, 23, 42], fontStyle: 'bold' }
-      });
-
-      // Estampar Firma Digital
-      const finalY = doc.lastAutoTable.finalY + 15;
-      if (firmaDataURL) {
-        doc.setFontSize(9);
+        // Encabezado
+        doc.setFillColor(11, 98, 164);
+        doc.rect(0, 0, 210, 28, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(16);
         doc.setFont('helvetica', 'bold');
-        doc.text("Firma de Conformidad / Entrega:", 14, finalY);
-        doc.addImage(firmaDataURL, 'PNG', 14, finalY + 4, 70, 25);
-        doc.line(14, finalY + 32, 90, finalY + 32);
+        doc.text("BANCO DE ALIMENTOS DE MEDELLÍN", 14, 12);
+        doc.setFontSize(10);
         doc.setFont('helvetica', 'normal');
-        doc.text(`Recibido por: ${tercero}`, 14, finalY + 37);
-      }
+        doc.text("Comprobante de Recogida / Entrada de Alimentos", 14, 20);
 
-      // Descargar PDF
-      doc.save(`${consecutivo}_Recogida_FUBAM.pdf`);
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
+        doc.text(`N° ${consecutivo}`, 155, 16);
+
+        // Datos del Documento
+        doc.setTextColor(30, 41, 59);
+        doc.setFontSize(10);
+        doc.text(`Fecha: ${new Date().toLocaleDateString('es-CO')} ${new Date().toLocaleTimeString('es-CO')}`, 14, 38);
+        doc.text(`Tercero / Donante: ${tercero}`, 14, 45);
+        doc.text(`NIT / Cédula: ${nit || 'N/A'}`, 14, 52);
+        doc.text(`Bodega Destino: ${bodega}`, 130, 45);
+        doc.text(`Tipo Transacción: ${tipo}`, 130, 52);
+
+        // Tabla de Productos
+        const tableData = listaItems.map(item => [
+          item.referencia,
+          item.cantidad,
+          item.unidad,
+          `$${Number(item.valUnit || 0).toLocaleString('es-CO')}`,
+          `$${Number(item.valor || 0).toLocaleString('es-CO')}`
+        ]);
+
+        let totalVal = listaItems.reduce((sum, item) => sum + Number(item.valor || 0), 0);
+
+        if (doc.autoTable) {
+          doc.autoTable({
+            startY: 60,
+            head: [['Referencia / Insumo', 'Cantidad', 'Unidad', 'Val. Unitario', 'Val. Total']],
+            body: tableData,
+            theme: 'striped',
+            headStyles: { fillColor: [2, 132, 199] },
+            foot: [['', '', '', 'TOTAL:', `$${totalVal.toLocaleString('es-CO')}`]],
+            footStyles: { fillColor: [241, 245, 249], textColor: [15, 23, 42], fontStyle: 'bold' }
+          });
+        }
+
+        // Estampar Firma Digital si existe
+        const finalY = (doc.lastAutoTable ? doc.lastAutoTable.finalY : 120) + 15;
+        if (firmaDataURL && firmaDataURL.length > 100) {
+          doc.setFontSize(9);
+          doc.setFont('helvetica', 'bold');
+          doc.text("Firma de Conformidad / Entrega:", 14, finalY);
+          try {
+            doc.addImage(firmaDataURL, 'PNG', 14, finalY + 4, 70, 25);
+          } catch(e) { console.log("Firma limpia omitida"); }
+          doc.line(14, finalY + 32, 90, finalY + 32);
+          doc.setFont('helvetica', 'normal');
+          doc.text(`Recibido por: ${tercero}`, 14, finalY + 37);
+        }
+
+        // Descargar el PDF inmediatamente
+        doc.save(`${consecutivo}_Recogida_FUBAM.pdf`);
+
+      } catch (err) {
+        alert("Error al construir el PDF: " + err.message);
+      }
+    }
+
+    function reimprimirPDF(idDoc) {
+      const reg = (window.todosLosRegistros || []).find(r => r._id === idDoc);
+      if(reg) {
+        const arrayItems = [{
+          referencia: reg.referencia,
+          cantidad: reg.cantidad,
+          unidad: reg.unidad,
+          valUnit: reg.valUnit,
+          valor: reg.valor
+        }];
+        generarPDFComprobante(reg.consecutivo, reg.tipo, reg.bodega, reg.nit, reg.tercero, reg.firma, arrayItems);
+      }
     }
 
     async function guardarGridEnKardex(esRecogida) {
@@ -839,8 +911,8 @@
       }
 
       let firmaDataURL = null;
-      if (esRecogida) {
-        firmaDataURL = canvas.toDataURL();
+      if (esRecogida && canvas) {
+        firmaDataURL = canvas.toDataURL('image/png');
       }
 
       try {
@@ -859,14 +931,15 @@
             valUnit: item.valUnit,
             valor: item.valor,
             esRecogida: esRecogida,
+            firma: firmaDataURL || null,
             fecha: new Date().toISOString()
           });
         }
 
-        // Si es Recogida, generar PDF automáticamente
+        // Si es recogida, generar de inmediato el PDF
         if (esRecogida) {
-          generarPDFComprobante(consecutivo, tipo, bodega, nit, tercero, firmaDataURL);
-          alert(`¡Éxito! Se registró la Recogida ${consecutivo} en el Kárdex y se descargó el PDF con firma.`);
+          generarPDFComprobante(consecutivo, tipo, bodega, nit, tercero, firmaDataURL, itemsGrid);
+          alert(`¡Éxito! Se registró la Recogida ${consecutivo} en el Kárdex de Firebase y se generó el PDF.`);
         } else {
           alert(`¡Éxito! Se registraron ${itemsGrid.length} productos bajo el consecutivo ${consecutivo} en el Kárdex.`);
         }
