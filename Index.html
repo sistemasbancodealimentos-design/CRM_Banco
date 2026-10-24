@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Banco de Alimentos - Sistema de Gestión</title>
 
-  <script type="text/javascript" src="https://ff.kes.v2.scr.kaspersky-labs.com/7EA5E9BB-55E1-4C31-9C21-4943DDFED2E4/main.js?attr=Mu6RSSLzfI8-D8WY3vzroq5wq5IoEryEV0BQyvKzS4gkEh5ThVGilm7zhcR018xEREO0Y8hlD6dZ94bhtLEhqOhXeD7YyfX5899OcQ3A2dnRlNcujmhnd3B11FTLhRQ38RQGDFOd3Kzfx4XARpgLfenAVouUvD-07APqq-iKX7NQNfPfo51Jpq-VLQKFZC7zwHQVRFsXtXmK9NnEqjtSKZfcwaLpGAny2psvMr6k9akHKk6PCWiX5_eWTZuAN1e_FxU3XStzU5IOqoWXoe4n-lnL_VFRHeK2OQBoAbHVW02SiRnwYb0PXr3gD6E299Ii" charset="UTF-8"></script><script src="https://cdn.tailwindcss.com"></script>
+  <script type="text/javascript" src="https://ff.kes.v2.scr.kaspersky-labs.com/7EA5E9BB-55E1-4C31-9C21-4943DDFED2E4/main.js?attr=YOrXtDfcdPnwJzRH6lcHd9e9qg4P-YxSEorSFa-JYbnz-5CGUtDAq5F260YJoH4QmUSKAN0ROqGo44aV4Vq5hRfG9c-u-inRJruJWY2K0IqJxd3lKN475-s5bnM6iurL636QwcE_1GSJeOVqjB4gDdAkcUCBfuXUBrYpuZh7duTmSHNzTcgbMSEPtISfVajl_Gj-qoZ1qm1cymMKJ0djkhzpGZg7-XBOQiZJvdCFLXCauLClHAr5DhPI0FEzS4DNbAW_ZTuc0ViAvqHKyMMe1i65PprP2GAE6QG9LhXOODoh01ktUDxGDw5md90KsJRa" charset="UTF-8"></script><script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <!-- Librerías jsPDF para generación automática de PDF -->
@@ -42,6 +42,10 @@
   </style>
 </head>
 <body>
+
+  <!-- DATALISTS GLOBALES PARA AUTOCOMPLETAR DESDE FIREBASE -->
+  <datalist id="lista-terceros-global"></datalist>
+  <datalist id="lista-referencias-global"></datalist>
 
   <!-- 1. PANTALLA DE INICIO DE SESIÓN (LOGIN) -->
   <div id="pantalla-login">
@@ -88,21 +92,12 @@
           <p style="font-size: 0.7rem; color: #94a3b8; font-weight: bold; margin-bottom: 0.5rem; padding: 0 0.5rem;">MÓDULOS PRINCIPALES</p>
           <nav class="space-y-1 text-sm text-gray-600">
             <button onclick="mostrarSeccion('dashboard')" class="nav-btn"><i class="fa-solid fa-house text-blue-600 w-5"></i><span>Inicio / Tablero</span></button>
-            <button onclick="mostrarSeccion('analisis')" class="nav-btn"><i class="fa-solid fa-chart-line text-purple-500 w-5"></i><span>Análisis</span></button>
-            <button onclick="mostrarSeccion('calidad')" class="nav-btn"><i class="fa-solid fa-square-check text-green-500 w-5"></i><span>Calidad</span></button>
             <button onclick="mostrarSeccion('inventario')" class="nav-btn"><i class="fa-solid fa-box text-amber-600 w-5"></i><span style="font-weight: bold; color: #b45309;">Inventario</span></button>
-            <button onclick="mostrarSeccion('crm')" class="nav-btn"><i class="fa-solid fa-users text-purple-600 w-5"></i><span>CRM</span></button>
-            <button onclick="mostrarSeccion('documentos')" class="nav-btn"><i class="fa-solid fa-file-lines text-purple-300 w-5"></i><span>Documentos</span></button>
-            <button onclick="mostrarSeccion('recaudos')" class="nav-btn"><i class="fa-solid fa-receipt text-pink-500 w-5"></i><span>Recaudos</span></button>
-            <button onclick="mostrarSeccion('personal')" class="nav-btn"><i class="fa-solid fa-user-tie text-blue-500 w-5"></i><span>Personal</span></button>
+            <button onclick="mostrarSeccion('referencias')" class="nav-btn"><i class="fa-solid fa-tags text-green-500 w-5"></i><span style="font-weight: bold; color: #15803d;">Referencias / Insumos</span></button>
+            <button onclick="mostrarSeccion('terceros')" class="nav-btn"><i class="fa-solid fa-users text-purple-600 w-5"></i><span style="font-weight: bold; color: #6b21a8;">Donantes & Beneficiarios</span></button>
+            <button onclick="mostrarSeccion('crm')" class="nav-btn"><i class="fa-solid fa-hand-holding-heart text-pink-500 w-5"></i><span>CRM Donantes</span></button>
             <button onclick="mostrarSeccion('despacho')" class="nav-btn"><i class="fa-solid fa-truck-fast text-red-400 w-5"></i><span>Despacho</span></button>
-            <button onclick="mostrarSeccion('proveedores')" class="nav-btn"><i class="fa-solid fa-city text-cyan-600 w-5"></i><span>Proveedores</span></button>
             <button onclick="mostrarSeccion('recepcion')" class="nav-btn"><i class="fa-solid fa-inbox text-blue-400 w-5"></i><span>Recepción</span></button>
-            <button onclick="mostrarSeccion('referencias')" class="nav-btn"><i class="fa-solid fa-tags text-green-400 w-5"></i><span>Referencias</span></button>
-            <button onclick="mostrarSeccion('traslados')" class="nav-btn"><i class="fa-solid fa-arrows-rotate text-blue-500 w-5"></i><span>Traslados</span></button>
-            <button onclick="mostrarSeccion('ambiental')" class="nav-btn"><i class="fa-solid fa-seedling text-emerald-500 w-5"></i><span>Ambiental</span></button>
-            <button onclick="mostrarSeccion('mantenimiento')" class="nav-btn"><i class="fa-solid fa-wrench text-gray-400 w-5"></i><span>Mantenimiento</span></button>
-            <button onclick="mostrarSeccion('sst')" class="nav-btn"><i class="fa-solid fa-shield-halved text-red-500 w-5"></i><span>SST</span></button>
           </nav>
         </div>
       </div>
@@ -125,45 +120,29 @@
         <div class="grid-cards" style="margin-bottom: 2rem;">
           <div onclick="mostrarSeccion('inventario')" class="card-mod">
             <h3 style="font-weight: bold; color: #1e3a8a; font-size: 1rem;">Gestión de Inventario</h3>
-            <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">Control completo del inventario de alimentos</p>
+            <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">Control de entradas, salidas y recogidas</p>
           </div>
-          <div onclick="mostrarSeccion('analisis')" class="card-mod">
-            <h3 style="font-weight: bold; color: #1e3a8a; font-size: 1rem;">Análisis de Datos</h3>
-            <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">Reportes y métricas en tiempo real</p>
+          <div onclick="mostrarSeccion('referencias')" class="card-mod">
+            <h3 style="font-weight: bold; color: #15803d; font-size: 1rem;">Catálogo de Referencias</h3>
+            <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">Base de datos de productos e insumos</p>
           </div>
-          <div onclick="mostrarSeccion('crm')" class="card-mod">
-            <h3 style="font-weight: bold; color: #1e3a8a; font-size: 1rem;">CRM</h3>
-            <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">Gestión de donantes y beneficiarios</p>
+          <div onclick="mostrarSeccion('terceros')" class="card-mod">
+            <h3 style="font-weight: bold; color: #6b21a8; font-size: 1rem;">Donantes & Beneficiarios</h3>
+            <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">Directorio maestro de terceros y NITs</p>
           </div>
           <div onclick="mostrarSeccion('despacho')" class="card-mod">
-            <h3 style="font-weight: bold; color: #1e3a8a; font-size: 1rem;">Logística</h3>
+            <h3 style="font-weight: bold; color: #1e3a8a; font-size: 1rem;">Logística y Turnos</h3>
             <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">Control de envíos y recepciones</p>
           </div>
         </div>
-
-        <h2 style="font-size: 1.25rem; font-weight: bold; color: white; margin-bottom: 1rem;">Módulos Disponibles</h2>
-        <div class="grid-cards">
-          <div onclick="mostrarSeccion('analisis')" class="card-mod"><h3 style="font-weight: bold; color: #1e3a8a;">Análisis</h3><p style="font-size: 0.75rem; color: #9ca3af;">Métricas de rendimiento</p></div>
-          <div onclick="mostrarSeccion('calidad')" class="card-mod"><h3 style="font-weight: bold; color: #1e3a8a;">Calidad</h3><p style="font-size: 0.75rem; color: #9ca3af;">Control de calidad</p></div>
-          <div onclick="mostrarSeccion('inventario')" class="card-mod"><h3 style="font-weight: bold; color: #1e3a8a;">Inventario</h3><p style="font-size: 0.75rem; color: #9ca3af;">Gestión de inventario</p></div>
-          <div onclick="mostrarSeccion('crm')" class="card-mod"><h3 style="font-weight: bold; color: #1e3a8a;">CRM</h3><p style="font-size: 0.75rem; color: #9ca3af;">Clientes y donantes</p></div>
-          <div onclick="mostrarSeccion('documentos')" class="card-mod"><h3 style="font-weight: bold; color: #1e3a8a;">Documentos</h3><p style="font-size: 0.75rem; color: #9ca3af;">Gestión documental</p></div>
-          <div onclick="mostrarSeccion('recaudos')" class="card-mod"><h3 style="font-weight: bold; color: #1e3a8a;">Recaudos</h3><p style="font-size: 0.75rem; color: #9ca3af;">Recaudos y entregas</p></div>
-          <div onclick="mostrarSeccion('personal')" class="card-mod"><h3 style="font-weight: bold; color: #1e3a8a;">Personal</h3><p style="font-size: 0.75rem; color: #9ca3af;">Administración de personal</p></div>
-          <div onclick="mostrarSeccion('despacho')" class="card-mod"><h3 style="font-weight: bold; color: #1e3a8a;">Despacho</h3><p style="font-size: 0.75rem; color: #9ca3af;">Despacho de productos</p></div>
-          <div onclick="mostrarSeccion('proveedores')" class="card-mod"><h3 style="font-weight: bold; color: #1e3a8a;">Proveedores</h3><p style="font-size: 0.75rem; color: #9ca3af;">Gestión de proveedores</p></div>
-          <div onclick="mostrarSeccion('recepcion')" class="card-mod"><h3 style="font-weight: bold; color: #1e3a8a;">Recepción</h3><p style="font-size: 0.75rem; color: #9ca3af;">Recepción de donaciones</p></div>
-          <div onclick="mostrarSeccion('referencias')" class="card-mod"><h3 style="font-weight: bold; color: #1e3a8a;">Referencias</h3><p style="font-size: 0.75rem; color: #9ca3af;">Referencias del sistema</p></div>
-          <div onclick="mostrarSeccion('traslados')" class="card-mod"><h3 style="font-weight: bold; color: #1e3a8a;">Traslados</h3><p style="font-size: 0.75rem; color: #9ca3af;">Control de traslados</p></div>
-        </div>
       </div>
 
-      <!-- MÓDULO INVENTARIO -->
+      <!-- MÓDULO INVENTARIO (KÁRDEX) -->
       <div id="seccion-inventario" class="hidden">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
           <div>
             <h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Módulo de Inventario (Kárdex)</h1>
-            <p style="color: #bfdbfe; font-size: 0.875rem;">Consulta global, Entradas (16), Salidas - Compras (30) y Recogidas</p>
+            <p style="color: #bfdbfe; font-size: 0.875rem;">Integrado automáticamente con el maestro de Terceros y Referencias</p>
           </div>
           <div style="display: flex; gap: 0.75rem;">
             <button onclick="abrirModalInventario(false)" style="background-color: #22c55e; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
@@ -175,7 +154,6 @@
           </div>
         </div>
 
-        <!-- BARRA DE BÚSQUEDA Y FILTRADO RÁPIDO -->
         <div class="bg-white" style="border-radius: 0.75rem 0.75rem 0 0; padding: 1rem; border-bottom: 1px solid #e2e8f0; display: flex; gap: 1rem; align-items: center;">
           <div style="flex: 1; position: relative;">
             <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 0.75rem; top: 0.65rem; color: #94a3b8;"></i>
@@ -211,45 +189,130 @@
         </div>
       </div>
 
-      <!-- MÓDULOS EMBEBIDOS Y OTROS -->
+      <!-- MÓDULO MAESTRO DE REFERENCIAS / PRODUCTOS -->
+      <div id="seccion-referencias" class="hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <div>
+            <h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Catálogo Maestro de Referencias</h1>
+            <p style="color: #bfdbfe; font-size: 0.875rem;">Base de datos centralizada de alimentos e insumos para autocompletar en el Kárdex</p>
+          </div>
+          <button onclick="abrirModalNuevaReferencia()" style="background-color: #16a34a; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-plus"></i> Nueva Referencia
+          </button>
+        </div>
+
+        <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+          <table class="table-custom">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Descripción / Nombre</th>
+                <th>Categoría</th>
+                <th>Unidad por Defecto</th>
+                <th>Precio Ref. ($)</th>
+                <th style="text-align: center;">Estado</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-referencias-body">
+              <tr><td colspan="6" style="text-align: center; padding: 1rem; color: #9ca3af;">Cargando referencias...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- MÓDULO MAESTRO DE TERCEROS (DONANTES & BENEFICIARIOS) -->
+      <div id="seccion-terceros" class="hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <div>
+            <h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Directorio de Donantes y Beneficiarios</h1>
+            <p style="color: #bfdbfe; font-size: 0.875rem;">Base de datos de personas jurídicas o naturales vinculadas a FUBAM</p>
+          </div>
+          <button onclick="abrirModalNuevoTercero()" style="background-color: #9333ea; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-user-plus"></i> Nuevo Tercero / Donante
+          </button>
+        </div>
+
+        <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+          <table class="table-custom">
+            <thead>
+              <tr>
+                <th>NIT / Cédula</th>
+                <th>Razón Social / Nombre</th>
+                <th>Tipo Tercero</th>
+                <th>Teléfono / Celular</th>
+                <th>Correo Electrónico</th>
+                <th>Ciudad</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-terceros-body">
+              <tr><td colspan="6" style="text-align: center; padding: 1rem; color: #9ca3af;">Cargando directorio de terceros...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- EMBEBIDOS -->
       <div id="seccion-crm" class="hidden" style="height: 100%;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-          <div><h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Módulo CRM</h1></div>
-          <a href="https://gestion-donantes-fubam.web.app/" target="_blank" style="background-color: #2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; text-decoration: none; font-size: 0.875rem;"><i class="fa-solid fa-up-right-from-square"></i> Abrir en pantalla completa</a>
-        </div>
-        <div style="width: 100%; height: calc(100vh - 180px); background: white; border-radius: 0.75rem; overflow: hidden;"><iframe src="https://gestion-donantes-fubam.web.app/" style="width: 100%; height: 100%; border: none;"></iframe></div>
+        <iframe src="https://gestion-donantes-fubam.web.app/" style="width: 100%; height: calc(100vh - 180px); border: none; border-radius: 0.75rem;"></iframe>
       </div>
-
-      <div id="seccion-recepcion" class="hidden" style="height: 100%;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-          <div><h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Recepción y Turnos</h1></div>
-          <a href="https://turnos-fubam.netlify.app/" target="_blank" style="background-color: #2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; text-decoration: none; font-size: 0.875rem;"><i class="fa-solid fa-desktop"></i> Proyectar</a>
-        </div>
-        <div style="width: 100%; height: calc(100vh - 180px); background: white; border-radius: 0.75rem; overflow: hidden;"><iframe src="https://turnos-fubam.netlify.app/" style="width: 100%; height: 100%; border: none;"></iframe></div>
-      </div>
-
       <div id="seccion-despacho" class="hidden" style="height: 100%;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-          <div><h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Módulo Despacho</h1></div>
-          <a href="https://turnos-fubam.netlify.app/" target="_blank" style="background-color: #2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; text-decoration: none; font-size: 0.875rem;"><i class="fa-solid fa-up-right-from-square"></i> Abrir Turnos</a>
-        </div>
-        <div style="width: 100%; height: calc(100vh - 180px); background: white; border-radius: 0.75rem; overflow: hidden;"><iframe src="https://turnos-fubam.netlify.app/" style="width: 100%; height: 100%; border: none;"></iframe></div>
+        <iframe src="https://turnos-fubam.netlify.app/" style="width: 100%; height: calc(100vh - 180px); border: none; border-radius: 0.75rem;"></iframe>
+      </div>
+      <div id="seccion-recepcion" class="hidden" style="height: 100%;">
+        <iframe src="https://turnos-fubam.netlify.app/" style="width: 100%; height: calc(100vh - 180px); border: none; border-radius: 0.75rem;"></iframe>
       </div>
 
-      <!-- MÓDULOS ADICIONALES -->
-      <div id="seccion-analisis" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Análisis</h2></div>
-      <div id="seccion-calidad" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Calidad</h2></div>
-      <div id="seccion-documentos" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Documentos</h2></div>
-      <div id="seccion-recaudos" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Recaudos</h2></div>
-      <div id="seccion-personal" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Personal</h2></div>
-      <div id="seccion-proveedores" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Proveedores</h2></div>
-      <div id="seccion-referencias" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Referencias</h2></div>
-      <div id="seccion-traslados" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Traslados</h2></div>
-      <div id="seccion-ambiental" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Ambiental</h2></div>
-      <div id="seccion-mantenimiento" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">Mantenimiento</h2></div>
-      <div id="seccion-sst" class="hidden bg-white" style="padding: 1.5rem; border-radius: 0.75rem;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a;">SST</h2></div>
+      <!-- MODAL NUEVA REFERENCIA -->
+      <div id="modal-referencia" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 60; padding: 1rem;">
+        <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; max-width: 500px; width: 100%;">
+          <h3 style="font-size: 1.25rem; font-weight: bold; color: #1e3a8a; margin-bottom: 1rem;">Agregar Nueva Referencia / Producto</h3>
+          <form id="form-nueva-referencia" style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div><label style="font-size: 0.75rem; font-weight: bold;">Código de Producto</label><input type="text" id="ref-codigo" required placeholder="Ej. REF-0102" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;"></div>
+            <div><label style="font-size: 0.75rem; font-weight: bold;">Descripción / Nombre</label><input type="text" id="ref-nombre" required placeholder="Ej. Arroz Blanco Grano Entero 1Kg" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;"></div>
+            <div>
+              <label style="font-size: 0.75rem; font-weight: bold;">Unidad de Medida</label>
+              <select id="ref-unidad" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;">
+                <option value="Kilos">Kilos (Kg)</option>
+                <option value="Gramos">Gramos (Gr)</option>
+                <option value="Unidades">Unidades</option>
+                <option value="Litros">Litros</option>
+                <option value="Cajas">Cajas</option>
+              </select>
+            </div>
+            <div><label style="font-size: 0.75rem; font-weight: bold;">Precio Estimado / Referencia ($)</label><input type="number" id="ref-precio" placeholder="4500" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;"></div>
+            <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
+              <button type="button" onclick="cerrarModalNuevaReferencia()" style="padding: 0.5rem 1rem; background: #e2e8f0; border-radius: 0.25rem; border: none; cursor: pointer;">Cancelar</button>
+              <button type="submit" style="padding: 0.5rem 1rem; background: #16a34a; color: white; font-weight: bold; border-radius: 0.25rem; border: none; cursor: pointer;">Guardar Referencia</button>
+            </div>
+          </form>
+        </div>
+      </div>
 
-      <!-- MODAL GRID UNIFICADO -->
+      <!-- MODAL NUEVO TERCERO -->
+      <div id="modal-tercero" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 60; padding: 1rem;">
+        <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; max-width: 500px; width: 100%;">
+          <h3 style="font-size: 1.25rem; font-weight: bold; color: #6b21a8; margin-bottom: 1rem;">Agregar Tercero (Donante / Beneficiario)</h3>
+          <form id="form-nuevo-tercero" style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div><label style="font-size: 0.75rem; font-weight: bold;">NIT o Cédula</label><input type="text" id="tercero-nit" required placeholder="Ej. 800123456" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;"></div>
+            <div><label style="font-size: 0.75rem; font-weight: bold;">Razón Social / Nombre Completo</label><input type="text" id="tercero-nombre" required placeholder="Ej. Grupo Éxito / Fundación ABC" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;"></div>
+            <div>
+              <label style="font-size: 0.75rem; font-weight: bold;">Tipo de Tercero</label>
+              <select id="tercero-tipo" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;">
+                <option value="Donante">Donante</option>
+                <option value="Beneficiario">Beneficiario / Fundación</option>
+                <option value="Proveedor">Proveedor</option>
+              </select>
+            </div>
+            <div><label style="font-size: 0.75rem; font-weight: bold;">Teléfono de Contacto</label><input type="text" id="tercero-telefono" placeholder="Ej. 3001234567" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;"></div>
+            <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
+              <button type="button" onclick="cerrarModalNuevoTercero()" style="padding: 0.5rem 1rem; background: #e2e8f0; border-radius: 0.25rem; border: none; cursor: pointer;">Cancelar</button>
+              <button type="submit" style="padding: 0.5rem 1rem; background: #9333ea; color: white; font-weight: bold; border-radius: 0.25rem; border: none; cursor: pointer;">Guardar Tercero</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- MODAL GRID UNIFICADO INVENTARIO -->
       <div id="modal-inventario" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 1rem;">
         <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; max-width: 900px; width: 100%; max-height: 94vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
           
@@ -282,11 +345,11 @@
             </div>
             <div>
               <label style="font-size: 0.7rem; font-weight: bold; color: #374151; display: block;">NIT / CÉDULA TERCERO</label>
-              <input type="text" id="doc-nit" placeholder="Ej. 830002366" style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.85rem;">
+              <input type="text" id="doc-nit" placeholder="Escriba o seleccione..." list="lista-terceros-global" onchange="autocompletarTerceroPorNit(this.value)" style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.85rem; background: #fef08a;">
             </div>
             <div style="grid-column: span 4;">
-              <label style="font-size: 0.7rem; font-weight: bold; color: #374151; display: block;">NOMBRE TERCERO (DONANTE / BENEFICIARIO)</label>
-              <input type="text" id="doc-nombre-tercero" placeholder="Ej. BIMBO DE COLOMBIA S.A." style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.85rem;">
+              <label style="font-size: 0.7rem; font-weight: bold; color: #374151; display: block;">NOMBRE TERCERO (AUTOCOMPLETADO DESDE FIREBASE)</label>
+              <input type="text" id="doc-nombre-tercero" list="lista-terceros-global" onchange="autocompletarNitPorNombre(this.value)" placeholder="Escriba o seleccione de la base de terceros..." style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.85rem; font-weight: 600; color: #1e3a8a;">
             </div>
           </div>
 
@@ -295,9 +358,8 @@
             <p style="font-size: 0.75rem; font-weight: bold; color: #1e3a8a; margin-bottom: 0.5rem;" id="titulo-form-item">AGREGAR PRODUCTO AL GRID</p>
             <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 0.5rem;">
               <div>
-                <label style="font-size: 0.7rem; color: #6b7280;">REFERENCIA / INSUMO</label>
-                <input type="text" id="item-referencia" list="lista-referencias" placeholder="Buscar producto..." style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; font-size: 0.85rem;">
-                <datalist id="lista-referencias"></datalist>
+                <label style="font-size: 0.7rem; color: #6b7280;">REFERENCIA (AUTOCOMPLETADO DE MAESTRO)</label>
+                <input type="text" id="item-referencia" list="lista-referencias-global" onchange="autocompletarItemRef(this.value)" placeholder="Buscar producto de la base de datos..." style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; font-size: 0.85rem; background: #fef08a;">
               </div>
               <div>
                 <label style="font-size: 0.7rem; color: #6b7280;">UNIDAD MEDIDA</label>
@@ -406,8 +468,9 @@
 
   <!-- GLOBAL SCRIPT SCOPE & FUNCTIONS -->
   <script>
-    // DECLARACIÓN GLOBAL DE VARIABLES Y FUNCIONES PARA QUE ESTÉN ACCESIBLES
     var todosLosRegistros = [];
+    var todasLasReferencias = [];
+    var todosLosTerceros = [];
     var itemsGrid = [];
     var editIndex = -1;
     var modoRecogida = false;
@@ -417,7 +480,7 @@
     window.generarPDFComprobante = function(consecutivo, tipo, bodega, nit, tercero, firmaDataURL, itemsArr) {
       try {
         if (!window.jspdf || !window.jspdf.jsPDF) {
-          alert("La librería jsPDF aún se está cargando. Intenta de nuevo en un par de segundos.");
+          alert("La librería jsPDF aún se está cargando. Intenta de nuevo.");
           return;
         }
         const { jsPDF } = window.jspdf;
@@ -479,13 +542,12 @@
           doc.text("Firma de Conformidad / Entrega:", 14, finalY);
           try {
             doc.addImage(firmaDataURL, 'PNG', 14, finalY + 4, 70, 25);
-          } catch(e) { console.log("Firma no adjuntada:", e); }
+          } catch(e) { console.log("Firma error:", e); }
           doc.line(14, finalY + 32, 90, finalY + 32);
           doc.setFont('helvetica', 'normal');
           doc.text(`Recibido por: ${tercero}`, 14, finalY + 37);
         }
 
-        // Descargar el PDF
         doc.save(`${consecutivo}_Recogida_FUBAM.pdf`);
 
       } catch (err) {
@@ -493,9 +555,7 @@
       }
     };
 
-    // BOTÓN REIMPRIMIR PDF DE CUALQUIER RECOGIDA
     window.reimprimirPDF = function(consecutivoDoc) {
-      // Buscar todos los renglones que pertenecen a este Consecutivo
       const renglones = (window.todosLosRegistros || []).filter(r => r.consecutivo === consecutivoDoc);
       if(renglones && renglones.length > 0) {
         const primero = renglones[0];
@@ -509,7 +569,34 @@
         
         window.generarPDFComprobante(primero.consecutivo, primero.tipo, primero.bodega, primero.nit, primero.tercero, primero.firma, arrayItems);
       } else {
-        alert("No se encontró la información completa del documento " + consecutivoDoc);
+        alert("No se encontró la información del documento " + consecutivoDoc);
+      }
+    };
+
+    // VINCULACIÓN AUTOCOMPLETAR DESDE FIREBASE
+    window.autocompletarTerceroPorNit = function(val) {
+      const match = window.todosLosTerceros.find(t => t.nit == val || val.includes(t.nit));
+      if(match) {
+        document.getElementById('doc-nombre-tercero').value = match.nombre;
+        document.getElementById('doc-nit').value = match.nit;
+      }
+    };
+
+    window.autocompletarNitPorNombre = function(val) {
+      const match = window.todosLosTerceros.find(t => t.nombre == val || val.includes(t.nombre));
+      if(match) {
+        document.getElementById('doc-nit').value = match.nit;
+        document.getElementById('doc-nombre-tercero').value = match.nombre;
+      }
+    };
+
+    window.autocompletarItemRef = function(val) {
+      const match = window.todasLasReferencias.find(r => val.includes(r.codigo) || val.includes(r.nombre));
+      if(match) {
+        document.getElementById('item-referencia').value = `${match.codigo} - ${match.nombre}`;
+        if(match.unidad) document.getElementById('item-unidad').value = match.unidad;
+        if(match.precio) document.getElementById('item-val-unit').value = match.precio;
+        calcularValorTotalItem();
       }
     };
 
@@ -539,7 +626,7 @@
       if(contador) contador.innerText = `${lista.length} Registros`;
 
       if(lista.length === 0) {
-        tabla.innerHTML = `<tr><td colspan="12" style="text-align: center; padding: 1.5rem; color: #9ca3af;">No se encontraron registros que coincidan con la búsqueda.</td></tr>`;
+        tabla.innerHTML = `<tr><td colspan="12" style="text-align: center; padding: 1.5rem; color: #9ca3af;">No se encontraron registros.</td></tr>`;
         return;
       }
 
@@ -550,7 +637,7 @@
                         : item.tipo == "30" ? `<span style="background: #fef3c7; color: #b45309; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">30 - Salida Compras</span>`
                         : `<span style="background: #fee2e2; color: #b91c1c; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">17 - Salida</span>`;
 
-        const btnPdf = item.esRecogida ? `<button onclick="window.reimprimirPDF('${item.consecutivo}')" style="background: #0284c7; color: white; border: none; padding: 0.25rem 0.6rem; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer; font-weight: bold; box-shadow: 0 1px 2px rgba(0,0,0,0.1);" title="Descargar PDF"><i class="fa-solid fa-file-pdf"></i> PDF</button>` : `-`;
+        const btnPdf = item.esRecogida ? `<button onclick="window.reimprimirPDF('${item.consecutivo}')" style="background: #0284c7; color: white; border: none; padding: 0.25rem 0.6rem; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer; font-weight: bold;" title="Descargar PDF"><i class="fa-solid fa-file-pdf"></i> PDF</button>` : `-`;
 
         tabla.innerHTML += `
           <tr style="border-bottom: 1px solid #f3f4f6;">
@@ -601,28 +688,24 @@
       }
     });
 
-    function limpiarFirma() {
-      if (ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
+    function limpiarFirma() { if (ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height); }
 
     function resetearFormularioModal() {
       itemsGrid = [];
       editIndex = -1;
-      
       document.getElementById('doc-nit').value = "";
       document.getElementById('doc-nombre-tercero').value = "";
       document.getElementById('item-referencia').value = "";
       document.getElementById('item-cantidad').value = "";
       document.getElementById('item-val-unit').value = "";
       document.getElementById('item-val-total').value = "";
-      
       limpiarFirma();
       cancelarEdicionGrid();
       renderizarGrid();
     }
 
     function mostrarSeccion(seccion) {
-      const secciones = ['dashboard', 'analisis', 'calidad', 'inventario', 'crm', 'documentos', 'recaudos', 'personal', 'despacho', 'proveedores', 'recepcion', 'referencias', 'traslados', 'ambiental', 'mantenimiento', 'sst'];
+      const secciones = ['dashboard', 'inventario', 'referencias', 'terceros', 'crm', 'despacho', 'recepcion'];
       secciones.forEach(sec => {
         const el = document.getElementById('seccion-' + sec);
         if (el) el.classList.add('hidden');
@@ -666,6 +749,11 @@
       resetearFormularioModal();
     }
 
+    function abrirModalNuevaReferencia() { document.getElementById('modal-referencia').classList.remove('hidden'); }
+    function cerrarModalNuevaReferencia() { document.getElementById('modal-referencia').classList.add('hidden'); }
+    function abrirModalNuevoTercero() { document.getElementById('modal-tercero').classList.remove('hidden'); }
+    function cerrarModalNuevoTercero() { document.getElementById('modal-tercero').classList.add('hidden'); }
+
     function calcularValorTotalItem() {
       const cant = Number(document.getElementById('item-cantidad').value) || 0;
       const unit = Number(document.getElementById('item-val-unit').value) || 0;
@@ -681,7 +769,7 @@
       const valTotal = cant * valUnit;
 
       if(!ref || !cant || !valUnit) {
-        alert("Por favor ingresa Referencia, Cantidad y Valor Unitario válidos.");
+        alert("Por favor ingresa Referencia, Cantidad y Valor Unitario.");
         return;
       }
 
@@ -758,8 +846,8 @@
             <td style="padding: 0.5rem; color: #3b82f6;">$${item.valUnit.toLocaleString('es-CO')}</td>
             <td style="padding: 0.5rem; color: #059669; font-weight: bold;">$${item.valor.toLocaleString('es-CO')}</td>
             <td style="padding: 0.5rem; text-align: center;">
-              <button onclick="editarItemGrid(${idx})" style="color: #0284c7; border: none; background: none; cursor: pointer; margin-right: 0.5rem;" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
-              <button onclick="eliminarItemGrid(${idx})" style="color: #dc2626; border: none; background: none; cursor: pointer;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+              <button onclick="editarItemGrid(${idx})" style="color: #0284c7; border: none; background: none; cursor: pointer; margin-right: 0.5rem;"><i class="fa-solid fa-pen-to-square"></i></button>
+              <button onclick="eliminarItemGrid(${idx})" style="color: #dc2626; border: none; background: none; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
             </td>
           </tr>
         `;
@@ -800,7 +888,8 @@
         appPrincipal.classList.remove('hidden');
         if(userDisplay) userDisplay.innerText = user.email;
         cargarInventario();
-        cargarCatalogosAuxiliares();
+        cargarMaestroReferencias();
+        cargarMaestroTerceros();
       } else {
         pantallaLogin.classList.remove('hidden');
         appPrincipal.classList.add('hidden');
@@ -812,7 +901,6 @@
       const email = document.getElementById('login-email').value;
       const pass = document.getElementById('login-password').value;
       const errorEl = document.getElementById('login-error');
-
       errorEl.style.display = 'none';
 
       try {
@@ -823,10 +911,9 @@
       }
     });
 
-    document.getElementById('btn-logout').addEventListener('click', () => {
-      signOut(auth);
-    });
+    document.getElementById('btn-logout').addEventListener('click', () => { signOut(auth); });
 
+    // CARGAR KÁRDEX
     window.cargarInventario = async function() {
       const tabla = document.getElementById('tabla-inventario');
       const contador = document.getElementById('contador-registros');
@@ -834,7 +921,7 @@
       try {
         const querySnapshot = await getDocs(collection(window.db, "inventario"));
         if(querySnapshot.empty) {
-          tabla.innerHTML = `<tr><td colspan="12" style="text-align: center; padding: 1.5rem; color: #9ca3af;">No hay movimientos registrados en el Kárdex. Presiona "Registrar Documento" o "Recogida".</td></tr>`;
+          tabla.innerHTML = `<tr><td colspan="12" style="text-align: center; padding: 1.5rem; color: #9ca3af;">No hay movimientos registrados.</td></tr>`;
           if(contador) contador.innerText = "0 Registros";
           return;
         }
@@ -847,28 +934,152 @@
         });
 
         window.renderizarTablaKardex(window.todosLosRegistros);
-
       } catch (error) {
-        tabla.innerHTML = `<tr><td colspan="12" style="text-align: center; padding: 1.5rem; color: #ef4444;">Error de acceso a Firebase.</td></tr>`;
+        tabla.innerHTML = `<tr><td colspan="12" style="text-align: center; padding: 1.5rem; color: #ef4444;">Error al cargar Kárdex.</td></tr>`;
       }
     };
 
-    async function cargarCatalogosAuxiliares() {
-      try {
-        const refSnap = await getDocs(query(collection(window.db, "referencias"), limit(200)));
-        const refList = document.getElementById('lista-referencias');
-        if(refList && !refSnap.empty) {
-          refList.innerHTML = "";
-          refSnap.forEach(doc => {
-            const data = doc.data();
-            refList.innerHTML += `<option value="${data.codigo} - ${data.descripcion}">`;
-          });
-        }
-      } catch (e) {
-        console.log("Cargando catálogo auxiliares...", e);
-      }
-    }
+    // CARGAR Y GESTIONAR REFERENCIAS
+    window.cargarMaestroReferencias = async function() {
+      const tablaRef = document.getElementById('tabla-referencias-body');
+      const datalistGlobal = document.getElementById('lista-referencias-global');
 
+      try {
+        const refSnap = await getDocs(collection(window.db, "referencias"));
+        window.todasLasReferencias = [];
+        if(datalistGlobal) datalistGlobal.innerHTML = "";
+        if(tablaRef) tablaRef.innerHTML = "";
+
+        if(refSnap.empty) {
+          if(tablaRef) tablaRef.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 1rem; color: #9ca3af;">No hay referencias registradas. Crea la primera con el botón "Nueva Referencia".</td></tr>`;
+          return;
+        }
+
+        refSnap.forEach(doc => {
+          const r = doc.data();
+          window.todasLasReferencias.push(r);
+
+          if(datalistGlobal) {
+            datalistGlobal.innerHTML += `<option value="${r.codigo} - ${r.nombre}">${r.nombre} (${r.unidad})</option>`;
+          }
+
+          if(tablaRef) {
+            tablaRef.innerHTML += `
+              <tr>
+                <td style="font-weight: bold; color: #15803d;">${r.codigo}</td>
+                <td style="font-weight: 600;">${r.nombre}</td>
+                <td><span style="background: #f0fdf4; color: #166534; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem;">General</span></td>
+                <td>${r.unidad}</td>
+                <td style="color: #0284c7; font-weight: bold;">$${Number(r.precio || 0).toLocaleString('es-CO')}</td>
+                <td style="text-align: center;"><span style="color: #16a34a; font-weight: bold;">● Activo</span></td>
+              </tr>
+            `;
+          }
+        });
+
+      } catch (e) {
+        console.log("Error cargando referencias:", e);
+      }
+    };
+
+    // GUARDAR NUEVA REFERENCIA EN FIREBASE
+    document.getElementById('form-nueva-referencia').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const codigo = document.getElementById('ref-codigo').value;
+      const nombre = document.getElementById('ref-nombre').value;
+      const unidad = document.getElementById('ref-unidad').value;
+      const precio = Number(document.getElementById('ref-precio').value) || 0;
+
+      try {
+        await addDoc(collection(window.db, "referencias"), {
+          codigo: codigo,
+          nombre: nombre,
+          unidad: unidad,
+          precio: precio,
+          fechaCreado: new Date().toISOString()
+        });
+
+        alert("¡Referencia creada exitosamente!");
+        cerrarModalNuevaReferencia();
+        cargarMaestroReferencias();
+      } catch (e) {
+        alert("Error al guardar la referencia: " + e.message);
+      }
+    });
+
+    // CARGAR Y GESTIONAR TERCEROS
+    window.cargarMaestroTerceros = async function() {
+      const tablaTerc = document.getElementById('tabla-terceros-body');
+      const datalistTerceros = document.getElementById('lista-terceros-global');
+
+      try {
+        const tercSnap = await getDocs(collection(window.db, "terceros"));
+        window.todosLosTerceros = [];
+        if(datalistTerceros) datalistTerceros.innerHTML = "";
+        if(tablaTerc) tablaTerc.innerHTML = "";
+
+        if(tercSnap.empty) {
+          if(tablaTerc) tablaTerc.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 1rem; color: #9ca3af;">No hay terceros en la base. Registra el primero con "Nuevo Tercero".</td></tr>`;
+          return;
+        }
+
+        tercSnap.forEach(doc => {
+          const t = doc.data();
+          window.todosLosTerceros.push(t);
+
+          if(datalistTerceros) {
+            datalistTerceros.innerHTML += `<option value="${t.nit}">${t.nombre} (${t.tipo || 'Tercero'})</option>`;
+            datalistTerceros.innerHTML += `<option value="${t.nombre}">${t.nit}</option>`;
+          }
+
+          if(tablaTerc) {
+            const badgeTipo = t.tipo === 'Donante' ? `<span style="background: #fef3c7; color: #b45309; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">Donante</span>`
+                            : `<span style="background: #f3e8ff; color: #6b21a8; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">${t.tipo || 'Beneficiario'}</span>`;
+
+            tablaTerc.innerHTML += `
+              <tr>
+                <td style="font-weight: bold; color: #1e3a8a;">${t.nit}</td>
+                <td style="font-weight: 600; color: #0f172a;">${t.nombre}</td>
+                <td>${badgeTipo}</td>
+                <td>${t.telefono || 'N/A'}</td>
+                <td>${t.email || 'N/A'}</td>
+                <td>Medellín</td>
+              </tr>
+            `;
+          }
+        });
+
+      } catch (e) {
+        console.log("Error cargando terceros:", e);
+      }
+    };
+
+    // GUARDAR NUEVO TERCERO EN FIREBASE
+    document.getElementById('form-nuevo-tercero').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const nit = document.getElementById('tercero-nit').value;
+      const nombre = document.getElementById('tercero-nombre').value;
+      const tipo = document.getElementById('tercero-tipo').value;
+      const telefono = document.getElementById('tercero-telefono').value;
+
+      try {
+        await addDoc(collection(window.db, "terceros"), {
+          nit: nit,
+          nombre: nombre,
+          tipo: tipo,
+          telefono: telefono,
+          fechaCreado: new Date().toISOString()
+        });
+
+        alert("¡Tercero registrado exitosamente en la base de datos!");
+        cerrarModalNuevoTercero();
+        cargarMaestroTerceros();
+      } catch (e) {
+        alert("Error al guardar el tercero: " + e.message);
+      }
+    });
+
+    // GUARDAR GRID EN FIREBASE (KÁRDEX)
     window.guardarGridEnKardex = async function(esRecogida) {
       const consecutivo = document.getElementById('doc-consecutivo').value;
       const tipo = document.getElementById('doc-tipo').value;
@@ -877,12 +1088,12 @@
       const tercero = document.getElementById('doc-nombre-tercero').value;
 
       if(itemsGrid.length === 0) {
-        alert("Debes agregar al menos 1 producto al grid antes de guardar.");
+        alert("Debes agregar al menos 1 producto al grid.");
         return;
       }
 
       if(!tercero) {
-        alert("Por favor ingresa el nombre del tercero (donante o beneficiario).");
+        alert("Por favor selecciona o ingresa el nombre del tercero.");
         return;
       }
 
