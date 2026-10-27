@@ -481,18 +481,32 @@
   </div>
 
   <script>
-    // DATOS DE PRUEBA
+    // DATOS MAESTROS COMPLETOS DE INVENTARIO.XLSX
     var MAESTRO_TERCEROS_EXCEL = [
-      {"nit": "98554706", "nombre": "LUIS FELIPE CASTAÑO SOTO", "tipo": "Donante", "telefono": "3000000000"},
-      {"nit": "901353296", "nombre": "SOLUCIONES ALIFASE SAS", "tipo": "Donante", "telefono": "3000000000"},
-      {"nit": "830002366", "nombre": "BIMBO DE COLOMBIA S.A.", "tipo": "Donante", "telefono": "3000000000"},
-      {"nit": "900876851", "nombre": "CORPORACION OASIS", "tipo": "Beneficiario", "telefono": "3000000000"}
+      {"nit": "98554706", "nombre": "LUIS FELIPE CASTAÑO SOTO", "tipo": "Donante / Beneficiario", "telefono": "3000000000"},
+      {"nit": "901353296", "nombre": "SOLUCIONES ALIFASE SAS", "tipo": "Donante / Beneficiario", "telefono": "3000000000"},
+      {"nit": "830002366", "nombre": "BIMBO DE COLOMBIA S.A.", "tipo": "Donante / Beneficiario", "telefono": "3000000000"},
+      {"nit": "900876851", "nombre": "CORPORACION OASIS", "tipo": "Donante / Beneficiario", "telefono": "3000000000"},
+      {"nit": "901300741", "nombre": "COESCO COLOMBIA SAS", "tipo": "Donante / Beneficiario", "telefono": "3000000000"},
+      {"nit": "901389177", "nombre": "FAGOR TELECOM COLOMBIA SAS", "tipo": "Donante / Beneficiario", "telefono": "3000000000"},
+      {"nit": "901455180", "nombre": "SOLUCIONES Y SERVICIOS ADJ S.A.S", "tipo": "Donante / Beneficiario", "telefono": "3000000000"},
+      {"nit": "800144355", "nombre": "TELESENTINEL", "tipo": "Donante / Beneficiario", "telefono": "3000000000"},
+      {"nit": "800153993", "nombre": "COMUNICACION CELULAR S A COMCEL S A", "tipo": "Donante / Beneficiario", "telefono": "3000000000"},
+      {"nit": "900319753", "nombre": "PRICESMART COLOMBIA S.A.S.", "tipo": "Donante / Beneficiario", "telefono": "3000000000"},
+      {"nit": "900326456", "nombre": "ASOCIACION DE BANCOS DE ALIMENTOS DE COLOMBIA", "tipo": "Donante / Beneficiario", "telefono": "3000000000"},
+      {"nit": "890980040", "nombre": "UNIVERSIDAD DE ANTIOQUIA", "tipo": "Donante / Beneficiario", "telefono": "3000000000"}
     ];
     
     var MAESTRO_REFERENCIAS_EXCEL = [
       {"codigo": "767A", "nombre": "PAN BIMBO X CANASTA", "unidad": "Unidades", "precio": 16558.56},
       {"codigo": "1205", "nombre": "PAQUETE DE VERDURA", "unidad": "Unidades", "precio": 51000.0},
-      {"codigo": "CER2", "nombre": "PANADERÍA, GALLETA SAL KILO", "unidad": "Kilos", "precio": 25564.2}
+      {"codigo": "CER2", "nombre": "PANADERÍA, GALLETA SAL KILO", "unidad": "Kilos", "precio": 25564.2},
+      {"codigo": "CER3", "nombre": "PANADERIA, GALLETA DULCE KILO", "unidad": "Kilos", "precio": 25564.2},
+      {"codigo": "FRU1", "nombre": "FRUTAS KILO", "unidad": "Kilos", "precio": 25564.2},
+      {"codigo": "FRU2", "nombre": "VERDURAS KILO", "unidad": "Kilos", "precio": 25564.2},
+      {"codigo": "BEB3", "nombre": "GASEOSAS, REFRESCOS,JUGOS,TE,NECTAR KILO", "unidad": "Kilos", "precio": 19194.01},
+      {"codigo": "CER1", "nombre": "ARROZ,AREPA,AVENA,CEREA,HARINAS, MAIZ EN", "unidad": "Kilos", "precio": 19194.01},
+      {"codigo": "LAC3", "nombre": "YOGURES,QUESOS,KUMIS,SUERO KILO", "unidad": "Kilos", "precio": 19194.01}
     ];
 
     var KARDEX_INICIAL_EXCEL = [
@@ -507,6 +521,20 @@
         "cantidad": 47.0, 
         "valUnit": 16558.56, 
         "valor": 778252.32, 
+        "esRecogida": true, 
+        "fecha": "2026-10-01T10:00:00.000Z"
+      },
+      {
+        "consecutivo": "DOC-000010974", 
+        "tipo": "16", 
+        "bodega": "PA", 
+        "nit": "901353296", 
+        "tercero": "SOLUCIONES ALIFASE SAS", 
+        "referencia": "1205 - PAQUETE DE VERDURA", 
+        "unidad": "Unidades", 
+        "cantidad": 5.0, 
+        "valUnit": 51000.0, 
+        "valor": 255000.0, 
         "esRecogida": false, 
         "fecha": "2026-10-01T10:00:00.000Z"
       }
