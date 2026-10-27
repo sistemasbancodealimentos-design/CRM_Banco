@@ -76,17 +76,15 @@
       <h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a; margin-bottom: 0.25rem;">Banco de Alimentos</h2>
       <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 1.5rem;">ERP & Dashboard FUBAM</p>
 
-      <form id="form-login" style="display: flex; flex-direction: column; gap: 1rem; text-align: left;">
+      <form id="form-login" onsubmit="event.preventDefault(); iniciarSesion();" style="display: flex; flex-direction: column; gap: 1rem; text-align: left;">
         <div>
           <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">CORREO ELECTRÓNICO</label>
-          <input type="email" id="login-email" required placeholder="usuario@bancodealimentos.org" style="width: 100%; border: 1px solid #d1d5db; padding: 0.6rem; border-radius: 0.375rem; margin-top: 0.25rem; font-size: 0.875rem;">
+          <input type="email" id="login-email" required value="admin@bancodealimentos.org" style="width: 100%; border: 1px solid #d1d5db; padding: 0.6rem; border-radius: 0.375rem; margin-top: 0.25rem; font-size: 0.875rem;">
         </div>
         <div>
           <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">CONTRASEÑA</label>
-          <input type="password" id="login-password" required placeholder="••••••••" style="width: 100%; border: 1px solid #d1d5db; padding: 0.6rem; border-radius: 0.375rem; margin-top: 0.25rem; font-size: 0.875rem;">
+          <input type="password" id="login-password" required value="123456" style="width: 100%; border: 1px solid #d1d5db; padding: 0.6rem; border-radius: 0.375rem; margin-top: 0.25rem; font-size: 0.875rem;">
         </div>
-
-        <p id="login-error" style="color: #dc2626; font-size: 0.75rem; display: none; text-align: center;"></p>
 
         <button type="submit" style="background-color: #2563eb; color: white; padding: 0.75rem; border-radius: 0.375rem; font-weight: bold; border: none; cursor: pointer; font-size: 0.875rem; margin-top: 0.5rem;">
           Iniciar Sesión
@@ -125,8 +123,8 @@
 
       <!-- BOTÓN CERRAR SESIÓN -->
       <div style="padding: 1rem; border-top: 1px solid #e2e8f0; font-size: 0.75rem; color: #94a3b8;">
-        <p id="user-display" style="font-weight: bold; color: #334155; margin-bottom: 0.5rem; word-break: break-all;"></p>
-        <button id="btn-logout" style="width: 100%; padding: 0.4rem; background-color: #fee2e2; color: #dc2626; border-radius: 0.25rem; font-weight: bold; border: none; cursor: pointer;">
+        <p id="user-display" style="font-weight: bold; color: #334155; margin-bottom: 0.5rem; word-break: break-all;">admin@bancodealimentos.org</p>
+        <button id="btn-logout" onclick="cerrarSesion()" style="width: 100%; padding: 0.4rem; background-color: #fee2e2; color: #dc2626; border-radius: 0.25rem; font-weight: bold; border: none; cursor: pointer;">
           <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
         </button>
       </div>
@@ -219,12 +217,12 @@
             <h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Módulo de Inventario (Kárdex)</h1>
             <p style="color: #bfdbfe; font-size: 0.875rem;">Gestión de entradas, salidas y ordenes de recogida con firma</p>
           </div>
-          <!-- DOS BOTONES INDEPENDIENTES: UNO NORMAL Y UNO PARA RECOGIDA CON FIRMA -->
+          <!-- DOS BOTONES INDEPENDIENTES Y SEPARADOS -->
           <div style="display: flex; gap: 0.75rem;">
-            <button onclick="abrirModalInventario(false)" style="background-color: #22c55e; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+            <button onclick="abrirModalNormal()" style="background-color: #22c55e; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
               <i class="fa-solid fa-plus"></i> Registrar Documento Normal
             </button>
-            <button onclick="abrirModalInventario(true)" style="background-color: #0284c7; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.15);">
+            <button onclick="abrirModalRecogida()" style="background-color: #0284c7; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.15);">
               <i class="fa-solid fa-signature"></i> Recogida (Con Firma & PDF)
             </button>
           </div>
@@ -272,9 +270,6 @@
             <h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Catálogo Maestro de Referencias</h1>
             <p style="color: #bfdbfe; font-size: 0.875rem;">Importado desde la base de datos de Inventario FUBAM</p>
           </div>
-          <button onclick="abrirModalNuevaReferencia()" style="background-color: #16a34a; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
-            <i class="fa-solid fa-plus"></i> Nueva Referencia
-          </button>
         </div>
 
         <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-height: 75vh; overflow-y: auto;">
@@ -287,11 +282,10 @@
                 <th>Unidad por Defecto</th>
                 <th>Precio Ref. ($)</th>
                 <th style="text-align: center;">Estado</th>
-                <th style="text-align: center;">Acciones</th>
               </tr>
             </thead>
             <tbody id="tabla-referencias-body">
-              <tr><td colspan="7" style="text-align: center; padding: 1rem; color: #9ca3af;">Cargando referencias...</td></tr>
+              <tr><td colspan="6" style="text-align: center; padding: 1rem; color: #9ca3af;">Cargando referencias...</td></tr>
             </tbody>
           </table>
         </div>
@@ -304,9 +298,6 @@
             <h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Directorio de Donantes y Beneficiarios</h1>
             <p style="color: #bfdbfe; font-size: 0.875rem;">Todos los NITs y Razones Sociales importados</p>
           </div>
-          <button onclick="abrirModalNuevoTercero()" style="background-color: #9333ea; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
-            <i class="fa-solid fa-user-plus"></i> Nuevo Tercero / Donante
-          </button>
         </div>
 
         <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-height: 75vh; overflow-y: auto;">
@@ -317,12 +308,10 @@
                 <th>Razón Social / Nombre</th>
                 <th>Tipo Tercero</th>
                 <th>Teléfono / Celular</th>
-                <th>Ciudad</th>
-                <th style="text-align: center;">Acciones</th>
               </tr>
             </thead>
             <tbody id="tabla-terceros-body">
-              <tr><td colspan="6" style="text-align: center; padding: 1rem; color: #9ca3af;">Cargando directorio de terceros...</td></tr>
+              <tr><td colspan="4" style="text-align: center; padding: 1rem; color: #9ca3af;">Cargando directorio de terceros...</td></tr>
             </tbody>
           </table>
         </div>
@@ -344,7 +333,7 @@
         <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; max-width: 900px; width: 100%; max-height: 94vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
           
           <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.75rem; margin-bottom: 1rem;">
-            <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937;" id="modal-titulo">Registrar Movimiento de Inventario</h3>
+            <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937;" id="modal-titulo">Registrar Movimiento</h3>
             <button onclick="cerrarModalInventario()" style="background: none; border: none; font-size: 1.25rem; color: #6b7280; cursor: pointer;">×</button>
           </div>
           
@@ -440,7 +429,7 @@
             </table>
           </div>
 
-          <!-- BLOQUE DE FIRMA DIGITAL (SOLO SE MUESTRA EN FORMULARIO DE RECOGIDA) -->
+          <!-- BLOQUE DE FIRMA DIGITAL (EXCLUSIVO PARA RECOGIDA) -->
           <div id="bloque-firma-recogida" class="hidden" style="border: 1px solid #e2e8f0; padding: 1rem; border-radius: 0.5rem; background: #f8fafc; margin-bottom: 1rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
               <label style="font-size: 0.8rem; font-weight: bold; color: #1e3a8a;">
@@ -454,7 +443,7 @@
             <p style="font-size: 0.7rem; color: #64748b; margin-top: 0.25rem;">Dibuje su firma en el recuadro usando mouse o pantalla táctil.</p>
           </div>
 
-          <!-- RESUMEN Y BOTONES DE ACCIÓN SEPARADOS -->
+          <!-- RESUMEN Y BOTONES DE ACCIÓN SEPARADOS E INDEPENDIENTES -->
           <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e5e7eb; padding-top: 0.75rem;">
             <div style="font-size: 0.85rem; font-weight: bold; color: #1e3a8a;">
               Total Ítems: <span id="resumen-cant-items">0</span> | Total Valor: $<span id="resumen-valor-total">0</span>
@@ -462,12 +451,12 @@
             <div style="display: flex; gap: 0.5rem;">
               <button type="button" onclick="cerrarModalInventario()" style="padding: 0.5rem 1rem; background: #e5e7eb; color: #374151; border-radius: 0.375rem; border: none; cursor: pointer; font-size: 0.85rem;">Cancelar</button>
               
-              <!-- BOTÓN DEDICADO AL FORMULARIO NORMAL -->
+              <!-- BOTÓN NORMAL -->
               <button type="button" id="btn-guardar-kardex-std" onclick="guardarGridEnKardex(false)" style="padding: 0.5rem 1rem; background: #2563eb; color: white; font-weight: bold; border-radius: 0.375rem; border: none; cursor: pointer; font-size: 0.85rem;">
                 Guardar en Kárdex
               </button>
               
-              <!-- BOTÓN DEDICADO AL FORMULARIO DE RECOGIDA CON PDF Y FIRMA -->
+              <!-- BOTÓN RECOGIDA CON PDF Y FIRMA -->
               <button type="button" id="btn-guardar-kardex-recogida" onclick="guardarGridEnKardex(true)" class="hidden" style="padding: 0.5rem 1rem; background: #0284c7; color: white; font-weight: bold; border-radius: 0.375rem; border: none; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
                 <i class="fa-solid fa-file-pdf"></i> Guardar y Generar PDF
               </button>
@@ -492,19 +481,101 @@
   </div>
 
   <script>
-    var MAESTRO_TERCEROS_EXCEL = [{"nit": "98554706", "nombre": "LUIS FELIPE CASTAÑO SOTO", "tipo": "Donante", "telefono": "3000000000"}, {"nit": "901353296", "nombre": "SOLUCIONES ALIFASE SAS", "tipo": "Donante", "telefono": "3000000000"}, {"nit": "830002366", "nombre": "BIMBO DE COLOMBIA S.A.", "tipo": "Donante", "telefono": "3000000000"}, {"nit": "900876851", "nombre": "CORPORACION OASIS", "tipo": "Beneficiario", "telefono": "3000000000"}];
-    var MAESTRO_REFERENCIAS_EXCEL = [{"codigo": "767A", "nombre": "PAN BIMBO X CANASTA", "unidad": "Unidades", "precio": 16558.56}, {"codigo": "1205", "nombre": "PAQUETE DE VERDURA", "unidad": "Unidades", "precio": 51000.0}, {"codigo": "CER2", "nombre": "PANADERÍA, GALLETA SAL KILO", "unidad": "Kilos", "precio": 25564.2}];
-    var KARDEX_INICIAL_EXCEL = [{"consecutivo": "DOC-000010970", "tipo": "16", "bodega": "PA", "nit": "830002366", "tercero": "BIMBO DE COLOMBIA S.A.", "referencia": "767A - PAN BIMBO X CANASTA", "unidad": "Unidades", "cantidad": 47.0, "valUnit": 16558.56, "valor": 778252.32, "esRecogida": true, "fecha": "2026-10-01T10:00:00.000Z"}];
+    // DATOS DE PRUEBA
+    var MAESTRO_TERCEROS_EXCEL = [
+      {"nit": "98554706", "nombre": "LUIS FELIPE CASTAÑO SOTO", "tipo": "Donante", "telefono": "3000000000"},
+      {"nit": "901353296", "nombre": "SOLUCIONES ALIFASE SAS", "tipo": "Donante", "telefono": "3000000000"},
+      {"nit": "830002366", "nombre": "BIMBO DE COLOMBIA S.A.", "tipo": "Donante", "telefono": "3000000000"},
+      {"nit": "900876851", "nombre": "CORPORACION OASIS", "tipo": "Beneficiario", "telefono": "3000000000"}
+    ];
+    
+    var MAESTRO_REFERENCIAS_EXCEL = [
+      {"codigo": "767A", "nombre": "PAN BIMBO X CANASTA", "unidad": "Unidades", "precio": 16558.56},
+      {"codigo": "1205", "nombre": "PAQUETE DE VERDURA", "unidad": "Unidades", "precio": 51000.0},
+      {"codigo": "CER2", "nombre": "PANADERÍA, GALLETA SAL KILO", "unidad": "Kilos", "precio": 25564.2}
+    ];
+
+    var KARDEX_INICIAL_EXCEL = [
+      {
+        "consecutivo": "DOC-000010970", 
+        "tipo": "16", 
+        "bodega": "PA", 
+        "nit": "830002366", 
+        "tercero": "BIMBO DE COLOMBIA S.A.", 
+        "referencia": "767A - PAN BIMBO X CANASTA", 
+        "unidad": "Unidades", 
+        "cantidad": 47.0, 
+        "valUnit": 16558.56, 
+        "valor": 778252.32, 
+        "esRecogida": false, 
+        "fecha": "2026-10-01T10:00:00.000Z"
+      }
+    ];
 
     var todosLosRegistros = KARDEX_INICIAL_EXCEL;
     var todasLasReferencias = MAESTRO_REFERENCIAS_EXCEL;
     var todosLosTerceros = MAESTRO_TERCEROS_EXCEL;
 
+    // ESTADO DE ITEMS GRID Y RECOGIDA INDEPENDIENTES
     var itemsGrid = [];
     var modoRecogida = false;
     var canvas, ctx, dibujando = false;
 
-    // INICIALIZACIÓN DE FIRMA EN CANVAS
+    // LOGIN & SESION
+    function iniciarSesion() {
+      document.getElementById('pantalla-login').classList.add('hidden');
+      document.getElementById('app-principal').classList.remove('hidden');
+      poblardatalists();
+      renderizarTablaKardex(todosLosRegistros);
+      renderizarReferencias();
+      renderizarTerceros();
+      actualizarModuloReportes();
+    }
+
+    function cerrarSesion() {
+      document.getElementById('app-principal').classList.add('hidden');
+      document.getElementById('pantalla-login').classList.remove('hidden');
+    }
+
+    // AUTOCOMPLETADOS
+    function poblardatalists() {
+      const dTerceros = document.getElementById('lista-terceros-global');
+      const dRefs = document.getElementById('lista-referencias-global');
+      if(dTerceros) {
+        dTerceros.innerHTML = "";
+        todosLosTerceros.forEach(t => {
+          dTerceros.innerHTML += `<option value="${t.nit}">${t.nombre}</option>`;
+          dTerceros.innerHTML += `<option value="${t.nombre}">${t.nit}</option>`;
+        });
+      }
+      if(dRefs) {
+        dRefs.innerHTML = "";
+        todasLasReferencias.forEach(r => {
+          dRefs.innerHTML += `<option value="${r.codigo} - ${r.nombre}">${r.precio}</option>`;
+        });
+      }
+    }
+
+    function autocompletarTerceroPorNit(nit) {
+      const t = todosLosTerceros.find(x => x.nit === nit.trim());
+      if(t) document.getElementById('doc-nombre-tercero').value = t.nombre;
+    }
+
+    function autocompletarNitPorNombre(nombre) {
+      const t = todosLosTerceros.find(x => x.nombre.toLowerCase() === nombre.trim().toLowerCase());
+      if(t) document.getElementById('doc-nit').value = t.nit;
+    }
+
+    function autocompletarItemRef(val) {
+      const ref = todasLasReferencias.find(r => val.includes(r.codigo) || val.includes(r.nombre));
+      if(ref) {
+        document.getElementById('item-val-unit').value = ref.precio;
+        if(ref.unidad) document.getElementById('item-unidad').value = ref.unidad;
+        calcularValorTotalItem();
+      }
+    }
+
+    // CANVAS FIRMA
     function inicializarCanvasFirma() {
       canvas = document.getElementById('canvas-firma');
       if(!canvas) return;
@@ -532,61 +603,122 @@
       canvas.addEventListener('touchend', pararDibujo);
     }
 
-    window.limpiarFirma = function() {
+    function limpiarFirma() {
       if(ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height);
-    };
+    }
 
-    // CONTROL APERTURA DE MODALES DISTINGUIENDO FORMULARIO NORMAL Y RECOGIDA
-    function abrirModalInventario(esRecogida = false) {
-      modoRecogida = esRecogida;
+    // APERTURA TOTALMENTE LIMPIA E INDEPENDIENTE DE MODALES
+    function resetearFormularioCampos() {
       itemsGrid = [];
       renderizarGrid();
+      document.getElementById('doc-nit').value = "";
+      document.getElementById('doc-nombre-tercero').value = "";
+      document.getElementById('item-referencia').value = "";
+      document.getElementById('item-cantidad').value = "";
+      document.getElementById('item-val-unit').value = "";
+      document.getElementById('item-val-total').value = "";
+      limpiarFirma();
+    }
+
+    function abrirModalNormal() {
+      modoRecogida = false;
+      resetearFormularioCampos();
 
       const m = document.getElementById('modal-inventario');
       m.classList.remove('hidden');
       m.style.display = 'flex';
 
-      const titulo = document.getElementById('modal-titulo');
-      const btnStd = document.getElementById('btn-guardar-kardex-std');
-      const btnRecogida = document.getElementById('btn-guardar-kardex-recogida');
-      const bloqueFirma = document.getElementById('bloque-firma-recogida');
-
+      document.getElementById('modal-titulo').innerText = "Registrar Documento / Movimiento Normal";
       const numCons = Math.floor(100000 + Math.random() * 900000);
+      document.getElementById('doc-consecutivo').value = "DOC-" + numCons;
 
-      if(esRecogida) {
-        // MODO FORMULARIO DE RECOGIDA
-        titulo.innerText = "Formulario de Recogida (Con Firma Digital & PDF)";
-        document.getElementById('doc-consecutivo').value = "REC-" + numCons;
-        btnStd.classList.add('hidden');
-        btnRecogida.classList.remove('hidden');
-        bloqueFirma.classList.remove('hidden');
-        setTimeout(inicializarCanvasFirma, 100);
-      } else {
-        // MODO FORMULARIO NORMAL
-        titulo.innerText = "Registrar Documento / Movimiento Normal";
-        document.getElementById('doc-consecutivo').value = "DOC-" + numCons;
-        btnStd.classList.remove('hidden');
-        btnRecogida.classList.add('hidden');
-        bloqueFirma.classList.add('hidden');
-      }
+      document.getElementById('btn-guardar-kardex-std').classList.remove('hidden');
+      document.getElementById('btn-guardar-kardex-recogida').classList.add('hidden');
+      document.getElementById('bloque-firma-recogida').classList.add('hidden');
+    }
+
+    function abrirModalRecogida() {
+      modoRecogida = true;
+      resetearFormularioCampos();
+
+      const m = document.getElementById('modal-inventario');
+      m.classList.remove('hidden');
+      m.style.display = 'flex';
+
+      document.getElementById('modal-titulo').innerText = "Formulario de Recogida (Con Firma Digital & PDF)";
+      const numCons = Math.floor(100000 + Math.random() * 900000);
+      document.getElementById('doc-consecutivo').value = "REC-" + numCons;
+
+      document.getElementById('btn-guardar-kardex-std').classList.add('hidden');
+      document.getElementById('btn-guardar-kardex-recogida').classList.remove('hidden');
+      document.getElementById('bloque-firma-recogida').classList.remove('hidden');
+
+      setTimeout(inicializarCanvasFirma, 100);
     }
 
     function cerrarModalInventario() {
       const m = document.getElementById('modal-inventario');
       m.classList.add('hidden');
       m.style.display = 'none';
-      limpiarFirma();
+      resetearFormularioCampos();
     }
 
-    // DESCARGAR O REIMPRIMIR PDF CON FIRMA
-    window.generarPDFComprobante = function(consecutivo, tipo, bodega, nit, tercero, firmaImg, itemsArr) {
+    function calcularValorTotalItem() {
+      const c = Number(document.getElementById('item-cantidad').value) || 0;
+      const u = Number(document.getElementById('item-val-unit').value) || 0;
+      document.getElementById('item-val-total').value = (c * u).toFixed(2);
+    }
+
+    function agregarItemAlGrid() {
+      const ref = document.getElementById('item-referencia').value;
+      const und = document.getElementById('item-unidad').value;
+      const cant = Number(document.getElementById('item-cantidad').value);
+      const valU = Number(document.getElementById('item-val-unit').value);
+
+      if(!ref || !cant) { alert("Ingrese una referencia y una cantidad válidas."); return; }
+      itemsGrid.push({ referencia: ref, unidad: und, cantidad: cant, valUnit: valU, valor: cant * valU });
+
+      document.getElementById('item-referencia').value = "";
+      document.getElementById('item-cantidad').value = "";
+      document.getElementById('item-val-unit').value = "";
+      document.getElementById('item-val-total').value = "";
+      renderizarGrid();
+    }
+
+    function renderizarGrid() {
+      const body = document.getElementById('grid-items-body');
+      if(itemsGrid.length === 0) {
+        body.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #9ca3af; padding: 1rem;">No hay ítems agregados al grid aún.</td></tr>`;
+        document.getElementById('resumen-cant-items').innerText = "0";
+        document.getElementById('resumen-valor-total').innerText = "0";
+        return;
+      }
+      body.innerHTML = "";
+      let tot = 0;
+      itemsGrid.forEach((i, idx) => {
+        tot += i.valor;
+        body.innerHTML += `<tr>
+          <td>${i.referencia}</td>
+          <td>${i.cantidad}</td>
+          <td>${i.unidad}</td>
+          <td>$${i.valUnit.toLocaleString('es-CO')}</td>
+          <td>$${i.valor.toLocaleString('es-CO')}</td>
+          <td style="text-align:center;"><button onclick="itemsGrid.splice(${idx},1);renderizarGrid();" style="color:red;border:none;background:none;cursor:pointer;"><i class="fa-solid fa-trash"></i></button></td>
+        </tr>`;
+      });
+      document.getElementById('resumen-cant-items').innerText = itemsGrid.length;
+      document.getElementById('resumen-valor-total').innerText = tot.toLocaleString('es-CO');
+    }
+
+    // IMPRESIÓN Y DESCARGA DE PDF
+    function generarPDFComprobante(consecutivo, tipo, bodega, nit, tercero, firmaImg, itemsArr) {
       try {
         if (!window.jspdf || !window.jspdf.jsPDF) { alert("Cargando librería jsPDF..."); return; }
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
         const lista = itemsArr || [];
 
-        // Encabezado PDF
+        // Encabezado
         doc.setFillColor(11, 98, 164);
         doc.rect(0, 0, 210, 28, 'F');
         doc.setTextColor(255, 255, 255);
@@ -609,8 +741,14 @@
         doc.text(`NIT / Cédula: ${nit || 'N/A'}`, 14, 52);
         doc.text(`Bodega: ${bodega}`, 130, 45);
 
-        // Tabla de ítems
-        const bodyData = lista.map(i => [i.referencia, i.cantidad, i.unidad, `$${Number(i.valUnit).toLocaleString('es-CO')}`, `$${Number(i.valor).toLocaleString('es-CO')}`]);
+        // Tabla
+        const bodyData = lista.map(i => [
+          i.referencia, 
+          i.cantidad, 
+          i.unidad, 
+          `$${Number(i.valUnit).toLocaleString('es-CO')}`, 
+          `$${Number(i.valor).toLocaleString('es-CO')}`
+        ]);
         let totalVal = lista.reduce((s, i) => s + Number(i.valor || 0), 0);
 
         if(doc.autoTable) {
@@ -635,16 +773,16 @@
       } catch(e) {
         alert("Error generando PDF: " + e.message);
       }
-    };
+    }
 
-    window.reimprimirPDF = function(consecutivo) {
-      const items = window.todosLosRegistros.filter(r => r.consecutivo === consecutivo);
+    function reimprimirPDF(consecutivo) {
+      const items = todosLosRegistros.filter(r => r.consecutivo === consecutivo);
       if(items.length === 0) return;
       const primer = items[0];
-      window.generarPDFComprobante(primer.consecutivo, primer.tipo, primer.bodega, primer.nit, primer.tercero, primer.firmaData, items);
-    };
+      generarPDFComprobante(primer.consecutivo, primer.tipo, primer.bodega, primer.nit, primer.tercero, primer.firmaData, items);
+    }
 
-    window.guardarGridEnKardex = async function(esRecogida) {
+    function guardarGridEnKardex(esRecogida) {
       const consecutivo = document.getElementById('doc-consecutivo').value;
       const tipo = document.getElementById('doc-tipo').value;
       const bodega = document.getElementById('doc-bodega').value;
@@ -652,6 +790,7 @@
       const tercero = document.getElementById('doc-nombre-tercero').value;
 
       if(itemsGrid.length === 0) { alert("Agregue al menos 1 ítem al grid."); return; }
+      if(!tercero) { alert("Escriba o seleccione un tercero/donante."); return; }
 
       let firmaData = null;
       if (esRecogida && canvas) {
@@ -674,18 +813,99 @@
           firmaData: firmaData,
           fecha: new Date().toISOString()
         };
-        window.todosLosRegistros.unshift(nuevo);
+        todosLosRegistros.unshift(nuevo);
       }
 
       if (esRecogida) {
-        window.generarPDFComprobante(consecutivo, tipo, bodega, nit, tercero, firmaData, itemsGrid);
+        generarPDFComprobante(consecutivo, tipo, bodega, nit, tercero, firmaData, itemsGrid);
       }
 
       cerrarModalInventario();
-      window.renderizarTablaKardex(window.todosLosRegistros);
-      window.actualizarModuloReportes();
-      alert("¡Guardado exitosamente!");
-    };
+      renderizarTablaKardex(todosLosRegistros);
+      actualizarModuloReportes();
+      alert(esRecogida ? "¡Recogida guardada e impresa en PDF exitosamente!" : "¡Documento guardado en Kárdex exitosamente!");
+    }
+
+    // FILTRADO Y RENDERIZADO TABLAS
+    function renderizarTablaKardex(lista) {
+      const tabla = document.getElementById('tabla-inventario');
+      const contador = document.getElementById('contador-registros');
+      if(!tabla) return;
+
+      tabla.innerHTML = "";
+      if(contador) contador.innerText = `${lista.length} registros`;
+
+      if(lista.length === 0) {
+        tabla.innerHTML = `<tr><td colspan="12" style="text-align: center; color: #9ca3af; padding: 1.5rem;">No hay registros disponibles.</td></tr>`;
+        return;
+      }
+
+      lista.forEach(item => {
+        const badge = item.esRecogida 
+          ? `<span style="background: #e0f2fe; color: #0369a1; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;"><i class="fa-solid fa-truck-pickup"></i> Recogida</span>` 
+          : `<span style="background: #dcfce7; color: #15803d; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">Normal</span>`;
+        
+        const btnPdf = item.esRecogida 
+          ? `<button onclick="reimprimirPDF('${item.consecutivo}')" style="background: #0284c7; color: white; border: none; padding: 0.25rem 0.6rem; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-file-pdf"></i> PDF</button>` 
+          : `-`;
+
+        tabla.innerHTML += `<tr>
+          <td style="font-weight: bold; color: #1e3a8a;">${item.consecutivo}</td>
+          <td>${badge}</td>
+          <td>${item.nit}</td>
+          <td style="font-weight: 600;">${item.tercero}</td>
+          <td>${item.bodega}</td>
+          <td>${item.referencia}</td>
+          <td>${item.cantidad}</td>
+          <td>${item.unidad}</td>
+          <td>$${Number(item.valUnit).toLocaleString('es-CO')}</td>
+          <td style="font-weight: bold; color: #059669;">$${Number(item.valor).toLocaleString('es-CO')}</td>
+          <td>${new Date(item.fecha).toLocaleDateString('es-CO')}</td>
+          <td style="text-align:center;">${btnPdf}</td>
+        </tr>`;
+      });
+    }
+
+    function filtrarTablaKardex() {
+      const query = document.getElementById('filtro-kardex').value.toLowerCase();
+      const filtrados = todosLosRegistros.filter(r => 
+        r.consecutivo.toLowerCase().includes(query) ||
+        r.tercero.toLowerCase().includes(query) ||
+        r.nit.toLowerCase().includes(query) ||
+        r.referencia.toLowerCase().includes(query)
+      );
+      renderizarTablaKardex(filtrados);
+    }
+
+    function renderizarReferencias() {
+      const b = document.getElementById('tabla-referencias-body');
+      if(!b) return;
+      b.innerHTML = "";
+      todasLasReferencias.forEach(r => {
+        b.innerHTML += `<tr>
+          <td style="font-weight:bold;">${r.codigo}</td>
+          <td>${r.nombre}</td>
+          <td>General</td>
+          <td>${r.unidad}</td>
+          <td>$${Number(r.precio).toLocaleString('es-CO')}</td>
+          <td style="text-align:center;"><span style="background:#dcfce7;color:#15803d;padding:0.2rem 0.5rem;border-radius:0.25rem;font-size:0.75rem;font-weight:bold;">Activo</span></td>
+        </tr>`;
+      });
+    }
+
+    function renderizarTerceros() {
+      const b = document.getElementById('tabla-terceros-body');
+      if(!b) return;
+      b.innerHTML = "";
+      todosLosTerceros.forEach(t => {
+        b.innerHTML += `<tr>
+          <td style="font-weight:bold;color:#1e3a8a;">${t.nit}</td>
+          <td>${t.nombre}</td>
+          <td><span style="background:#f3e8ff;color:#6b21a8;padding:0.2rem 0.5rem;border-radius:0.25rem;font-size:0.75rem;font-weight:bold;">${t.tipo}</span></td>
+          <td>${t.telefono}</td>
+        </tr>`;
+      });
+    }
 
     function mostrarSeccion(sec) {
       ['dashboard', 'reportes', 'inventario', 'referencias', 'terceros', 'crm', 'despacho', 'recepcion'].forEach(s => {
@@ -697,58 +917,28 @@
       if(sec === 'reportes') actualizarModuloReportes();
     }
 
-    function calcularValorTotalItem() {
-      const c = Number(document.getElementById('item-cantidad').value) || 0;
-      const u = Number(document.getElementById('item-val-unit').value) || 0;
-      document.getElementById('item-val-total').value = (c * u).toFixed(2);
+    function actualizarModuloReportes() {
+      const totalEntradas = todosLosRegistros.filter(r => r.tipo === "16").reduce((s, x) => s + Number(x.valor), 0);
+      const totalSalidas = todosLosRegistros.filter(r => r.tipo === "30" || r.tipo === "17").reduce((s, x) => s + Number(x.valor), 0);
+
+      document.getElementById('kpi-entradas-val').innerText = `$${totalEntradas.toLocaleString('es-CO')}`;
+      document.getElementById('kpi-salidas-val').innerText = `$${totalSalidas.toLocaleString('es-CO')}`;
+      document.getElementById('kpi-stock-val').innerText = `$${(totalEntradas - totalSalidas).toLocaleString('es-CO')}`;
     }
 
-    function agregarItemAlGrid() {
-      const ref = document.getElementById('item-referencia').value;
-      const und = document.getElementById('item-unidad').value;
-      const cant = Number(document.getElementById('item-cantidad').value);
-      const valU = Number(document.getElementById('item-val-unit').value);
-
-      if(!ref || !cant) { alert("Ingrese referencia y cantidad validas."); return; }
-      itemsGrid.push({ referencia: ref, unidad: und, cantidad: cant, valUnit: valU, valor: cant * valU });
-      document.getElementById('item-referencia').value = "";
-      document.getElementById('item-cantidad').value = "";
-      document.getElementById('item-val-unit').value = "";
-      document.getElementById('item-val-total').value = "";
-      renderizarGrid();
+    function exportarExcelKpis() {
+      const ws = XLSX.utils.json_to_sheet(todosLosRegistros);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Kardex");
+      XLSX.writeFile(wb, "Reporte_Kardex_FUBAM.xlsx");
     }
 
-    function renderizarGrid() {
-      const body = document.getElementById('grid-items-body');
-      if(itemsGrid.length === 0) {
-        body.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #9ca3af; padding: 1rem;">No hay ítems agregados.</td></tr>`;
-        document.getElementById('resumen-cant-items').innerText = "0";
-        document.getElementById('resumen-valor-total').innerText = "0";
-        return;
-      }
-      body.innerHTML = "";
-      let tot = 0;
-      itemsGrid.forEach((i, idx) => {
-        tot += i.valor;
-        body.innerHTML += `<tr><td>${i.referencia}</td><td>${i.cantidad}</td><td>${i.unidad}</td><td>$${i.valUnit.toLocaleString()}</td><td>$${i.valor.toLocaleString()}</td><td style="text-align:center;"><button onclick="itemsGrid.splice(${idx},1);renderizarGrid();" style="color:red;border:none;background:none;"><i class="fa-solid fa-trash"></i></button></td></tr>`;
-      });
-      document.getElementById('resumen-cant-items').innerText = itemsGrid.length;
-      document.getElementById('resumen-valor-total').innerText = tot.toLocaleString();
-    }
-
-    window.renderizarTablaKardex = function(lista) {
-      const tabla = document.getElementById('tabla-inventario');
-      if(!tabla) return;
-      tabla.innerHTML = "";
-      lista.forEach(item => {
-        const badge = item.esRecogida ? `<span style="background: #e0f2fe; color: #0369a1; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;"><i class="fa-solid fa-truck-pickup"></i> Recogida</span>` : `<span style="background: #dcfce7; color: #15803d; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">Normal</span>`;
-        const btnPdf = item.esRecogida ? `<button onclick="window.reimprimirPDF('${item.consecutivo}')" style="background: #0284c7; color: white; border: none; padding: 0.25rem 0.6rem; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-file-pdf"></i> PDF</button>` : `-`;
-        tabla.innerHTML += `<tr><td>${item.consecutivo}</td><td>${badge}</td><td>${item.nit}</td><td>${item.tercero}</td><td>${item.bodega}</td><td>${item.referencia}</td><td>${item.cantidad}</td><td>${item.unidad}</td><td>$${Number(item.valUnit).toLocaleString()}</td><td>$${Number(item.valor).toLocaleString()}</td><td>${new Date().toLocaleDateString()}</td><td style="text-align:center;">${btnPdf}</td></tr>`;
-      });
-    };
-
-    window.actualizarModuloReportes = function() {};
-    window.addEventListener('DOMContentLoaded', () => { window.renderizarTablaKardex(todosLosRegistros); });
+    window.addEventListener('DOMContentLoaded', () => {
+      poblardatalists();
+      renderizarTablaKardex(todosLosRegistros);
+      renderizarReferencias();
+      renderizarTerceros();
+    });
   </script>
 </body>
 </html>
