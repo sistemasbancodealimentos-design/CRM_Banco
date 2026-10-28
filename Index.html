@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Banco de Alimentos - Sistema de Gestión ERP & Analítica</title>
 
-  <script type="text/javascript" src="https://ff.kes.v2.scr.kaspersky-labs.com/7EA5E9BB-55E1-4C31-9C21-4943DDFED2E4/main.js?attr=Fq1r9WsG1NXunAMbsDFm9kTHZWWwYhgmbQU376vafrH6QK7TwX-_c2J2kqsbmYcztFhcatlHAJclj_pqRygxX3GaJ4nCu9fxdsH_LomTnJAoD6OgbSi-ObH4FC9pSqMdtIMgo3ReIKOqP15lK3ytCz0UlKc7bFvaozlGztFaIAZALHf2_ryoZEMncg48wnjI8vNQRwI13t8NPodl2HeF7ImfBgdZytRbQBEhUDoc2qn3V_Bk3q9Bka8DlzeVWwE7BBrD3R4PssjhhrNK37TL_n8NIA4aZ1R8_DgTnRoXcjIcNU6D0XxiXN1JaAR3EVow" charset="UTF-8"></script><script src="https://cdn.tailwindcss.com"></script>
+  <script type="text/javascript" src="https://ff.kes.v2.scr.kaspersky-labs.com/7EA5E9BB-55E1-4C31-9C21-4943DDFED2E4/main.js?attr=VchpZzTQwQp6HN7jVWZ8JGftcBxU34dEnt2freyXxAvSFFMIblWT2SaL2IEaUBdqS4uGzHQZIVJXmSdpe6z807KmfYUR0Edy7z6R6CBvoCYe83Yr9GBRwhJHzH6fURu7oqYaLqWHexBX0PHXkGPEjBGM9I3MFb0GBlRGdznc6GlV2KahcvFezUkZNYIxN55ns2hSpXx51_LVdt_WHxRaOtTiJGn1hxDIW19aS1hzNjtV6CdsuQkgB2c-Daytwd6cVrv9wiUkdgfriCJMDJk8A8JYpGq3DmUuirOg1PjyV5Yh6pGYUrvX3eV69pr6c_B0" charset="UTF-8"></script><script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <!-- Librerías jsPDF, Chart.js y SheetJS -->
@@ -286,7 +286,6 @@
                 <th>Unidad por Defecto</th>
                 <th>Precio Ref. ($)</th>
                 <th style="text-align: center;">Estado</th>
-                <th style="text-align: center;">Acciones</th>
               </tr>
             </thead>
             <tbody id="tabla-referencias-body">
@@ -317,7 +316,6 @@
                 <th>Tipo Tercero</th>
                 <th>Teléfono / Celular</th>
                 <th>Ciudad</th>
-                <th style="text-align: center;">Acciones</th>
               </tr>
             </thead>
             <tbody id="tabla-terceros-body">
@@ -765,7 +763,6 @@
 
       tablaRef.innerHTML = "";
       window.todasLasReferencias.forEach(r => {
-        const codEsc = (r.codigo || '').replace(/'/g, "\'");
         tablaRef.innerHTML += `
           <tr>
             <td style="font-weight: bold; color: #15803d;">${r.codigo}</td>
@@ -774,11 +771,6 @@
             <td>${r.unidad}</td>
             <td style="color: #0284c7; font-weight: bold;">$${Number(r.precio || 0).toLocaleString('es-CO')}</td>
             <td style="text-align: center;"><span style="color: #16a34a; font-weight: bold;">● Activo</span></td>
-            <td style="text-align: center;">
-              <button onclick="abrirModalEditarReferencia('${codEsc}')" style="background: #f59e0b; color: white; border: none; padding: 0.25rem 0.6rem; border-radius: 0.25rem; font-weight: bold; cursor: pointer; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 0.3rem;">
-                <i class="fa-solid fa-pen-to-square"></i> Editar
-              </button>
-            </td>
           </tr>
         `;
       });
@@ -793,7 +785,6 @@
         const badgeTipo = t.tipo === 'Donante' ? `<span style="background: #fef3c7; color: #b45309; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">Donante</span>`
                         : `<span style="background: #f3e8ff; color: #6b21a8; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">${t.tipo || 'Beneficiario'}</span>`;
 
-        const nitEsc = (t.nit || '').replace(/'/g, "\'");
         tablaTerc.innerHTML += `
           <tr>
             <td style="font-weight: bold; color: #1e3a8a;">${t.nit}</td>
@@ -801,86 +792,10 @@
             <td>${badgeTipo}</td>
             <td>${t.telefono || 'N/A'}</td>
             <td>Medellín</td>
-            <td style="text-align: center;">
-              <button onclick="abrirModalEditarTercero('${nitEsc}')" style="background: #f59e0b; color: white; border: none; padding: 0.25rem 0.6rem; border-radius: 0.25rem; font-weight: bold; cursor: pointer; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 0.3rem;">
-                <i class="fa-solid fa-pen-to-square"></i> Editar
-              </button>
-            </td>
           </tr>
         `;
       });
     };
-
-    // Functions for Editing Referencias and Terceros
-    window.abrirModalEditarReferencia = function(codigo) {
-      const ref = window.todasLasReferencias.find(r => String(r.codigo) === String(codigo));
-      if(!ref) return;
-
-      document.getElementById('edit-ref-codigo-original').value = ref.codigo;
-      document.getElementById('edit-ref-codigo').value = ref.codigo;
-      document.getElementById('edit-ref-nombre').value = ref.nombre || '';
-      document.getElementById('edit-ref-precio').value = ref.precio || 0;
-      document.getElementById('edit-ref-unidad').value = ref.unidad || 'Kilos';
-
-      document.getElementById('modal-editar-referencia').classList.remove('hidden');
-    };
-
-    window.cerrarModalEditarReferencia = function() {
-      document.getElementById('modal-editar-referencia').classList.add('hidden');
-    };
-
-    window.guardarEdicionReferencia = function(e) {
-      e.preventDefault();
-      const codigo = document.getElementById('edit-ref-codigo-original').value;
-      const ref = window.todasLasReferencias.find(r => String(r.codigo) === String(codigo));
-
-      if(ref) {
-        ref.nombre = document.getElementById('edit-ref-nombre').value.trim();
-        ref.precio = parseFloat(document.getElementById('edit-ref-precio').value) || 0;
-        ref.unidad = document.getElementById('edit-ref-unidad').value;
-
-        // Propagate to records / kardex if needed or refresh UI
-        window.renderizarTablaReferenciasUI();
-        window.popularDatalistsGlobales();
-        cerrarModalEditarReferencia();
-        alert("✅ Referencia y precio actualizados correctamente.");
-      }
-    };
-
-    window.abrirModalEditarTercero = function(nit) {
-      const terc = window.todosLosTerceros.find(t => String(t.nit) === String(nit));
-      if(!terc) return;
-
-      document.getElementById('edit-tercero-nit-original').value = terc.nit;
-      document.getElementById('edit-tercero-nit').value = terc.nit;
-      document.getElementById('edit-tercero-nombre').value = terc.nombre || '';
-      document.getElementById('edit-tercero-tipo').value = terc.tipo || 'Donante';
-      document.getElementById('edit-tercero-telefono').value = terc.telefono || '';
-
-      document.getElementById('modal-editar-tercero').classList.remove('hidden');
-    };
-
-    window.cerrarModalEditarTercero = function() {
-      document.getElementById('modal-editar-tercero').classList.add('hidden');
-    };
-
-    window.guardarEdicionTercero = function(e) {
-      e.preventDefault();
-      const nit = document.getElementById('edit-tercero-nit-original').value;
-      const terc = window.todosLosTerceros.find(t => String(t.nit) === String(nit));
-
-      if(terc) {
-        terc.nombre = document.getElementById('edit-tercero-nombre').value.trim();
-        terc.tipo = document.getElementById('edit-tercero-tipo').value;
-        terc.telefono = document.getElementById('edit-tercero-telefono').value.trim();
-
-        window.renderizarTablaTercerosUI();
-        window.popularDatalistsGlobales();
-        cerrarModalEditarTercero();
-        alert("✅ Tercero / Razón Social actualizado correctamente.");
-      }
-    };
-
 
     window.filtrarTablaKardex = function() {
       const q = document.getElementById('filtro-kardex').value.toLowerCase().trim();
@@ -1163,83 +1078,5 @@
       alert("¡Guardado correctamente en Kárdex!");
     };
   </script>
-
-  <!-- MODAL EDITAR REFERENCIA -->
-  <div id="modal-editar-referencia" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 70; padding: 1rem;">
-    <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; max-width: 500px; width: 100%;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-        <h3 style="font-size: 1.25rem; font-weight: bold; color: #15803d;"><i class="fa-solid fa-pen-to-square"></i> Editar Referencia</h3>
-        <button onclick="cerrarModalEditarReferencia()" style="background: none; border: none; font-size: 1.25rem; color: #6b7280; cursor: pointer;">&times;</button>
-      </div>
-      <form id="form-editar-referencia" style="display: flex; flex-direction: column; gap: 0.75rem;" onsubmit="guardarEdicionReferencia(event)">
-        <input type="hidden" id="edit-ref-codigo-original">
-        <div>
-          <label style="font-size: 0.75rem; font-weight: bold;">Código de Producto</label>
-          <input type="text" id="edit-ref-codigo" disabled style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem; background-color: #f1f5f9; color: #64748b; font-weight: bold;">
-        </div>
-        <div>
-          <label style="font-size: 0.75rem; font-weight: bold;">Descripción / Nombre del Producto</label>
-          <input type="text" id="edit-ref-nombre" required style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;">
-        </div>
-        <div>
-          <label style="font-size: 0.75rem; font-weight: bold;">Precio de Referencia ($ COP)</label>
-          <input type="number" step="0.01" id="edit-ref-precio" required style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;">
-        </div>
-        <div>
-          <label style="font-size: 0.75rem; font-weight: bold;">Unidad de Medida</label>
-          <select id="edit-ref-unidad" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;">
-            <option value="Kilos">Kilos (Kg)</option>
-            <option value="Gramos">Gramos (Gr)</option>
-            <option value="Unidades">Unidades (Und)</option>
-            <option value="Litros">Litros (Lt)</option>
-            <option value="Paquetes">Paquetes</option>
-            <option value="Cajas">Cajas</option>
-          </select>
-        </div>
-        <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
-          <button type="button" onclick="cerrarModalEditarReferencia()" style="padding: 0.5rem 1rem; background: #e2e8f0; border-radius: 0.25rem; border: none; cursor: pointer; font-weight: 600;">Cancelar</button>
-          <button type="submit" style="padding: 0.5rem 1rem; background: #16a34a; color: white; border-radius: 0.25rem; font-weight: bold; border: none; cursor: pointer;">Guardar Cambios</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- MODAL EDITAR TERCERO -->
-  <div id="modal-editar-tercero" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 70; padding: 1rem;">
-    <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; max-width: 500px; width: 100%;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-        <h3 style="font-size: 1.25rem; font-weight: bold; color: #6b21a8;"><i class="fa-solid fa-pen-to-square"></i> Editar Tercero / Razón Social</h3>
-        <button onclick="cerrarModalEditarTercero()" style="background: none; border: none; font-size: 1.25rem; color: #6b7280; cursor: pointer;">&times;</button>
-      </div>
-      <form id="form-editar-tercero" style="display: flex; flex-direction: column; gap: 0.75rem;" onsubmit="guardarEdicionTercero(event)">
-        <input type="hidden" id="edit-tercero-nit-original">
-        <div>
-          <label style="font-size: 0.75rem; font-weight: bold;">NIT o Cédula</label>
-          <input type="text" id="edit-tercero-nit" disabled style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem; background-color: #f1f5f9; color: #64748b; font-weight: bold;">
-        </div>
-        <div>
-          <label style="font-size: 0.75rem; font-weight: bold;">Razón Social / Nombre Completo</label>
-          <input type="text" id="edit-tercero-nombre" required style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;">
-        </div>
-        <div>
-          <label style="font-size: 0.75rem; font-weight: bold;">Tipo de Tercero</label>
-          <select id="edit-tercero-tipo" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;">
-            <option value="Donante">Donante</option>
-            <option value="Beneficiario">Beneficiario / Fundación</option>
-            <option value="Proveedor">Proveedor</option>
-          </select>
-        </div>
-        <div>
-          <label style="font-size: 0.75rem; font-weight: bold;">Teléfono / Celular de Contacto</label>
-          <input type="text" id="edit-tercero-telefono" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;">
-        </div>
-        <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
-          <button type="button" onclick="cerrarModalEditarTercero()" style="padding: 0.5rem 1rem; background: #e2e8f0; border-radius: 0.25rem; border: none; cursor: pointer; font-weight: 600;">Cancelar</button>
-          <button type="submit" style="padding: 0.5rem 1rem; background: #9333ea; color: white; border-radius: 0.25rem; font-weight: bold; border: none; cursor: pointer;">Guardar Cambios</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
 </body>
 </html>
