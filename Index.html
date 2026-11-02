@@ -706,6 +706,22 @@
           });
         }
 
+        // Firma digital capturada en el formulario de recogida
+        let yFirma = doc.lastAutoTable ? doc.lastAutoTable.finalY + 18 : 115;
+        if (yFirma > 250) { doc.addPage(); yFirma = 30; }
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(30, 41, 59);
+        doc.text('Firma de quien entrega / recibe:', 14, yFirma);
+        if (firmaDataURL && firmaDataURL.length > 1000) {
+          doc.addImage(firmaDataURL, 'PNG', 14, yFirma + 3, 65, 22);
+        } else {
+          doc.setDrawColor(148, 163, 184);
+          doc.line(14, yFirma + 27, 95, yFirma + 27);
+        }
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.text('Documento generado digitalmente por el ERP FUBAM.', 14, yFirma + 33);
+
         doc.save(`${consecutivo}_Recogida_FUBAM.pdf`);
 
       } catch (err) {
@@ -963,13 +979,29 @@
     }
 
     function abrirModalInventario(esRecogida = false) {
+      // Cada apertura inicia un documento limpio e independiente.
       modoRecogida = esRecogida;
+      itemsGrid = [];
+      editIndex = -1;
       const m = document.getElementById('modal-inventario');
       m.classList.remove('hidden');
       m.style.display = 'flex';
 
       const numCons = Math.floor(100000 + Math.random() * 900000);
       document.getElementById('doc-consecutivo').value = (esRecogida ? "REC-" : "DOC-") + numCons;
+      document.getElementById('doc-tipo').value = esRecogida ? "16" : "16";
+      document.getElementById('doc-bodega').value = "PA";
+      ['doc-nit','doc-nombre-tercero','item-referencia','item-cantidad','item-val-unit','item-val-total'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      document.getElementById('item-unidad').value = 'Kilos';
+      renderizarGrid();
+
+      document.getElementById('modal-titulo').textContent = esRecogida ? 'Registrar Recogida / Comprobante de Entrega' : 'Registrar Documento / Movimiento en Lote';
+      document.getElementById('bloque-firma-recogida').classList.toggle('hidden', !esRecogida);
+      document.getElementById('btn-guardar-kardex-std').classList.toggle('hidden', esRecogida);
+      document.getElementById('btn-guardar-kardex-recogida').classList.toggle('hidden', !esRecogida);
+      if (esRecogida) setTimeout(() => { if (typeof inicializarCanvasFirma === 'function') inicializarCanvasFirma(); }, 50);
     }
 
     function cerrarModalInventario() {
@@ -1154,7 +1186,9 @@
       }
 
       if (esRecogida) {
-        window.generarPDFComprobante(consecutivo, tipo, bodega, nit, tercero, null, itemsGrid);
+        const canvasFirma = document.getElementById('canvas-firma');
+        const firmaData = canvasFirma ? canvasFirma.toDataURL('image/png') : null;
+        window.generarPDFComprobante(consecutivo, tipo, bodega, nit, tercero, firmaData, itemsGrid);
       }
 
       cerrarModalInventario();
