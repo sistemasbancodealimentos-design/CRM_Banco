@@ -64,7 +64,8 @@
 <body>
 
   <!-- DATALISTS GLOBALES AUTOCOMPLETADOS DESDE EL ARCHIVO EXCEL DE FUBAM -->
-  <datalist id="lista-terceros-global"></datalist>
+  <datalist id="lista-terceros-nit"></datalist>
+  <datalist id="lista-terceros-nombre"></datalist>
   <datalist id="lista-referencias-global"></datalist>
 
   <!-- 1. PANTALLA DE INICIO DE SESIÓN (LOGIN) -->
@@ -421,11 +422,11 @@
             </div>
             <div>
               <label style="font-size: 0.7rem; font-weight: bold; color: #374151; display: block;">NIT / CÉDULA TERCERO</label>
-              <input type="text" id="doc-nit" placeholder="Escriba NIT..." list="lista-terceros-global" onchange="autocompletarTerceroPorNit(this.value)" style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.85rem; background: #fef08a;">
+              <input type="text" id="doc-nit" placeholder="Escriba NIT..." list="lista-terceros-nit" onchange="autocompletarTerceroPorNit(this.value)" style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.85rem; background: #fef08a;">
             </div>
             <div style="grid-column: span 4;">
               <label style="font-size: 0.7rem; font-weight: bold; color: #374151; display: block;">NOMBRE TERCERO (SELECCIONABLE DESDE EXCEL)</label>
-              <input type="text" id="doc-nombre-tercero" list="lista-terceros-global" onchange="autocompletarNitPorNombre(this.value)" placeholder="Buscar en los 445 donantes/beneficiarios..." style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.85rem; font-weight: 600; color: #1e3a8a;">
+              <input type="text" id="doc-nombre-tercero" list="lista-terceros-nombre" onchange="autocompletarNitPorNombre(this.value)" placeholder="Buscar en los 445 donantes/beneficiarios..." style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.85rem; font-weight: 600; color: #1e3a8a;">
             </div>
           </div>
 
@@ -648,6 +649,52 @@
       XLSX.writeFile(wb, "Reporte_Ejecutivo_FUBAM.xlsx");
     };
 
+    // Firma manuscrita: compatible con mouse, lápiz y pantalla táctil.
+    window.inicializarCanvasFirma = function() {
+      const canvas = document.getElementById('canvas-firma');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 3;
+      let dibujando = false;
+      let huboTrazo = false;
+      const punto = (ev) => {
+        const rect = canvas.getBoundingClientRect();
+        return { x: (ev.clientX - rect.left) * canvas.width / rect.width,
+                 y: (ev.clientY - rect.top) * canvas.height / rect.height };
+      };
+      if (canvas.dataset.firmaEventos === '1') {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        canvas.dataset.firmaHecha = '0';
+        return;
+      }
+      canvas.dataset.firmaEventos = '1';
+      canvas.addEventListener('pointerdown', (ev) => {
+        ev.preventDefault(); dibujando = true; huboTrazo = true;
+        canvas.setPointerCapture?.(ev.pointerId);
+        const p = punto(ev); ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x + 0.1, p.y + 0.1); ctx.stroke();
+        canvas.dataset.firmaHecha = '1';
+      });
+      canvas.addEventListener('pointermove', (ev) => {
+        if (!dibujando) return;
+        ev.preventDefault(); const p = punto(ev); ctx.lineTo(p.x, p.y); ctx.stroke();
+      });
+      const terminar = () => { dibujando = false; ctx.beginPath(); };
+      canvas.addEventListener('pointerup', terminar);
+      canvas.addEventListener('pointercancel', terminar);
+      canvas.addEventListener('pointerleave', (ev) => { if (ev.buttons === 0) terminar(); });
+      canvas.dataset.firmaHecha = '0';
+    };
+
+    window.limpiarFirma = function() {
+      const canvas = document.getElementById('canvas-firma');
+      if (!canvas) return;
+      canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+      canvas.dataset.firmaHecha = '0';
+    };
+
     // GENERADOR Y DESCARGADOR DE PDF
     window.generarPDFComprobante = function(consecutivo, tipo, bodega, nit, tercero, firmaDataURL, itemsArr) {
       try {
@@ -730,7 +777,8 @@
     };
 
     window.autocompletarTerceroPorNit = function(val) {
-      const match = window.todosLosTerceros.find(t => t.nit == val || val.includes(t.nit));
+      const nitBuscado = String(val || '').trim();
+      const match = window.todosLosTerceros.find(t => String(t.nit || '').trim() === nitBuscado);
       if(match) {
         document.getElementById('doc-nombre-tercero').value = match.nombre;
         document.getElementById('doc-nit').value = match.nit;
@@ -738,7 +786,8 @@
     };
 
     window.autocompletarNitPorNombre = function(val) {
-      const match = window.todosLosTerceros.find(t => t.nombre == val || val.includes(t.nombre));
+      const nombreBuscado = String(val || '').trim().toLocaleLowerCase('es');
+      const match = window.todosLosTerceros.find(t => String(t.nombre || '').trim().toLocaleLowerCase('es') === nombreBuscado);
       if(match) {
         document.getElementById('doc-nit').value = match.nit;
         document.getElementById('doc-nombre-tercero').value = match.nombre;
@@ -756,15 +805,23 @@
     };
 
     window.popularDatalistsGlobales = function() {
-      const datalistTerc = document.getElementById('lista-terceros-global');
+      const datalistNit = document.getElementById('lista-terceros-nit');
+      const datalistNombre = document.getElementById('lista-terceros-nombre');
       const datalistRef = document.getElementById('lista-referencias-global');
 
-      if(datalistTerc && window.todosLosTerceros) {
-        datalistTerc.innerHTML = "";
-        window.todosLosTerceros.forEach(t => {
-          datalistTerc.innerHTML += `<option value="${t.nit}">${t.nombre} (${t.tipo})</option>`;
-          datalistTerc.innerHTML += `<option value="${t.nombre}">${t.nit}</option>`;
-        });
+      if(window.todosLosTerceros) {
+        if(datalistNit) {
+          datalistNit.innerHTML = "";
+          window.todosLosTerceros.forEach(t => {
+            datalistNit.innerHTML += `<option value="${String(t.nit || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;')}">${t.nombre || ''} (${t.tipo || ''})</option>`;
+          });
+        }
+        if(datalistNombre) {
+          datalistNombre.innerHTML = "";
+          window.todosLosTerceros.forEach(t => {
+            datalistNombre.innerHTML += `<option value="${String(t.nombre || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;')}">${t.nit || ''} (${t.tipo || ''})</option>`;
+          });
+        }
       }
 
       if(datalistRef && window.todasLasReferencias) {
