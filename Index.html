@@ -492,7 +492,7 @@
                   <th>Unidad</th>
                   <th>Val. Unit. ($)</th>
                   <th>Val. Total ($)</th>
-                  <th style="width: 80px; text-align: center;">Acciones</th>
+                  <th style="width: 100px; text-align: center;">Acciones</th>
                 </tr>
               </thead>
               <tbody id="grid-items-body">
@@ -986,9 +986,17 @@
       window.renderizarTablaKardex(filtrados);
     };
 
-    window.duplicarRegistroConsecutivo = function(consecutivo) {
-      // Buscar todos los items asociados a este consecutivo
-      const registrosEncontrados = (window.todosLosRegistros || []).filter(r => r.consecutivo === consecutivo);
+    window.duplicarRegistroConsecutivo = function(consecutivo, indiceDirecto = -1) {
+      let registrosEncontrados = [];
+      
+      if (indiceDirecto >= 0 && window.todosLosRegistros[indiceDirecto]) {
+        const baseItem = window.todosLosRegistros[indiceDirecto];
+        // Filtrar exclusivamente los items del mismo documento o registro especifico
+        registrosEncontrados = window.todosLosRegistros.filter(r => r.consecutivo === consecutivo && r.tercero === baseItem.tercero && r.fecha === baseItem.fecha);
+      } else {
+        registrosEncontrados = (window.todosLosRegistros || []).filter(r => r.consecutivo === consecutivo);
+      }
+
       if(!registrosEncontrados || registrosEncontrados.length === 0) {
         alert("No se encontró el registro para copiar.");
         return;
@@ -1004,7 +1012,7 @@
       document.getElementById('doc-nombre-tercero').value = base.tercero || "";
       document.getElementById('doc-observaciones').value = base.observaciones ? `Copia de ${consecutivo}: ${base.observaciones}` : `Copia de ${consecutivo}`;
 
-      // Cargar los ítems al grid
+      // Cargar exactamente los ítems correspondientes a este consecutivo
       itemsGrid = [];
       registrosEncontrados.forEach(r => {
         itemsGrid.push({
@@ -1032,7 +1040,7 @@
       }
 
       tabla.innerHTML = "";
-      lista.forEach((item) => {
+      lista.forEach((item, index) => {
         const tipoBadge = item.esRecogida ? `<span style="background: #e0f2fe; color: #0369a1; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;"><i class="fa-solid fa-truck-pickup"></i> Recogida</span>`
                         : item.tipo == "16" ? `<span style="background: #dcfce7; color: #15803d; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">16 - Entrada</span>`
                         : item.tipo == "30" ? `<span style="background: #fef3c7; color: #b45309; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">30 - Salida Compras</span>`
@@ -1040,7 +1048,7 @@
 
         const btnPdf = item.esRecogida ? `<button onclick="window.reimprimirPDF('${item.consecutivo}')" style="background: #0284c7; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer; font-weight: bold;" title="Descargar PDF"><i class="fa-solid fa-file-pdf"></i> PDF</button>` : ``;
 
-        const btnCopiar = `<button onclick="window.duplicarRegistroConsecutivo('${item.consecutivo}')" style="background: #8b5cf6; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer; font-weight: bold; margin-left: 0.2rem;" title="Copiar este registro con nuevo consecutivo"><i class="fa-solid fa-copy"></i> Copiar</button>`;
+        const btnCopiar = `<button onclick="window.duplicarRegistroConsecutivo('${item.consecutivo}', ${index})" style="background: #8b5cf6; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer; font-weight: bold; margin-left: 0.2rem;" title="Copiar este registro con nuevo consecutivo"><i class="fa-solid fa-copy"></i> Copiar</button>`;
 
         tabla.innerHTML += `
           <tr style="border-bottom: 1px solid #f3f4f6;">
@@ -1106,6 +1114,7 @@
         document.getElementById(id).value = '';
       });
       document.getElementById('item-unidad').value = 'Kilos';
+      cancelarEdicionGrid();
       renderizarGrid();
 
       document.getElementById('modal-titulo').textContent = esRecogida ? 'Registrar Recogida / Comprobante de Entrega' : 'Registrar Documento / Movimiento en Lote';
@@ -1119,6 +1128,7 @@
       const m = document.getElementById('modal-inventario');
       m.classList.add('hidden');
       m.style.display = 'none';
+      cancelarEdicionGrid();
     }
 
     function abrirModalNuevaReferencia() { document.getElementById('modal-referencia').classList.remove('hidden'); }
@@ -1145,12 +1155,48 @@
         return;
       }
 
-      itemsGrid.push({ referencia: ref, unidad: unidad, cantidad: cant, valUnit: valUnit, valor: valTotal });
+      if (editIndex >= 0) {
+        itemsGrid[editIndex] = { referencia: ref, unidad: unidad, cantidad: cant, valUnit: valUnit, valor: valTotal };
+        cancelarEdicionGrid();
+      } else {
+        itemsGrid.push({ referencia: ref, unidad: unidad, cantidad: cant, valUnit: valUnit, valor: valTotal });
+      }
+
       document.getElementById('item-referencia').value = "";
       document.getElementById('item-cantidad').value = "";
       document.getElementById('item-val-unit').value = "";
       document.getElementById('item-val-total').value = "";
       renderizarGrid();
+    }
+
+    function editarItemGrid(idx) {
+      if (idx < 0 || idx >= itemsGrid.length) return;
+      editIndex = idx;
+      const item = itemsGrid[idx];
+
+      document.getElementById('item-referencia').value = item.referencia;
+      document.getElementById('item-unidad').value = item.unidad || 'Kilos';
+      document.getElementById('item-cantidad').value = item.cantidad;
+      document.getElementById('item-val-unit').value = item.valUnit;
+      document.getElementById('item-val-total').value = item.valor.toFixed(2);
+
+      document.getElementById('titulo-form-item').innerText = "EDITAR PRODUCTO DEL GRID";
+      document.getElementById('btn-agregar-item').innerText = "Guardar Cambios del Ítem";
+      document.getElementById('btn-agregar-item').style.backgroundColor = "#f59e0b";
+      document.getElementById('btn-cancelar-edit').classList.remove('hidden');
+    }
+
+    function cancelarEdicionGrid() {
+      editIndex = -1;
+      document.getElementById('item-referencia').value = "";
+      document.getElementById('item-cantidad').value = "";
+      document.getElementById('item-val-unit').value = "";
+      document.getElementById('item-val-total').value = "";
+
+      document.getElementById('titulo-form-item').innerText = "AGREGAR PRODUCTO AL GRID";
+      document.getElementById('btn-agregar-item').innerText = "+ Agregar Ítem al Grid";
+      document.getElementById('btn-agregar-item').style.backgroundColor = "#0284c7";
+      document.getElementById('btn-cancelar-edit').classList.add('hidden');
     }
 
     function renderizarGrid() {
@@ -1176,8 +1222,9 @@
             <td style="padding: 0.5rem; font-size: 0.75rem; color: #64748b;">${item.unidad}</td>
             <td style="padding: 0.5rem; color: #3b82f6;">$${item.valUnit.toLocaleString('es-CO')}</td>
             <td style="padding: 0.5rem; color: #059669; font-weight: bold;">$${item.valor.toLocaleString('es-CO')}</td>
-            <td style="padding: 0.5rem; text-align: center;">
-              <button onclick="itemsGrid.splice(${idx},1); renderizarGrid();" style="color: #dc2626; border: none; background: none; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
+            <td style="padding: 0.5rem; text-align: center; white-space: nowrap;">
+              <button onclick="editarItemGrid(${idx})" style="color: #f59e0b; border: none; background: none; cursor: pointer; margin-right: 0.4rem;" title="Editar este ítem"><i class="fa-solid fa-pen-to-square"></i></button>
+              <button onclick="itemsGrid.splice(${idx},1); if(editIndex===${idx}) cancelarEdicionGrid(); renderizarGrid();" style="color: #dc2626; border: none; background: none; cursor: pointer;" title="Eliminar ítem"><i class="fa-solid fa-trash"></i></button>
             </td>
           </tr>
         `;
