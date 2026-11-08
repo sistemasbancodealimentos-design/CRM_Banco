@@ -344,7 +344,7 @@
       <div id="modal-referencia" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 60; padding: 1rem;">
         <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; max-width: 500px; width: 100%;">
           <h3 style="font-size: 1.25rem; font-weight: bold; color: #1e3a8a; margin-bottom: 1rem;">Agregar Nueva Referencia / Producto</h3>
-          <form id="form-nueva-referencia" style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <form id="form-nueva-referencia" onsubmit="guardarNuevaReferenciaDirecta(event)" style="display: flex; flex-direction: column; gap: 0.75rem;">
             <div><label style="font-size: 0.75rem; font-weight: bold;">Código de Producto</label><input type="text" id="ref-codigo" required placeholder="Ej. REF-0102" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;"></div>
             <div><label style="font-size: 0.75rem; font-weight: bold;">Descripción / Nombre</label><input type="text" id="ref-nombre" required placeholder="Ej. Arroz Blanco Grano Entero 1Kg" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;"></div>
             <div>
@@ -370,7 +370,7 @@
       <div id="modal-tercero" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 60; padding: 1rem;">
         <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; max-width: 500px; width: 100%;">
           <h3 style="font-size: 1.25rem; font-weight: bold; color: #6b21a8; margin-bottom: 1rem;">Agregar Tercero (Donante / Beneficiario)</h3>
-          <form id="form-nuevo-tercero" style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <form id="form-nuevo-tercero" onsubmit="guardarNuevoTerceroDirecto(event)" style="display: flex; flex-direction: column; gap: 0.75rem;">
             <div><label style="font-size: 0.75rem; font-weight: bold;">NIT o Cédula</label><input type="text" id="tercero-nit" required placeholder="Ej. 800123456" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;"></div>
             <div><label style="font-size: 0.75rem; font-weight: bold;">Razón Social / Nombre Completo</label><input type="text" id="tercero-nombre" required placeholder="Ej. Grupo Éxito / Fundación ABC" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;"></div>
             <div>
@@ -482,11 +482,12 @@
             </div>
           </div>
 
-          <!-- TABLA GRID DE ARTÍCULOS -->
+          <!-- TABLA GRID DE ARTÍCULOS CON NUMERACIÓN DE ÍTEMS -->
           <div style="border: 1px solid #e2e8f0; border-radius: 0.5rem; overflow: hidden; margin-bottom: 1rem;">
             <table class="table-custom">
               <thead>
                 <tr>
+                  <th style="width: 40px; text-align: center;">#</th>
                   <th>Referencia</th>
                   <th>Cant.</th>
                   <th>Unidad</th>
@@ -497,7 +498,7 @@
               </thead>
               <tbody id="grid-items-body">
                 <tr>
-                  <td colspan="6" style="text-align: center; color: #9ca3af; padding: 1rem;">No hay ítems agregados al grid aún.</td>
+                  <td colspan="7" style="text-align: center; color: #9ca3af; padding: 1rem;">No hay ítems agregados al grid aún.</td>
                 </tr>
               </tbody>
             </table>
@@ -517,10 +518,13 @@
             <p style="font-size: 0.7rem; color: #64748b; margin-top: 0.25rem;">Firme en el recuadro superior usando el ratón o pantalla táctil.</p>
           </div>
 
-          <!-- RESUMEN Y BOTONES -->
+          <!-- RESUMEN COMPLETO Y BOTONES (INCLUYE TOTAL CANTIDAD Y TOTAL KILOS) -->
           <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e5e7eb; padding-top: 0.75rem;">
-            <div style="font-size: 0.85rem; font-weight: bold; color: #1e3a8a;">
-              Total Ítems: <span id="resumen-cant-items">0</span> | Total Valor: $<span id="resumen-valor-total">0</span>
+            <div style="font-size: 0.85rem; font-weight: bold; color: #1e3a8a; display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
+              <span>Ítems: <span id="resumen-cant-items" style="color: #0284c7;">0</span></span>
+              <span>| Total Cantidad: <span id="resumen-total-cantidad" style="color: #16a34a;">0</span></span>
+              <span>| Total Kilos: <span id="resumen-total-kilos" style="color: #d97706;">0.00 Kg</span></span>
+              <span>| Total Valor: $<span id="resumen-valor-total" style="color: #059669;">0</span></span>
             </div>
             <div style="display: flex; gap: 0.5rem;">
               <button type="button" onclick="cerrarModalInventario()" style="padding: 0.5rem 1rem; background: #e5e7eb; color: #374151; border-radius: 0.375rem; border: none; cursor: pointer; font-size: 0.85rem;">Cancelar</button>
@@ -745,7 +749,8 @@
         }
 
         // Tabla de Productos
-        const tableData = listaItems.map(item => [
+        const tableData = listaItems.map((item, idx) => [
+          idx + 1,
           item.referencia,
           item.cantidad,
           item.unidad || 'Kg',
@@ -758,11 +763,11 @@
         if (doc.autoTable) {
           doc.autoTable({
             startY: obs ? 62 : 57,
-            head: [['Referencia / Insumo', 'Cantidad', 'Unidad', 'Val. Unitario', 'Val. Total']],
+            head: [['#', 'Referencia / Insumo', 'Cantidad', 'Unidad', 'Val. Unitario', 'Val. Total']],
             body: tableData,
             theme: 'striped',
             headStyles: { fillColor: [2, 132, 199] },
-            foot: [['', '', '', 'TOTAL:', `$${totalVal.toLocaleString('es-CO')}`]],
+            foot: [['', '', '', '', 'TOTAL:', `$${totalVal.toLocaleString('es-CO')}`]],
             footStyles: { fillColor: [241, 245, 249], textColor: [15, 23, 42], fontStyle: 'bold' }
           });
         }
@@ -898,7 +903,47 @@
       });
     };
 
-    // Functions for Editing Referencias and Terceros
+    // Funciones para Crear Referencias y Terceros sin recargar ni romper sesión
+    window.guardarNuevaReferenciaDirecta = function(e) {
+      if (e) e.preventDefault();
+      const codigo = document.getElementById('ref-codigo').value.trim();
+      const nombre = document.getElementById('ref-nombre').value.trim();
+      const unidad = document.getElementById('ref-unidad').value;
+      const precio = parseFloat(document.getElementById('ref-precio').value) || 0;
+
+      if (!codigo || !nombre) return;
+
+      const nuevaRef = { codigo: codigo, nombre: nombre, unidad: unidad, precio: precio };
+      window.todasLasReferencias.unshift(nuevaRef);
+
+      window.renderizarTablaReferenciasUI();
+      window.popularDatalistsGlobales();
+
+      document.getElementById('form-nueva-referencia').reset();
+      cerrarModalNuevaReferencia();
+      alert("✅ Nueva referencia agregada correctamente al catálogo.");
+    };
+
+    window.guardarNuevoTerceroDirecto = function(e) {
+      if (e) e.preventDefault();
+      const nit = document.getElementById('tercero-nit').value.trim();
+      const nombre = document.getElementById('tercero-nombre').value.trim();
+      const tipo = document.getElementById('tercero-tipo').value;
+      const telefono = document.getElementById('tercero-telefono').value.trim();
+
+      if (!nit || !nombre) return;
+
+      const nuevoTerc = { nit: nit, nombre: nombre, tipo: tipo, telefono: telefono || '3000000000' };
+      window.todosLosTerceros.unshift(nuevoTerc);
+
+      window.renderizarTablaTercerosUI();
+      window.popularDatalistsGlobales();
+
+      document.getElementById('form-nuevo-tercero').reset();
+      cerrarModalNuevoTercero();
+      alert("✅ Nuevo tercero agregado correctamente al directorio.");
+    };
+
     window.abrirModalEditarReferencia = function(codigo) {
       const ref = window.todasLasReferencias.find(r => String(r.codigo) === String(codigo));
       if(!ref) return;
@@ -991,7 +1036,6 @@
       
       if (indiceDirecto >= 0 && window.todosLosRegistros[indiceDirecto]) {
         const baseItem = window.todosLosRegistros[indiceDirecto];
-        // Filtrar exclusivamente los items del mismo documento o registro especifico
         registrosEncontrados = window.todosLosRegistros.filter(r => r.consecutivo === consecutivo && r.tercero === baseItem.tercero && r.fecha === baseItem.fecha);
       } else {
         registrosEncontrados = (window.todosLosRegistros || []).filter(r => r.consecutivo === consecutivo);
@@ -1005,14 +1049,12 @@
       const base = registrosEncontrados[0];
       abrirModalInventario(base.esRecogida || false);
 
-      // Cargar datos del encabezado
       document.getElementById('doc-tipo').value = base.tipo || "16";
       document.getElementById('doc-bodega').value = base.bodega || "PA";
       document.getElementById('doc-nit').value = base.nit || "";
       document.getElementById('doc-nombre-tercero').value = base.tercero || "";
       document.getElementById('doc-observaciones').value = base.observaciones ? `Copia de ${consecutivo}: ${base.observaciones}` : `Copia de ${consecutivo}`;
 
-      // Cargar exactamente los ítems correspondientes a este consecutivo
       itemsGrid = [];
       registrosEncontrados.forEach(r => {
         itemsGrid.push({
@@ -1103,7 +1145,6 @@
       const numCons = Math.floor(100000 + Math.random() * 900000);
       document.getElementById('doc-consecutivo').value = (esRecogida ? "REC-" : "DOC-") + numCons;
       
-      // Fecha por defecto formateada para datetime-local
       const ahora = new Date();
       ahora.setMinutes(ahora.getMinutes() - ahora.getTimezoneOffset());
       document.getElementById('doc-fecha').value = ahora.toISOString().slice(0, 16);
@@ -1202,23 +1243,40 @@
     function renderizarGrid() {
       const body = document.getElementById('grid-items-body');
       const cantSpan = document.getElementById('resumen-cant-items');
+      const totalCantSpan = document.getElementById('resumen-total-cantidad');
+      const totalKgSpan = document.getElementById('resumen-total-kilos');
       const valSpan = document.getElementById('resumen-valor-total');
 
       if(itemsGrid.length === 0) {
-        body.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #9ca3af; padding: 1rem;">No hay ítems agregados al grid aún.</td></tr>`;
+        body.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #9ca3af; padding: 1rem;">No hay ítems agregados al grid aún.</td></tr>`;
         cantSpan.innerText = "0";
+        if(totalCantSpan) totalCantSpan.innerText = "0";
+        if(totalKgSpan) totalKgSpan.innerText = "0.00 Kg";
         valSpan.innerText = "0";
         return;
       }
 
       body.innerHTML = "";
       let totalVal = 0;
+      let totalCantidad = 0;
+      let totalKilos = 0;
+
       itemsGrid.forEach((item, idx) => {
         totalVal += item.valor;
+        totalCantidad += Number(item.cantidad || 0);
+
+        const undLower = String(item.unidad || '').toLowerCase();
+        if (undLower.includes('kilo') || undLower.includes('kg')) {
+          totalKilos += Number(item.cantidad || 0);
+        } else if (undLower.includes('gramo') || undLower.includes('gr')) {
+          totalKilos += Number(item.cantidad || 0) / 1000;
+        }
+
         body.innerHTML += `
           <tr>
+            <td style="padding: 0.5rem; font-weight: bold; text-align: center; color: #64748b;">${idx + 1}</td>
             <td style="padding: 0.5rem; font-weight: 600;">${item.referencia}</td>
-            <td style="padding: 0.5rem;">${item.cantidad}</td>
+            <td style="padding: 0.5rem; font-weight: bold;">${item.cantidad}</td>
             <td style="padding: 0.5rem; font-size: 0.75rem; color: #64748b;">${item.unidad}</td>
             <td style="padding: 0.5rem; color: #3b82f6;">$${item.valUnit.toLocaleString('es-CO')}</td>
             <td style="padding: 0.5rem; color: #059669; font-weight: bold;">$${item.valor.toLocaleString('es-CO')}</td>
@@ -1231,6 +1289,8 @@
       });
 
       cantSpan.innerText = itemsGrid.length;
+      if(totalCantSpan) totalCantSpan.innerText = totalCantidad.toLocaleString('es-CO');
+      if(totalKgSpan) totalKgSpan.innerText = `${totalKilos.toFixed(2)} Kg`;
       valSpan.innerText = totalVal.toLocaleString('es-CO');
     }
   </script>
