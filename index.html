@@ -3,211 +3,607 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Banco de Alimentos - Sistema de Gestión</title>
+  <title>Banco de Alimentos - ERP & Analítica FUBAM</title>
+
+  <!-- Tailwind CSS & FontAwesome -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    body { background-color: #0b62a4; }
-    .sidebar { background-color: #f8fafc; }
-    .card-hover:hover { transform: translateY(-2px); transition: all 0.2s ease; }
-  </style>
+  
+  <!-- Estilos Custom -->
+  <link rel="stylesheet" href="css/styles.css">
+
+  <!-- Librerías Pesadas con Carga Diferida (defer) para máxima velocidad de inicio -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer></script>
+
+  <!-- Archivos de Datos Maestros -->
+  <script src="js/data/terceros.js"></script>
+  <script src="js/data/referencias.js"></script>
+  <script src="js/data/kardex-inicial.js"></script>
+
+  <!-- Módulos de la Aplicación -->
+  <script src="js/modules/ui.js" defer></script>
+  <script src="js/modules/pdf-firma.js" defer></script>
+  <script src="js/modules/reportes.js" defer></script>
+  <script src="js/modules/kardex.js" defer></script>
 </head>
-<body class="flex h-screen overflow-hidden font-sans">
+<body>
 
-  <!-- BARRA LATERAL (SIDEBAR) -->
-  <aside class="w-64 sidebar border-r border-gray-200 flex flex-col justify-between overflow-y-auto">
-    <div>
-      <!-- Logo y Título Sidebar -->
-      <div class="p-4 border-b border-gray-200 flex items-center justify-between">
-        <div class="flex items-center space-x-2">
-          <i class="fa-solid font-bold text-blue-600 text-xl flex items-center">
-            <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-          </i>
-          <span class="font-bold text-blue-700 text-lg">Banco de Alimentos</span>
+  <!-- DATALISTS GLOBALES AUTOCOMPLETADOS -->
+  <datalist id="lista-terceros-nit"></datalist>
+  <datalist id="lista-terceros-nombre"></datalist>
+  <datalist id="lista-referencias-global"></datalist>
+
+  <!-- 1. PANTALLA DE INICIO DE SESIÓN (LOGIN INSTANTÁNEO) -->
+  <div id="pantalla-login">
+    <div class="login-card">
+      <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">
+        <img src="logo.png" alt="Logo" style="height: 2.5rem; width: auto; display: block; margin: 0 auto;" onerror="this.src='https://via.placeholder.com/150?text=FUBAM'">
+      </div>
+      <h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a; margin-bottom: 0.25rem;">Banco de Alimentos</h2>
+      <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 1.5rem;">ERP & Dashboard FUBAM</p>
+
+      <form id="form-login" style="display: flex; flex-direction: column; gap: 1rem; text-align: left;">
+        <div>
+          <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">CORREO ELECTRÓNICO</label>
+          <input type="email" id="login-email" required placeholder="usuario@bancodealimentos.org" style="width: 100%; border: 1px solid #d1d5db; padding: 0.6rem; border-radius: 0.375rem; margin-top: 0.25rem; font-size: 0.875rem;">
         </div>
-        <button class="text-gray-400 hover:text-gray-600">&times;</button>
-      </div>
+        <div>
+          <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">CONTRASEÑA</label>
+          <input type="password" id="login-password" required placeholder="••••••••" style="width: 100%; border: 1px solid #d1d5db; padding: 0.6rem; border-radius: 0.375rem; margin-top: 0.25rem; font-size: 0.875rem;">
+        </div>
 
-      <!-- Menú Módulos Principales -->
-      <div class="p-3">
-        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-2">MÓDULOS PRINCIPALES</p>
-        <nav class="space-y-1 text-sm text-gray-600">
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-chart-line text-purple-500 w-5"></i><span>Análisis</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-square-check text-green-500 w-5"></i><span>Calidad</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-box text-amber-600 w-5"></i><span>Inventario</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-users text-purple-600 w-5"></i><span>CRM</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-file-lines text-purple-300 w-5"></i><span>Documentos</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-receipt text-pink-500 w-5"></i><span>Recaudos</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-user-tie text-blue-500 w-5"></i><span>Personal</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-truck-fast text-red-400 w-5"></i><span>Despacho</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-city text-cyan-600 w-5"></i><span>Proveedores</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-inbox text-blue-400 w-5"></i><span>Recepción</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-tags text-green-400 w-5"></i><span>Referencias</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-arrows-rotate text-blue-500 w-5"></i><span>Traslados</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-seedling text-emerald-500 w-5"></i><span>Ambiental</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-wrench text-gray-400 w-5"></i><span>Mantenimiento</span></a>
-          <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-shield-halved text-red-500 w-5"></i><span>SST</span></a>
-        </nav>
-      </div>
+        <p id="login-error" style="color: #dc2626; font-size: 0.75rem; display: none; text-align: center;"></p>
+
+        <button type="submit" style="background-color: #2563eb; color: white; padding: 0.75rem; border-radius: 0.375rem; font-weight: bold; border: none; cursor: pointer; font-size: 0.875rem; margin-top: 0.5rem;">
+          Iniciar Sesión
+        </button>
+      </form>
     </div>
-    <div class="p-4 border-t border-gray-200 text-xs text-gray-400">
-      SISTEMA
-    </div>
-  </aside>
+  </div>
 
-  <!-- CONTENIDO PRINCIPAL -->
-  <main class="flex-1 flex flex-col justify-between p-8 overflow-y-auto">
-    <div>
-      <!-- Título Superior -->
-      <h1 class="text-3xl font-bold text-white mb-8">Banco de Alimentos - Sistema de Gestión</h1>
+  <!-- 2. APLICACIÓN PRINCIPAL -->
+  <div id="app-principal" class="hidden">
 
-      <!-- Tarjetas Destacadas Superiores -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div class="bg-white p-5 rounded-xl shadow card-hover">
-          <h3 class="font-bold text-blue-900 text-base mb-1">Gestión de Inventario</h3>
-          <p class="text-xs text-gray-500">Control completo del inventario de alimentos</p>
-        </div>
-        <div class="bg-white p-5 rounded-xl shadow card-hover">
-          <h3 class="font-bold text-blue-900 text-base mb-1">Análisis de Datos</h3>
-          <p class="text-xs text-gray-500">Reportes y métricas en tiempo real</p>
-        </div>
-        <div class="bg-white p-5 rounded-xl shadow card-hover">
-          <h3 class="font-bold text-blue-900 text-base mb-1">CRM</h3>
-          <p class="text-xs text-gray-500">Gestión de donantes y beneficiarios</p>
-        </div>
-        <div class="bg-white p-5 rounded-xl shadow card-hover">
-          <h3 class="font-bold text-blue-900 text-base mb-1">Logística</h3>
-          <p class="text-xs text-gray-500">Control de envíos y recepciones</p>
-        </div>
-      </div>
-
-      <!-- Sección Módulos Disponibles -->
-      <h2 class="text-xl font-bold text-white mb-4">Módulos Disponibles</h2>
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        
-        <!-- Tarjeta Análisis -->
-        <div class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-chart-line text-purple-500 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Análisis</h3>
-            <p class="text-xs text-gray-400">Métricas de rendimiento del banco</p>
-          </div>
-        </div>
-
-        <!-- Tarjeta Calidad -->
-        <div class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-square-check text-green-500 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Calidad</h3>
-            <p class="text-xs text-gray-400">Control de calidad de productos</p>
-          </div>
-        </div>
-
-        <!-- Tarjeta Inventario -->
-        <div class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-box text-amber-600 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Inventario</h3>
-            <p class="text-xs text-gray-400">Carga masiva de inventario</p>
-          </div>
-        </div>
-
-        <!-- Tarjeta CRM -->
-        <div class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-users text-purple-600 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">CRM</h3>
-            <p class="text-xs text-gray-400">Gestión de relaciones con clientes</p>
-          </div>
-        </div>
-
-        <!-- Tarjeta Documentos -->
-        <div class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-file-lines text-purple-300 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Documentos</h3>
-            <p class="text-xs text-gray-400">Gestión documental</p>
-          </div>
-        </div>
-
-        <!-- Tarjeta Recaudos -->
-        <div class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-truck-arrow-right text-red-400 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Recaudos</h3>
-            <p class="text-xs text-gray-400">Control de recaudos y entregas</p>
-          </div>
-        </div>
-
-        <!-- Tarjeta Personal -->
-        <div class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-user text-purple-800 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Personal</h3>
-            <p class="text-xs text-gray-400">Administración de personal</p>
-          </div>
-        </div>
-
-        <!-- Tarjeta Despacho -->
-        <div class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-box-archive text-blue-500 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Despacho</h3>
-            <p class="text-xs text-gray-400">Despacho de productos</p>
-          </div>
-        </div>
-
-        <!-- Tarjeta Proveedores -->
-        <div class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-city text-cyan-600 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Proveedores</h3>
-            <p class="text-xs text-gray-400">Gestión de proveedores</p>
-          </div>
-        </div>
-
-        <!-- Tarjeta Recepción -->
-        <div class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-inbox text-blue-400 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Recepción</h3>
-            <p class="text-xs text-gray-400">Recepción de donaciones</p>
-          </div>
-        </div>
-
-        <!-- Tarjeta Referencias -->
-        <div class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-layer-group text-green-400 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Referencias</h3>
-            <p class="text-xs text-gray-400">Referencias del sistema</p>
-          </div>
-        </div>
-
-        <!-- Tarjeta Traslados -->
-        <div class="bg-white p-5 rounded-xl shadow card-hover flex flex-col justify-between">
-          <i class="fa-solid fa-arrows-rotate text-blue-500 text-3xl mb-3"></i>
-          <div>
-            <h3 class="font-bold text-blue-900 text-base">Traslados</h3>
-            <p class="text-xs text-gray-400">Control de traslados</p>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Pie de página -->
-    <footer class="mt-8 text-xs text-blue-200 flex justify-between items-center">
+    <!-- BARRA LATERAL (SIDEBAR) -->
+    <aside class="w-64 sidebar border-r border-gray-200 flex flex-col justify-between overflow-y-auto">
       <div>
-        <p>© 2026 Banco de Alimentos de Medellín</p>
-        <p class="text-blue-300 font-semibold">Sistema de Gestión Integral</p>
+        <div class="p-4 border-b border-gray-200 flex items-center justify-between" style="padding: 1rem; border-bottom: 1px solid #e2e8f0;">
+          <div class="flex items-center space-x-2">
+            <img src="logo.png" alt="ERP FUBAM" class="h-6 w-auto" onerror="this.src='https://via.placeholder.com/30?text=FB'"/>
+            <span class="font-bold text-blue-700 text-lg">Banco de Alimentos</span>
+          </div>
+        </div>
+
+        <div class="p-3">
+          <p style="font-size: 0.7rem; color: #94a3b8; font-weight: bold; margin-bottom: 0.5rem; padding: 0 0.5rem;">MÓDULOS PRINCIPALES</p>
+          <nav class="space-y-1 text-sm text-gray-600">
+            <button onclick="mostrarSeccion('dashboard')" class="nav-btn"><i class="fa-solid fa-house text-blue-600 w-5"></i><span>Inicio / Tablero</span></button>
+            <button onclick="mostrarSeccion('reportes')" class="nav-btn"><i class="fa-solid fa-chart-line text-emerald-600 w-5"></i><span style="font-weight: bold; color: #059669;">Reportes / KPIs Analítica</span></button>
+            <button onclick="mostrarSeccion('inventario')" class="nav-btn"><i class="fa-solid fa-box text-amber-600 w-5"></i><span style="font-weight: bold; color: #b45309;">Inventario (Kárdex)</span></button>
+            <button onclick="mostrarSeccion('referencias')" class="nav-btn"><i class="fa-solid fa-tags text-green-500 w-5"></i><span style="font-weight: bold; color: #15803d;">Referencias (106)</span></button>
+            <button onclick="mostrarSeccion('terceros')" class="nav-btn"><i class="fa-solid fa-users text-purple-600 w-5"></i><span style="font-weight: bold; color: #6b21a8;">Terceros (445)</span></button>
+            <button onclick="mostrarSeccion('crm')" class="nav-btn"><i class="fa-solid fa-hand-holding-heart text-pink-500 w-5"></i><span>CRM Donantes</span></button>
+            <button onclick="mostrarSeccion('despacho')" class="nav-btn"><i class="fa-solid fa-truck-fast text-red-400 w-5"></i><span>Despacho</span></button>
+            <button onclick="mostrarSeccion('recepcion')" class="nav-btn"><i class="fa-solid fa-inbox text-blue-400 w-5"></i><span>Recepción</span></button>
+          </nav>
+        </div>
       </div>
-      <div class="text-right">
-        <span class="font-bold text-sm block">Banco Arquidiocesano</span>
-        <span class="text-xs text-blue-300">DE ALIMENTOS DE MEDELLÍN</span>
+
+      <!-- BOTÓN CERRAR SESIÓN -->
+      <div style="padding: 1rem; border-top: 1px solid #e2e8f0; font-size: 0.75rem; color: #94a3b8;">
+        <p id="user-display" style="font-weight: bold; color: #334155; margin-bottom: 0.5rem; word-break: break-all;"></p>
+        <button id="btn-logout" style="width: 100%; padding: 0.4rem; background-color: #fee2e2; color: #dc2626; border-radius: 0.25rem; font-weight: bold; border: none; cursor: pointer;">
+          <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+        </button>
       </div>
-    </footer>
-  </main>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main>
+      <!-- VISTA INICIAL: DASHBOARD -->
+      <div id="seccion-dashboard">
+        <h1 style="font-size: 1.875rem; font-weight: bold; color: white; margin-bottom: 2rem;">Banco de Alimentos - Sistema de Gestión</h1>
+
+        <div class="grid-cards" style="margin-bottom: 2rem;">
+          <div onclick="mostrarSeccion('reportes')" class="card-mod" style="border-left: 4px solid #10b981;">
+            <h3 style="font-weight: bold; color: #059669; font-size: 1rem;"><i class="fa-solid fa-chart-pie"></i> Reportes & KPIs</h3>
+            <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">Panel de Analítica, Gráficos y Excel</p>
+          </div>
+          <div onclick="mostrarSeccion('inventario')" class="card-mod">
+            <h3 style="font-weight: bold; color: #1e3a8a; font-size: 1rem;"><i class="fa-solid fa-boxes-stacked"></i> Gestión de Inventario</h3>
+            <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">Control de entradas, salidas y recogidas</p>
+          </div>
+          <div onclick="mostrarSeccion('referencias')" class="card-mod">
+            <h3 style="font-weight: bold; color: #15803d; font-size: 1rem;"><i class="fa-solid fa-tags"></i> Catálogo de Referencias (106)</h3>
+            <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">Cargado desde Inventario.xlsx</p>
+          </div>
+          <div onclick="mostrarSeccion('terceros')" class="card-mod">
+            <h3 style="font-weight: bold; color: #6b21a8; font-size: 1rem;"><i class="fa-solid fa-users"></i> Donantes & Beneficiarios (445)</h3>
+            <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">Directorio maestro con NITs reales</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- MÓDULO REPORTES & ANALÍTICA -->
+      <div id="seccion-reportes" class="hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <div>
+            <h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Módulo de Analítica y Reportes Ejecutivos</h1>
+            <p style="color: #bfdbfe; font-size: 0.875rem;">Métricas de desempeño e indicadores calculados desde el Kárdex oficial</p>
+          </div>
+          <div class="actions-bar" style="display: flex; gap: 0.5rem;">
+            <button onclick="exportarExcelKpis()" style="background-color: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fa-solid fa-file-excel"></i> Descargar Excel
+            </button>
+            <button onclick="window.print()" style="background-color: #ef4444; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fa-solid fa-file-pdf"></i> Imprimir Reporte PDF
+            </button>
+          </div>
+        </div>
+
+        <!-- TARJETAS KPI -->
+        <div class="kpi-grid">
+          <div class="kpi-card success">
+            <p>Total Entradas (Recogidas / Compras)</p>
+            <h2 id="kpi-entradas-val">$0</h2>
+            <span id="kpi-entradas-cant" style="font-size: 0.75rem; color: #10b981; font-weight: 600;">0 registros</span>
+          </div>
+          <div class="kpi-card warning">
+            <p>Total Salidas (Atención / Entregas)</p>
+            <h2 id="kpi-salidas-val">$0</h2>
+            <span id="kpi-salidas-cant" style="font-size: 0.75rem; color: #f59e0b; font-weight: 600;">0 registros</span>
+          </div>
+          <div class="kpi-card info">
+            <p>Consumo Interno / Operativo</p>
+            <h2 id="kpi-consumo-val">$0</h2>
+            <span id="kpi-consumo-cant" style="font-size: 0.75rem; color: #06b6d4; font-weight: 600;">0 ítems</span>
+          </div>
+          <div class="kpi-card">
+            <p>Valor Estimado del Stock</p>
+            <h2 id="kpi-stock-val">$0</h2>
+            <span style="font-size: 0.75rem; color: #2563eb; font-weight: 600;">En Bodegas PA, SA y SC</span>
+          </div>
+        </div>
+
+        <!-- GRÁFICOS ANALÍTICOS -->
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h3><i class="fa-solid fa-chart-line text-blue-600"></i> Tendencia de Transacciones (Entradas vs Salidas)</h3>
+            <canvas id="chartTendenciaApp" height="200"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3><i class="fa-solid fa-chart-pie text-emerald-600"></i> Distribución de Insumos por Categoría</h3>
+            <canvas id="chartCategoriasApp" height="200"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- MÓDULO INVENTARIO (KÁRDEX) -->
+      <div id="seccion-inventario" class="hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <div>
+            <h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Módulo de Inventario (Kárdex)</h1>
+            <p style="color: #bfdbfe; font-size: 0.875rem;">Conectado con los 445 Terceros y 106 Referencias del Excel FUBAM</p>
+          </div>
+          <div style="display: flex; gap: 0.75rem;">
+            <button onclick="abrirModalInventario(false)" style="background-color: #22c55e; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fa-solid fa-plus"></i> Registrar Documento
+            </button>
+            <button onclick="abrirModalInventario(true)" style="background-color: #0284c7; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.15);">
+              <i class="fa-solid fa-signature"></i> Recogida (Firma & PDF)
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white" style="border-radius: 0.75rem 0.75rem 0 0; padding: 1rem; border-bottom: 1px solid #e2e8f0; display: flex; gap: 1rem; align-items: center;">
+          <div style="flex: 1; position: relative;">
+            <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 0.75rem; top: 0.65rem; color: #94a3b8;"></i>
+            <input type="text" id="filtro-kardex" onkeyup="filtrarTablaKardex()" placeholder="Buscar por Consecutivo, Tercero, NIT, Referencia u Observaciones..." style="width: 100%; border: 1px solid #cbd5e1; padding: 0.5rem 0.5rem 0.5rem 2.2rem; border-radius: 0.375rem; font-size: 0.85rem;">
+          </div>
+          <span id="contador-registros" style="font-size: 0.8rem; font-weight: bold; color: #475569;">Cargando...</span>
+        </div>
+
+        <div class="bg-white" style="border-radius: 0 0 0.75rem 0.75rem; padding: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-height: 70vh; overflow-y: auto;">
+          <table class="table-custom">
+            <thead>
+              <tr>
+                <th>Doc #</th>
+                <th>Tipo Tx</th>
+                <th>NIT</th>
+                <th>Nombre Tercero</th>
+                <th>Bodega</th>
+                <th>Referencia</th>
+                <th>Cantidad</th>
+                <th>Unidad</th>
+                <th>Val. Unit. ($)</th>
+                <th>Val. Total ($)</th>
+                <th>Fecha</th>
+                <th>Observaciones</th>
+                <th style="text-align: center;">Acción</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-inventario">
+              <tr>
+                <td colspan="13" style="text-align: center; padding: 1.5rem; color: #9ca3af;">Cargando kárdex...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- MÓDULO MAESTRO DE REFERENCIAS -->
+      <div id="seccion-referencias" class="hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <div>
+            <h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Catálogo Maestro de Referencias (106)</h1>
+            <p style="color: #bfdbfe; font-size: 0.875rem;">Importado desde la base de datos de Inventario FUBAM</p>
+          </div>
+          <button onclick="abrirModalNuevaReferencia()" style="background-color: #16a34a; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-plus"></i> Nueva Referencia
+          </button>
+        </div>
+
+        <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-height: 75vh; overflow-y: auto;">
+          <table class="table-custom">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Descripción / Nombre</th>
+                <th>Categoría</th>
+                <th>Unidad por Defecto</th>
+                <th>Precio Ref. ($)</th>
+                <th style="text-align: center;">Estado</th>
+                <th style="text-align: center;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-referencias-body">
+              <tr><td colspan="7" style="text-align: center; padding: 1rem; color: #9ca3af;">Cargando referencias...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- MÓDULO MAESTRO DE TERCEROS -->
+      <div id="seccion-terceros" class="hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <div>
+            <h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Directorio de Donantes y Beneficiarios (445)</h1>
+            <p style="color: #bfdbfe; font-size: 0.875rem;">Todos los NITs y Razones Sociales importados del Excel</p>
+          </div>
+          <button onclick="abrirModalNuevoTercero()" style="background-color: #9333ea; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-user-plus"></i> Nuevo Tercero / Donante
+          </button>
+        </div>
+
+        <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-height: 75vh; overflow-y: auto;">
+          <table class="table-custom">
+            <thead>
+              <tr>
+                <th>NIT / Cédula</th>
+                <th>Razón Social / Nombre</th>
+                <th>Tipo Tercero</th>
+                <th>Teléfono / Celular</th>
+                <th>Ciudad</th>
+                <th style="text-align: center;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-terceros-body">
+              <tr><td colspan="6" style="text-align: center; padding: 1rem; color: #9ca3af;">Cargando directorio de terceros...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- EMBEBIDOS -->
+      <div id="seccion-crm" class="hidden" style="height: 100%;">
+        <iframe src="https://gestion-donantes-fubam.web.app/" style="width: 100%; height: calc(100vh - 180px); border: none; border-radius: 0.75rem;"></iframe>
+      </div>
+      <div id="seccion-despacho" class="hidden" style="height: 100%;">
+        <iframe src="https://turnos-fubam.netlify.app/" style="width: 100%; height: calc(100vh - 180px); border: none; border-radius: 0.75rem;"></iframe>
+      </div>
+      <div id="seccion-recepcion" class="hidden" style="height: 100%;">
+        <iframe src="https://turnos-fubam.netlify.app/" style="width: 100%; height: calc(100vh - 180px); border: none; border-radius: 0.75rem;"></iframe>
+      </div>
+
+      <!-- MODALES Y FORMULARIOS -->
+      <!-- MODAL NUEVA REFERENCIA -->
+      <div id="modal-referencia" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 60; padding: 1rem;">
+        <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; max-width: 500px; width: 100%;">
+          <h3 style="font-size: 1.25rem; font-weight: bold; color: #1e3a8a; margin-bottom: 1rem;">Agregar Nueva Referencia / Producto</h3>
+          <form id="form-nueva-referencia" onsubmit="guardarNuevaReferenciaDirecta(event)" style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div><label style="font-size: 0.75rem; font-weight: bold;">Código de Producto</label><input type="text" id="ref-codigo" required placeholder="Ej. REF-0102" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;"></div>
+            <div><label style="font-size: 0.75rem; font-weight: bold;">Descripción / Nombre</label><input type="text" id="ref-nombre" required placeholder="Ej. Arroz Blanco Grano Entero 1Kg" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;"></div>
+            <div>
+              <label style="font-size: 0.75rem; font-weight: bold;">Unidad de Medida</label>
+              <select id="ref-unidad" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;">
+                <option value="Kilos">Kilos (Kg)</option>
+                <option value="Gramos">Gramos (Gr)</option>
+                <option value="Unidades">Unidades</option>
+                <option value="Litros">Litros</option>
+                <option value="Cajas">Cajas</option>
+              </select>
+            </div>
+            <div><label style="font-size: 0.75rem; font-weight: bold;">Precio Estimado / Referencia ($)</label><input type="number" id="ref-precio" placeholder="4500" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;"></div>
+            <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
+              <button type="button" onclick="cerrarModalNuevaReferencia()" style="padding: 0.5rem 1rem; background: #e2e8f0; border-radius: 0.25rem; border: none; cursor: pointer;">Cancelar</button>
+              <button type="submit" style="padding: 0.5rem 1rem; background: #16a34a; color: white; font-weight: bold; border-radius: 0.25rem; border: none; cursor: pointer;">Guardar Referencia</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- MODAL NUEVO TERCERO -->
+      <div id="modal-tercero" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 60; padding: 1rem;">
+        <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; max-width: 500px; width: 100%;">
+          <h3 style="font-size: 1.25rem; font-weight: bold; color: #6b21a8; margin-bottom: 1rem;">Agregar Tercero (Donante / Beneficiario)</h3>
+          <form id="form-nuevo-tercero" onsubmit="guardarNuevoTerceroDirecto(event)" style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div><label style="font-size: 0.75rem; font-weight: bold;">NIT o Cédula</label><input type="text" id="tercero-nit" required placeholder="Ej. 800123456" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;"></div>
+            <div><label style="font-size: 0.75rem; font-weight: bold;">Razón Social / Nombre Completo</label><input type="text" id="tercero-nombre" required placeholder="Ej. Grupo Éxito / Fundación ABC" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;"></div>
+            <div>
+              <label style="font-size: 0.75rem; font-weight: bold;">Tipo de Tercero</label>
+              <select id="tercero-tipo" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;">
+                <option value="Donante">Donante</option>
+                <option value="Beneficiario">Beneficiario / Fundación</option>
+                <option value="Proveedor">Proveedor</option>
+              </select>
+            </div>
+            <div><label style="font-size: 0.75rem; font-weight: bold;">Teléfono de Contacto</label><input type="text" id="tercero-telefono" placeholder="Ej. 3001234567" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;"></div>
+            <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
+              <button type="button" onclick="cerrarModalNuevoTercero()" style="padding: 0.5rem 1rem; background: #e2e8f0; border-radius: 0.25rem; border: none; cursor: pointer;">Cancelar</button>
+              <button type="submit" style="padding: 0.5rem 1rem; background: #9333ea; color: white; font-weight: bold; border-radius: 0.25rem; border: none; cursor: pointer;">Guardar Tercero</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- MODAL GRID UNIFICADO INVENTARIO -->
+      <div id="modal-inventario" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 1rem;">
+        <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; max-width: 900px; width: 100%; max-height: 94vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.75rem; margin-bottom: 1rem;">
+            <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937;" id="modal-titulo">Registrar Documento / Movimiento en Lote</h3>
+            <button onclick="cerrarModalInventario()" style="background: none; border: none; font-size: 1.25rem; color: #6b7280; cursor: pointer;">&times;</button>
+          </div>
+          
+          <!-- ENCABEZADO DOC -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 0.75rem; background: #f8fafc; padding: 1rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; margin-bottom: 1rem;">
+            <div>
+              <label style="font-size: 0.7rem; font-weight: bold; color: #374151; display: block;">CONSECUTIVO DOC #</label>
+              <input type="text" id="doc-consecutivo" readonly style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.85rem; font-weight: bold; background: #e2e8f0; color: #1e3a8a;">
+            </div>
+            <div>
+              <label style="font-size: 0.7rem; font-weight: bold; color: #374151; display: block;">FECHA (MODIFICABLE)</label>
+              <input type="datetime-local" id="doc-fecha" style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.85rem; background: #ffffff;">
+            </div>
+            <div>
+              <label style="font-size: 0.7rem; font-weight: bold; color: #374151; display: block;">TIPO TRANSACCIÓN</label>
+              <select id="doc-tipo" style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.85rem;">
+                <option value="16">16 - Entrada</option>
+                <option value="30">30 - Salida - Compras</option>
+                <option value="17">17 - Salidas Generales</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size: 0.7rem; font-weight: bold; color: #374151; display: block;">BODEGA</label>
+              <select id="doc-bodega" style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.85rem;">
+                <option value="PA">PA - Compras</option>
+                <option value="SA">SA - Con certificado</option>
+                <option value="SC">SC - Sin certificado</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size: 0.7rem; font-weight: bold; color: #374151; display: block;">NIT / CÉDULA TERCERO</label>
+              <input type="text" id="doc-nit" placeholder="Escriba NIT..." list="lista-terceros-nit" onchange="autocompletarTerceroPorNit(this.value)" style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.85rem; background: #fef08a;">
+            </div>
+            <div style="grid-column: span 5;">
+              <label style="font-size: 0.7rem; font-weight: bold; color: #374151; display: block;">NOMBRE TERCERO (SELECCIONABLE DESDE EXCEL)</label>
+              <input type="text" id="doc-nombre-tercero" list="lista-terceros-nombre" onchange="autocompletarNitPorNombre(this.value)" placeholder="Buscar en los 445 donantes/beneficiarios..." style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.85rem; font-weight: 600; color: #1e3a8a;">
+            </div>
+            <div style="grid-column: span 5;">
+              <label style="font-size: 0.7rem; font-weight: bold; color: #374151; display: block;">OBSERVACIONES / NOTAS</label>
+              <input type="text" id="doc-observaciones" placeholder="Ingrese cualquier detalle adicional u observación del movimiento..." style="width: 100%; border: 1px solid #d1d5db; padding: 0.4rem; border-radius: 0.25rem; margin-top: 0.25rem; font-size: 0.85rem; background: #ffffff;">
+            </div>
+          </div>
+
+          <!-- FORMULARIO ÍTEM GRID -->
+          <div style="border: 1px solid #e2e8f0; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem; background: #ffffff;">
+            <p style="font-size: 0.75rem; font-weight: bold; color: #1e3a8a; margin-bottom: 0.5rem;" id="titulo-form-item">AGREGAR PRODUCTO AL GRID</p>
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 0.5rem;">
+              <div>
+                <label style="font-size: 0.7rem; color: #6b7280;">REFERENCIA (SELECCIONABLE DESDE EXCEL)</label>
+                <input type="text" id="item-referencia" list="lista-referencias-global" onchange="autocompletarItemRef(this.value)" placeholder="Buscar en las 106 referencias..." style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem; font-size: 0.85rem; background: #fef08a;">
+              </div>
+              <div>
+                <label style="font-size: 0.7rem; color: #6b7280;">UNIDAD MEDIDA</label>
+                <select id="item-unidad" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem; font-size: 0.85rem;">
+                  <option value="Kilos">Kilos (Kg)</option>
+                  <option value="Gramos">Gramos (Gr)</option>
+                  <option value="Unidades">Unidades</option>
+                  <option value="Litros">Litros</option>
+                  <option value="Cajas">Cajas</option>
+                  <option value="Cubetas">Cubetas/Pistas</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size: 0.7rem; color: #6b7280;">CANTIDAD</label>
+                <input type="number" step="0.01" id="item-cantidad" oninput="calcularValorTotalItem()" placeholder="10.00" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem; font-size: 0.85rem;">
+              </div>
+              <div>
+                <label style="font-size: 0.7rem; color: #6b7280;">VAL. UNITARIO ($)</label>
+                <input type="number" step="0.01" id="item-val-unit" oninput="calcularValorTotalItem()" placeholder="15000" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem; font-size: 0.85rem;">
+              </div>
+              <div>
+                <label style="font-size: 0.7rem; color: #6b7280;">VAL. TOTAL ($)</label>
+                <input type="number" step="0.01" id="item-val-total" readonly placeholder="Calculado..." style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem; font-size: 0.85rem; background: #f1f5f9; font-weight: bold; color: #059669;">
+              </div>
+            </div>
+            
+            <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+              <button type="button" id="btn-agregar-item" onclick="agregarItemAlGrid()" style="flex: 1; background: #0284c7; color: white; border: none; padding: 0.4rem; border-radius: 0.25rem; font-size: 0.85rem; font-weight: bold; cursor: pointer;">
+                + Agregar Ítem al Grid
+              </button>
+              <button type="button" id="btn-cancelar-edit" onclick="cancelarEdicionGrid()" class="hidden" style="background: #94a3b8; color: white; border: none; padding: 0.4rem 1rem; border-radius: 0.25rem; font-size: 0.85rem; font-weight: bold; cursor: pointer;">
+                Cancelar Edición
+              </button>
+            </div>
+          </div>
+
+          <!-- TABLA GRID DE ARTÍCULOS -->
+          <div style="border: 1px solid #e2e8f0; border-radius: 0.5rem; overflow: hidden; margin-bottom: 1rem;">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th style="width: 40px; text-align: center;">#</th>
+                  <th>Referencia</th>
+                  <th>Cant.</th>
+                  <th>Unidad</th>
+                  <th>Val. Unit. ($)</th>
+                  <th>Val. Total ($)</th>
+                  <th style="width: 100px; text-align: center;">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="grid-items-body">
+                <tr>
+                  <td colspan="7" style="text-align: center; color: #9ca3af; padding: 1rem;">No hay ítems agregados al grid aún.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- BLOQUE DE FIRMA -->
+          <div id="bloque-firma-recogida" class="hidden" style="border: 1px solid #e2e8f0; padding: 1rem; border-radius: 0.5rem; background: #f8fafc; margin-bottom: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <label style="font-size: 0.8rem; font-weight: bold; color: #1e3a8a;">
+                <i class="fa-solid fa-pen-nib"></i> FIRMA DE RECIBIDO / ENTREGA
+              </label>
+              <button type="button" onclick="limpiarFirma()" style="background: #fee2e2; color: #dc2626; border: none; padding: 0.25rem 0.6rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: bold; cursor: pointer;">
+                <i class="fa-solid fa-eraser"></i> Limpiar Firma
+              </button>
+            </div>
+            <canvas id="canvas-firma" width="820" height="130"></canvas>
+            <p style="font-size: 0.7rem; color: #64748b; margin-top: 0.25rem;">Firme en el recuadro superior usando el ratón o pantalla táctil.</p>
+          </div>
+
+          <!-- RESUMEN Y BOTONES -->
+          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e5e7eb; padding-top: 0.75rem;">
+            <div style="font-size: 0.85rem; font-weight: bold; color: #1e3a8a; display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
+              <span>Ítems: <span id="resumen-cant-items" style="color: #0284c7;">0</span></span>
+              <span>| Total Cantidad: <span id="resumen-total-cantidad" style="color: #16a34a;">0</span></span>
+              <span>| Total Kilos: <span id="resumen-total-kilos" style="color: #d97706;">0.00 Kg</span></span>
+              <span>| Total Valor: $<span id="resumen-valor-total" style="color: #059669;">0</span></span>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+              <button type="button" onclick="cerrarModalInventario()" style="padding: 0.5rem 1rem; background: #e5e7eb; color: #374151; border-radius: 0.375rem; border: none; cursor: pointer; font-size: 0.85rem;">Cancelar</button>
+              
+              <button type="button" id="btn-guardar-kardex-std" onclick="guardarGridEnKardex(false)" style="padding: 0.5rem 1rem; background: #2563eb; color: white; font-weight: bold; border-radius: 0.375rem; border: none; cursor: pointer; font-size: 0.85rem;">
+                Guardar en Kárdex
+              </button>
+              
+              <button type="button" id="btn-guardar-kardex-recogida" onclick="guardarGridEnKardex(true)" class="hidden" style="padding: 0.5rem 1rem; background: #0284c7; color: white; font-weight: bold; border-radius: 0.375rem; border: none; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
+                <i class="fa-solid fa-file-pdf"></i> Guardar y Generar PDF
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- MODAL EDITAR REFERENCIA -->
+      <div id="modal-editar-referencia" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 70; padding: 1rem;">
+        <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; max-width: 500px; width: 100%;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h3 style="font-size: 1.25rem; font-weight: bold; color: #15803d;"><i class="fa-solid fa-pen-to-square"></i> Editar Referencia</h3>
+            <button onclick="cerrarModalEditarReferencia()" style="background: none; border: none; font-size: 1.25rem; color: #6b7280; cursor: pointer;">&times;</button>
+          </div>
+          <form id="form-editar-referencia" style="display: flex; flex-direction: column; gap: 0.75rem;" onsubmit="guardarEdicionReferencia(event)">
+            <input type="hidden" id="edit-ref-codigo-original">
+            <div>
+              <label style="font-size: 0.75rem; font-weight: bold;">Código de Producto</label>
+              <input type="text" id="edit-ref-codigo" disabled style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem; background-color: #f1f5f9; color: #64748b; font-weight: bold;">
+            </div>
+            <div>
+              <label style="font-size: 0.75rem; font-weight: bold;">Descripción / Nombre del Producto</label>
+              <input type="text" id="edit-ref-nombre" required style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;">
+            </div>
+            <div>
+              <label style="font-size: 0.75rem; font-weight: bold;">Precio de Referencia ($ COP)</label>
+              <input type="number" step="0.01" id="edit-ref-precio" required style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;">
+            </div>
+            <div>
+              <label style="font-size: 0.75rem; font-weight: bold;">Unidad de Medida</label>
+              <select id="edit-ref-unidad" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;">
+                <option value="Kilos">Kilos (Kg)</option>
+                <option value="Gramos">Gramos (Gr)</option>
+                <option value="Unidades">Unidades (Und)</option>
+                <option value="Litros">Litros (Lt)</option>
+                <option value="Paquetes">Paquetes</option>
+                <option value="Cajas">Cajas</option>
+              </select>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
+              <button type="button" onclick="cerrarModalEditarReferencia()" style="padding: 0.5rem 1rem; background: #e2e8f0; border-radius: 0.25rem; border: none; cursor: pointer; font-weight: 600;">Cancelar</button>
+              <button type="submit" style="padding: 0.5rem 1rem; background: #16a34a; color: white; border-radius: 0.25rem; font-weight: bold; border: none; cursor: pointer;">Guardar Cambios</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- MODAL EDITAR TERCERO -->
+      <div id="modal-editar-tercero" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 70; padding: 1rem;">
+        <div class="bg-white" style="border-radius: 0.75rem; padding: 1.5rem; max-width: 500px; width: 100%;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h3 style="font-size: 1.25rem; font-weight: bold; color: #6b21a8;"><i class="fa-solid fa-pen-to-square"></i> Editar Tercero / Razón Social</h3>
+            <button onclick="cerrarModalEditarTercero()" style="background: none; border: none; font-size: 1.25rem; color: #6b7280; cursor: pointer;">&times;</button>
+          </div>
+          <form id="form-editar-tercero" style="display: flex; flex-direction: column; gap: 0.75rem;" onsubmit="guardarEdicionTercero(event)">
+            <input type="hidden" id="edit-tercero-nit-original">
+            <div>
+              <label style="font-size: 0.75rem; font-weight: bold;">NIT o Cédula</label>
+              <input type="text" id="edit-tercero-nit" disabled style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem; background-color: #f1f5f9; color: #64748b; font-weight: bold;">
+            </div>
+            <div>
+              <label style="font-size: 0.75rem; font-weight: bold;">Razón Social / Nombre Completo</label>
+              <input type="text" id="edit-tercero-nombre" required style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;">
+            </div>
+            <div>
+              <label style="font-size: 0.75rem; font-weight: bold;">Tipo de Tercero</label>
+              <select id="edit-tercero-tipo" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;">
+                <option value="Donante">Donante</option>
+                <option value="Beneficiario">Beneficiario / Fundación</option>
+                <option value="Proveedor">Proveedor</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size: 0.75rem; font-weight: bold;">Teléfono / Celular de Contacto</label>
+              <input type="text" id="edit-tercero-telefono" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.4rem; border-radius: 0.25rem;">
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
+              <button type="button" onclick="cerrarModalEditarTercero()" style="padding: 0.5rem 1rem; background: #e2e8f0; border-radius: 0.25rem; border: none; cursor: pointer; font-weight: 600;">Cancelar</button>
+              <button type="submit" style="padding: 0.5rem 1rem; background: #9333ea; color: white; border-radius: 0.25rem; font-weight: bold; border: none; cursor: pointer;">Guardar Cambios</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- PIE DE PÁGINA -->
+      <footer style="margin-top: 2rem; font-size: 0.75rem; color: #bfdbfe; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <p>© 2026 Banco de Alimentos de Medellín</p>
+          <p style="color: #93c5fd; font-weight: 600;">Sistema de Gestión Integral ERP & Dashboard</p>
+        </div>
+        <div style="text-align: right;">
+          <span style="font-weight: bold; font-size: 0.875rem; display: block;">Banco Arquidiocesano</span>
+          <span style="font-size: 0.75rem; color: #93c5fd;">DE ALIMENTOS DE MEDELLÍN</span>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <!-- FIREBASE ENGINE & APP SCRIPT -->
+  <script type="module" src="js/app.js"></script>
 
 </body>
 </html>
