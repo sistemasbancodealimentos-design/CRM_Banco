@@ -69,7 +69,7 @@ window.cargarInventario = async function() {
   } catch (error) {
     console.log("Usando Kárdex pre-cargado");
   }
-  window.renderizarTablaKardex(window.todosLosRegistros);
+  window.cargarInicialPorFechaMesActual();
   window.actualizarModuloReportes();
 };
 
@@ -121,7 +121,7 @@ window.guardarGridEnKardex = async function(esRecogida) {
   }
 
   cerrarModalInventario();
-  window.renderizarTablaKardex(window.todosLosRegistros);
+  window.cargarInicialPorFechaMesActual();
   window.actualizarModuloReportes();
-  alert("¡Guardado correctamente en Kárdex!");
+  alert("¡Documento guardado correctamente en Kárdex!");
 };

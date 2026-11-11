@@ -12,7 +12,7 @@
   <!-- Estilos Custom -->
   <link rel="stylesheet" href="css/styles.css">
 
-  <!-- Librerías Pesadas con Carga Diferida (defer) para máxima velocidad de inicio -->
+  <!-- Librerías Pesadas con Carga Diferida (defer) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
@@ -36,7 +36,7 @@
   <datalist id="lista-terceros-nombre"></datalist>
   <datalist id="lista-referencias-global"></datalist>
 
-  <!-- 1. PANTALLA DE INICIO DE SESIÓN (LOGIN INSTANTÁNEO) -->
+  <!-- 1. PANTALLA DE INICIO DE SESIÓN -->
   <div id="pantalla-login">
     <div class="login-card">
       <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">
@@ -181,14 +181,31 @@
         </div>
       </div>
 
-      <!-- MÓDULO INVENTARIO (KÁRDEX) -->
+      <!-- MÓDULO INVENTARIO (KÁRDEX CON AGRUPACIÓN Y CONSULTA DE FECHAS) -->
       <div id="seccion-inventario" class="hidden">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
           <div>
             <h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Módulo de Inventario (Kárdex)</h1>
-            <p style="color: #bfdbfe; font-size: 0.875rem;">Conectado con los 445 Terceros y 106 Referencias del Excel FUBAM</p>
+            <p style="color: #bfdbfe; font-size: 0.875rem;">Conectado con los 445 Terceros y 106 Referencias FUBAM</p>
           </div>
-          <div style="display: flex; gap: 0.75rem;">
+
+          <!-- BARRA SUPERIOR CON FILTRO DE FECHA Y BOTONES REGISTRAR -->
+          <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+            <!-- CONSULTA POR RANGO DE FECHAS -->
+            <div style="display: flex; align-items: center; gap: 0.4rem; background: rgba(255, 255, 255, 0.15); padding: 0.4rem 0.75rem; border-radius: 0.5rem; backdrop-filter: blur(4px); border: 1px solid rgba(255, 255, 255, 0.25);">
+              <i class="fa-solid fa-calendar-days" style="color: white; font-size: 0.9rem;"></i>
+              <span style="color: white; font-size: 0.75rem; font-weight: bold;">Desde:</span>
+              <input type="date" id="filtro-fecha-inicio" style="border: none; padding: 0.25rem 0.4rem; border-radius: 0.25rem; font-size: 0.8rem; outline: none; background: #ffffff;">
+              <span style="color: white; font-size: 0.75rem; font-weight: bold;">Hasta:</span>
+              <input type="date" id="filtro-fecha-fin" style="border: none; padding: 0.25rem 0.4rem; border-radius: 0.25rem; font-size: 0.8rem; outline: none; background: #ffffff;">
+              <button onclick="consultarPorRangoFechas()" style="background-color: #f59e0b; color: white; padding: 0.3rem 0.6rem; border-radius: 0.25rem; font-weight: bold; border: none; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; gap: 0.3rem;">
+                <i class="fa-solid fa-filter"></i> Consultar
+              </button>
+              <button onclick="restablecerFiltroFechas()" style="background: transparent; color: white; border: none; font-size: 0.75rem; cursor: pointer; text-decoration: underline;" title="Ver mes actual">
+                Limpiar
+              </button>
+            </div>
+
             <button onclick="abrirModalInventario(false)" style="background-color: #22c55e; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
               <i class="fa-solid fa-plus"></i> Registrar Documento
             </button>
@@ -215,10 +232,8 @@
                 <th>NIT</th>
                 <th>Nombre Tercero</th>
                 <th>Bodega</th>
-                <th>Referencia</th>
-                <th>Cantidad</th>
-                <th>Unidad</th>
-                <th>Val. Unit. ($)</th>
+                <th>Referencias (Productos)</th>
+                <th>Cant. Total</th>
                 <th>Val. Total ($)</th>
                 <th>Fecha</th>
                 <th>Observaciones</th>
@@ -227,7 +242,7 @@
             </thead>
             <tbody id="tabla-inventario">
               <tr>
-                <td colspan="13" style="text-align: center; padding: 1.5rem; color: #9ca3af;">Cargando kárdex...</td>
+                <td colspan="11" style="text-align: center; padding: 1.5rem; color: #9ca3af;">Cargando kárdex...</td>
               </tr>
             </tbody>
           </table>
