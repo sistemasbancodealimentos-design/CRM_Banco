@@ -6,7 +6,7 @@
   <title>Banco de Alimentos - ERP & Analítica FUBAM</title>
 
   <!-- Tailwind CSS & FontAwesome -->
-  <script type="text/javascript" src="https://ff.kes.v2.scr.kaspersky-labs.com/7EA5E9BB-55E1-4C31-9C21-4943DDFED2E4/main.js?attr=mksFyWcBd2bLRmmXGoooVil4Sfe7asGEPZ1XiN2VVwChgWJVk3LaftKlmRiLgVNCFMtYgcvaNJmOpQ9mJhF8_NmTwqp7SQ18ms0pohH9TlRn41GV0Z6yW4z2VpkKeUECGAzp98IsFwBuib44h6n4L4ti0wYgdHfU1ConMLmPWvJTdl3lNI_y4JxE0jOSNsC5ngPxffw5gVLpvLxIOYemd3guJYYpR1BcHWwMgkgs-CX4tlfMvkwIUcSQEKKuzoSIiyK_VfAMSkuk-W6NJT5IbLoYD6VvziuoxPOlVvZ3sYqNwWXHSzBGkKh5p52c3pXn" charset="UTF-8"></script><script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <!-- Estilos Custom -->
@@ -183,27 +183,12 @@
 
       <!-- MÓDULO INVENTARIO (KÁRDEX) -->
       <div id="seccion-inventario" class="hidden">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
           <div>
             <h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Módulo de Inventario (Kárdex)</h1>
             <p style="color: #bfdbfe; font-size: 0.875rem;">Conectado con los 445 Terceros y 106 Referencias del Excel FUBAM</p>
           </div>
-          <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
-            <!-- CONSULTA POR RANGO DE FECHAS -->
-            <div style="display: flex; align-items: center; gap: 0.4rem; background: rgba(255,255,255,0.15); padding: 0.4rem 0.75rem; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.3);">
-              <i class="fa-solid fa-calendar-days" style="color: white;"></i>
-              <span style="color: white; font-size: 0.75rem; font-weight: bold;">Desde:</span>
-              <input type="date" id="filtro-fecha-inicio" style="border: none; padding: 0.25rem 0.4rem; border-radius: 0.25rem; font-size: 0.8rem;">
-              <span style="color: white; font-size: 0.75rem; font-weight: bold;">Hasta:</span>
-              <input type="date" id="filtro-fecha-fin" style="border: none; padding: 0.25rem 0.4rem; border-radius: 0.25rem; font-size: 0.8rem;">
-              <button onclick="consultarPorRangoFechas()" style="background-color: #f59e0b; color: white; padding: 0.3rem 0.6rem; border-radius: 0.25rem; font-weight: bold; border: none; cursor: pointer; font-size: 0.8rem;">
-                <i class="fa-solid fa-filter"></i> Consultar
-              </button>
-              <button onclick="restablecerFiltroFechas()" style="background: transparent; color: white; border: none; font-size: 0.75rem; cursor: pointer; text-decoration: underline;">
-                Limpiar
-              </button>
-            </div>
-
+          <div style="display: flex; gap: 0.75rem;">
             <button onclick="abrirModalInventario(false)" style="background-color: #22c55e; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
               <i class="fa-solid fa-plus"></i> Registrar Documento
             </button>
@@ -230,8 +215,10 @@
                 <th>NIT</th>
                 <th>Nombre Tercero</th>
                 <th>Bodega</th>
-                <th>Referencias</th>
-                <th>Cant. Total</th>
+                <th>Referencia</th>
+                <th>Cantidad</th>
+                <th>Unidad</th>
+                <th>Val. Unit. ($)</th>
                 <th>Val. Total ($)</th>
                 <th>Fecha</th>
                 <th>Observaciones</th>
@@ -240,7 +227,7 @@
             </thead>
             <tbody id="tabla-inventario">
               <tr>
-                <td colspan="11" style="text-align: center; padding: 1.5rem; color: #9ca3af;">Cargando kárdex...</td>
+                <td colspan="13" style="text-align: center; padding: 1.5rem; color: #9ca3af;">Cargando kárdex...</td>
               </tr>
             </tbody>
           </table>

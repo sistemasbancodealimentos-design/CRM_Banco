@@ -64,15 +64,13 @@ window.cargarInventario = async function() {
         item._id = doc.id;
         firebaseItems.push(item);
       });
-      window.todosLosRegistros = firebaseItems.concat(window.KARDEX_INICIAL_EXCEL || []);
+      window.todosLosRegistros = firebaseItems.concat(window.KARDEX_INICIAL_EXCEL);
     }
   } catch (error) {
     console.log("Usando Kárdex pre-cargado");
   }
-  window.cargarInicialPorFechaMesActual();
-  if (typeof window.actualizarModuloReportes === 'function') {
-    window.actualizarModuloReportes();
-  }
+  window.renderizarTablaKardex(window.todosLosRegistros);
+  window.actualizarModuloReportes();
 };
 
 window.guardarGridEnKardex = async function(esRecogida) {
@@ -123,9 +121,7 @@ window.guardarGridEnKardex = async function(esRecogida) {
   }
 
   cerrarModalInventario();
-  window.cargarInicialPorFechaMesActual();
-  if (typeof window.actualizarModuloReportes === 'function') {
-    window.actualizarModuloReportes();
-  }
+  window.renderizarTablaKardex(window.todosLosRegistros);
+  window.actualizarModuloReportes();
   alert("¡Guardado correctamente en Kárdex!");
 };
