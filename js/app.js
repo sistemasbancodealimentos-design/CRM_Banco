@@ -1,27 +1,7 @@
-// ==========================================
-// MÓDULO PRINCIPAL DE INICIALIZACIÓN Y FIREBASE (js/app.js)
-// ==========================================
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { 
-  getAuth, 
-  signInWithEmailAndPassword, 
-  onAuthStateChanged, 
-  signOut 
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { 
-  getFirestore, 
-  collection, 
-  addDoc, 
-  getDocs, 
-  query, 
-  orderBy,
-  doc,
-  setDoc,
-  updateDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// CONFIGURACIÓN DE FIREBASE
 const firebaseConfig = {
   apiKey: "AIzaSyDummyKeyForFubamApp123456",
   authDomain: "erp-fubam.firebaseapp.com",
@@ -31,19 +11,14 @@ const firebaseConfig = {
   appId: "1:1234567890:web:abcdef123456"
 };
 
-// Inicializar Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Variables globales de estado
 window.todosLosRegistros = [];
 window.todosLosTerceros = window.tercerosIniciales || [];
 window.todasLasReferencias = window.referenciasIniciales || [];
 
-// ==========================================
-// 1. AUTENTICACIÓN Y CONTROL DE SESIÓN
-// ==========================================
 const formLogin = document.getElementById('form-login');
 const pantallaLogin = document.getElementById('pantalla-login');
 const appPrincipal = document.getElementById('app-principal');
@@ -54,16 +29,14 @@ if (formLogin) {
     e.preventDefault();
     const email = document.getElementById('login-email').value.trim();
     const password = document.getElementById('login-password').value;
-
-    loginError.style.display = 'none';
+    if(loginError) loginError.style.display = 'none';
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
-      // Modo contingencia / pruebas locales si no hay conexión a auth
       if (email && password.length >= 4) {
         iniciarSesionLocal(email);
-      } else {
+      } else if(loginError) {
         loginError.innerText = "Credenciales incorrectas. Verifica tu correo y contraseña.";
         loginError.style.display = 'block';
       }
@@ -89,16 +62,11 @@ function iniciarSesionLocal(email) {
 const btnLogout = document.getElementById('btn-logout');
 if (btnLogout) {
   btnLogout.addEventListener('click', async () => {
-    try {
-      await signOut(auth);
-    } catch (e) {}
+    try { await signOut(auth); } catch (e) {}
     window.location.reload();
   });
 }
 
-// ==========================================
-// 2. INICIALIZACIÓN DE DATOS MAESTROS Y KÁRDEX
-// ==========================================
 async function inicializarSistemaERP() {
   cargarDatalistsGlobales();
   if (typeof window.renderizarTablaReferencias === 'function') {
@@ -118,7 +86,7 @@ function cargarDatalistsGlobales() {
   if (dlNit && dlNombre) {
     let htmlNit = "";
     let htmlNombre = "";
-    window.todosLosTerceros.forEach(t => {
+    (window.todosLosTerceros || []).forEach(t => {
       htmlNit += `<option value="${t.nit}">${t.nombre}</option>`;
       htmlNombre += `<option value="${t.nombre}">NIT: ${t.nit}</option>`;
     });
@@ -128,22 +96,16 @@ function cargarDatalistsGlobales() {
 
   if (dlRef) {
     let htmlRef = "";
-    window.todasLasReferencias.forEach(r => {
+    (window.todasLasReferencias || []).forEach(r => {
       htmlRef += `<option value="${r.codigo} - ${r.nombre}">$${Number(r.precio || 0).toLocaleString('es-CO')} / ${r.unidad || 'Kilos'}</option>`;
     });
     dlRef.innerHTML = htmlRef;
   }
 }
 
-// ==========================================
-// 3. CARGA DE INVENTARIO (CARGA INICIAL POR MES ACTUAL)
-// ==========================================
 window.cargarInventario = async function() {
   try {
-    // Cargar base inicial local primero
     let registrosCombinados = [...(window.kardexInicial || [])];
-
-    // Intentar traer registros nuevos guardados en Firestore o LocalStorage
     const guardadosLocal = JSON.parse(localStorage.getItem('fubam_kardex_extra') || '[]');
     registrosCombinados = [...guardadosLocal, ...registrosCombinados];
 
@@ -157,20 +119,16 @@ window.cargarInventario = async function() {
       if (docsFirebase.length > 0) {
         registrosCombinados = [...docsFirebase, ...(window.kardexInicial || [])];
       }
-    } catch (fbErr) {
-      // Si no hay Firebase configurado o sin internet, opera con los datos locales sin fallar
-    }
+    } catch (fbErr) {}
 
     window.todosLosRegistros = registrosCombinados;
 
-    // Mostrar únicamente los registros del mes actual al iniciar
     if (typeof window.cargarInicialPorFechaMesActual === 'function') {
       window.cargarInicialPorFechaMesActual();
     } else if (typeof window.renderizarTablaKardex === 'function') {
       window.renderizarTablaKardex(window.todosLosRegistros);
     }
 
-    // Actualizar KPIs si el módulo de reportes está cargado
     if (typeof window.actualizarKPIsReportes === 'function') {
       window.actualizarKPIsReportes(window.todosLosRegistros);
     }
@@ -180,9 +138,6 @@ window.cargarInventario = async function() {
   }
 };
 
-// ==========================================
-// 4. GUARDAR DOCUMENTO EN LOTE EN EL KÁRDEX
-// ==========================================
 window.guardarGridEnKardex = async function(generarPdf = false) {
   const consecutivo = document.getElementById('doc-consecutivo').value;
   const fechaInput = document.getElementById('doc-fecha').value;
@@ -226,19 +181,14 @@ window.guardarGridEnKardex = async function(generarPdf = false) {
 
     try {
       await addDoc(collection(db, "kardex"), registro);
-    } catch (e) {
-      // Fallback local si no hay conexión
-    }
+    } catch (e) {}
   }
 
-  // Guardar respaldo en localStorage para persistencia inmediata
   const previosLocal = JSON.parse(localStorage.getItem('fubam_kardex_extra') || '[]');
   localStorage.setItem('fubam_kardex_extra', JSON.stringify([...nuevosRegistros, ...previosLocal]));
 
-  // Actualizar memoria global
   window.todosLosRegistros = [...nuevosRegistros, ...window.todosLosRegistros];
 
-  // Si es recogida con firma, disparar generación de PDF
   if (generarPdf && typeof window.generarPDFRecogida === 'function') {
     window.generarPDFRecogida({
       consecutivo,
@@ -252,7 +202,6 @@ window.guardarGridEnKardex = async function(generarPdf = false) {
     });
   }
 
-  // Cerrar modal y refrescar vista mostrando el mes actual agrupado
   if (typeof window.cerrarModalInventario === 'function') {
     window.cerrarModalInventario();
   }
@@ -268,39 +217,4 @@ window.guardarGridEnKardex = async function(generarPdf = false) {
   }
 
   alert(`Documento ${consecutivo} guardado exitosamente (${items.length} ítems consolidados).`);
-};
-
-// ==========================================
-// 5. GUARDAR NUEVAS REFERENCIAS Y TERCEROS
-// ==========================================
-window.guardarNuevaReferenciaDirecta = function(e) {
-  e.preventDefault();
-  const codigo = document.getElementById('ref-codigo').value.trim();
-  const nombre = document.getElementById('ref-nombre').value.trim();
-  const unidad = document.getElementById('ref-unidad').value;
-  const precio = Number(document.getElementById('ref-precio').value) || 0;
-
-  window.todasLasReferencias.unshift({ codigo, nombre, categoria: 'General', unidad, precio, activo: true });
-  cargarDatalistsGlobales();
-  if (typeof window.renderizarTablaReferencias === 'function') {
-    window.renderizarTablaReferencias(window.todasLasReferencias);
-  }
-  if (typeof window.cerrarModalNuevaReferencia === 'function') window.cerrarModalNuevaReferencia();
-  alert("Referencia agregada correctamente.");
-};
-
-window.guardarNuevoTerceroDirecto = function(e) {
-  e.preventDefault();
-  const nit = document.getElementById('tercero-nit').value.trim();
-  const nombre = document.getElementById('tercero-nombre').value.trim();
-  const tipo = document.getElementById('tercero-tipo').value;
-  const telefono = document.getElementById('tercero-telefono').value.trim();
-
-  window.todosLosTerceros.unshift({ nit, nombre, tipo, telefono, ciudad: 'Medellín' });
-  cargarDatalistsGlobales();
-  if (typeof window.renderizarTablaTerceros === 'function') {
-    window.renderizarTablaTerceros(window.todosLosTerceros);
-  }
-  if (typeof window.cerrarModalNuevoTercero === 'function') window.cerrarModalNuevoTercero();
-  alert("Tercero agregado correctamente.");
 };

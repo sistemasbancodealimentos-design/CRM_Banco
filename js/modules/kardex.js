@@ -2,14 +2,13 @@ let itemsGrid = [];
 let editIndex = -1;
 let modoRecogida = false;
 
-// 1. FUNCIÓN DE AGRUPACIÓN POR CONSECUTIVO (Resuelve los registros repetidos)
+// 1. AGRUPACIÓN CONSOLIDADA POR CONSECUTIVO (Un solo registro por documento)
 window.agruparRegistrosPorConsecutivo = function(listaOriginal) {
   if (!listaOriginal || !Array.isArray(listaOriginal)) return [];
   
   const mapa = new Map();
   
   listaOriginal.forEach(item => {
-    // Generar clave única por Consecutivo y Tercero
     const key = `${item.consecutivo || '000000'}_${item.tercero || ''}_${item.fecha ? item.fecha.slice(0,10) : ''}`;
     
     if (!mapa.has(key)) {
@@ -37,9 +36,8 @@ window.agruparRegistrosPorConsecutivo = function(listaOriginal) {
   return Array.from(mapa.values());
 };
 
-// 2. DUPLICAR / COPIAR DOCUMENTO COMPLETO (Carga Pan, Frutas y todos los ítems al modal)
+// 2. COPIAR DOCUMENTO COMPLETO (Trae Pan, Frutas y todos los productos al modal)
 window.duplicarRegistroConsecutivo = function(consecutivo) {
-  // Buscar todos los ítems que pertenecen a ese consecutivo
   const registrosDoc = (window.todosLosRegistros || []).filter(r => r.consecutivo === consecutivo);
 
   if(!registrosDoc || registrosDoc.length === 0) {
@@ -50,14 +48,12 @@ window.duplicarRegistroConsecutivo = function(consecutivo) {
   const base = registrosDoc[0];
   abrirModalInventario(base.esRecogida || false);
 
-  // Copiar datos del encabezado
   document.getElementById('doc-tipo').value = base.tipo || "16";
   document.getElementById('doc-bodega').value = base.bodega || "PA";
   document.getElementById('doc-nit').value = base.nit || "";
   document.getElementById('doc-nombre-tercero').value = base.tercero || "";
   document.getElementById('doc-observaciones').value = base.observaciones ? `Copia de ${consecutivo}: ${base.observaciones}` : `Copia de ${consecutivo}`;
 
-  // Cargar TODOS los productos en el Grid del formulario
   itemsGrid = [];
   registrosDoc.forEach(r => {
     itemsGrid.push({
@@ -72,13 +68,12 @@ window.duplicarRegistroConsecutivo = function(consecutivo) {
   renderizarGrid();
 };
 
-// 3. RENDERIZAR TABLA KÁRDEX (AGRUPADA)
+// 3. RENDERIZADO DE TABLA (MOSTRANDO 1 FILA POR DOCUMENTO CONSOLIDADO)
 window.renderizarTablaKardex = function(lista) {
   const tabla = document.getElementById('tabla-inventario');
   const contador = document.getElementById('contador-registros');
   if(!tabla) return;
 
-  // Agrupar la lista por documento
   const documentosAgrupados = window.agruparRegistrosPorConsecutivo(lista);
 
   if(contador) contador.innerText = `${documentosAgrupados.length} Documentos (${lista.length} Ítems)`;
@@ -95,7 +90,6 @@ window.renderizarTablaKardex = function(lista) {
                     : doc.tipo == "30" ? `<span style="background: #fef3c7; color: #b45309; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">30 - Salida Compras</span>`
                     : `<span style="background: #fee2e2; color: #b91c1c; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">17 - Salida</span>`;
 
-    // Resumen visual si hay más de 1 producto
     let refTexto = "";
     if (doc.items.length === 1) {
       refTexto = doc.items[0].referencia;
@@ -125,7 +119,7 @@ window.renderizarTablaKardex = function(lista) {
   tabla.innerHTML = htmlRows;
 };
 
-// 4. CONSULTA POR RANGO DE FECHAS
+// 4. CONSULTA POR RANGO DE FECHAS (DESDE / HASTA)
 window.consultarPorRangoFechas = function() {
   const inicioStr = document.getElementById('filtro-fecha-inicio').value;
   const finStr = document.getElementById('filtro-fecha-fin').value;
@@ -173,7 +167,7 @@ window.cargarInicialPorFechaMesActual = function() {
 
 window.autocompletarTerceroPorNit = function(val) {
   const nitBuscado = String(val || '').trim();
-  const match = window.todosLosTerceros.find(t => String(t.nit || '').trim() === nitBuscado);
+  const match = (window.todosLosTerceros || []).find(t => String(t.nit || '').trim() === nitBuscado);
   if(match) {
     document.getElementById('doc-nombre-tercero').value = match.nombre;
     document.getElementById('doc-nit').value = match.nit;
@@ -182,7 +176,7 @@ window.autocompletarTerceroPorNit = function(val) {
 
 window.autocompletarNitPorNombre = function(val) {
   const nombreBuscado = String(val || '').trim().toLocaleLowerCase('es');
-  const match = window.todosLosTerceros.find(t => String(t.nombre || '').trim().toLocaleLowerCase('es') === nombreBuscado);
+  const match = (window.todosLosTerceros || []).find(t => String(t.nombre || '').trim().toLocaleLowerCase('es') === nombreBuscado);
   if(match) {
     document.getElementById('doc-nit').value = match.nit;
     document.getElementById('doc-nombre-tercero').value = match.nombre;
@@ -190,7 +184,7 @@ window.autocompletarNitPorNombre = function(val) {
 };
 
 window.autocompletarItemRef = function(val) {
-  const match = window.todasLasReferencias.find(r => val.includes(r.codigo) || val.includes(r.nombre));
+  const match = (window.todasLasReferencias || []).find(r => val.includes(r.codigo) || val.includes(r.nombre));
   if(match) {
     document.getElementById('item-referencia').value = `${match.codigo} - ${match.nombre}`;
     if(match.unidad) document.getElementById('item-unidad').value = match.unidad;
@@ -236,7 +230,8 @@ window.abrirModalInventario = function(esRecogida = false) {
   document.getElementById('doc-tipo').value = "16";
   document.getElementById('doc-bodega').value = "PA";
   ['doc-nit','doc-nombre-tercero','item-referencia','item-cantidad','item-val-unit','item-val-total','doc-observaciones'].forEach(id => {
-    document.getElementById(id).value = '';
+    const el = document.getElementById(id);
+    if(el) el.value = '';
   });
   document.getElementById('item-unidad').value = 'Kilos';
   cancelarEdicionGrid();
