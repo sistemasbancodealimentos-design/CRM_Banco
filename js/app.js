@@ -1,220 +1,131 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDummyKeyForFubamApp123456",
-  authDomain: "erp-fubam.firebaseapp.com",
-  projectId: "erp-fubam",
-  storageBucket: "erp-fubam.appspot.com",
-  messagingSenderId: "1234567890",
-  appId: "1:1234567890:web:abcdef123456"
+  apiKey: "AIzaSyCIY2_rx2mEyn6U5ym-QYhd5xWM78Y2GEM",
+  authDomain: "crmfubam-61e45.firebaseapp.com",
+  projectId: "crmfubam-61e45",
+  storageBucket: "crmfubam-61e45.firebasestorage.app",
+  messagingSenderId: "747233524546",
+  appId: "1:747233524546:web:573402dbb3a1c628e926db",
+  measurementId: "G-L6D908N8EK"
 };
 
 const app = initializeApp(firebaseConfig);
+window.db = getFirestore(app);
 const auth = getAuth(app);
-const db = getFirestore(app);
 
-window.todosLosRegistros = [];
-window.todosLosTerceros = window.tercerosIniciales || [];
-window.todasLasReferencias = window.referenciasIniciales || [];
+onAuthStateChanged(auth, async (user) => {
+  const pantallaLogin = document.getElementById('pantalla-login');
+  const appPrincipal = document.getElementById('app-principal');
+  const userDisplay = document.getElementById('user-display');
 
-const formLogin = document.getElementById('form-login');
-const pantallaLogin = document.getElementById('pantalla-login');
-const appPrincipal = document.getElementById('app-principal');
-const loginError = document.getElementById('login-error');
-
-if (formLogin) {
-  formLogin.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('login-email').value.trim();
-    const password = document.getElementById('login-password').value;
-    if(loginError) loginError.style.display = 'none';
-
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-    } catch (error) {
-      if (email && password.length >= 4) {
-        iniciarSesionLocal(email);
-      } else if(loginError) {
-        loginError.innerText = "Credenciales incorrectas. Verifica tu correo y contraseña.";
-        loginError.style.display = 'block';
-      }
-    }
-  });
-}
-
-onAuthStateChanged(auth, (user) => {
   if (user) {
-    iniciarSesionLocal(user.email);
+    pantallaLogin.classList.add('hidden');
+    appPrincipal.classList.remove('hidden');
+    if(userDisplay) userDisplay.innerText = user.email;
+
+    popularDatalistsGlobales();
+    renderizarTablaReferenciasUI();
+    renderizarTablaTercerosUI();
+
+    await cargarInventario();
+  } else {
+    pantallaLogin.classList.remove('hidden');
+    appPrincipal.classList.add('hidden');
   }
 });
 
-function iniciarSesionLocal(email) {
-  if (pantallaLogin) pantallaLogin.classList.add('hidden');
-  if (appPrincipal) appPrincipal.classList.remove('hidden');
-  const userDisplay = document.getElementById('user-display');
-  if (userDisplay) userDisplay.innerText = email;
+document.getElementById('form-login').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('login-email').value;
+  const pass = document.getElementById('login-password').value;
+  const errorEl = document.getElementById('login-error');
+  errorEl.style.display = 'none';
 
-  inicializarSistemaERP();
-}
-
-const btnLogout = document.getElementById('btn-logout');
-if (btnLogout) {
-  btnLogout.addEventListener('click', async () => {
-    try { await signOut(auth); } catch (e) {}
-    window.location.reload();
-  });
-}
-
-async function inicializarSistemaERP() {
-  cargarDatalistsGlobales();
-  if (typeof window.renderizarTablaReferencias === 'function') {
-    window.renderizarTablaReferencias(window.todasLasReferencias);
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch (error) {
+    errorEl.innerText = "Usuario o contraseña incorrectos.";
+    errorEl.style.display = 'block';
   }
-  if (typeof window.renderizarTablaTerceros === 'function') {
-    window.renderizarTablaTerceros(window.todosLosTerceros);
-  }
-  await cargarInventario();
-}
+});
 
-function cargarDatalistsGlobales() {
-  const dlNit = document.getElementById('lista-terceros-nit');
-  const dlNombre = document.getElementById('lista-terceros-nombre');
-  const dlRef = document.getElementById('lista-referencias-global');
-
-  if (dlNit && dlNombre) {
-    let htmlNit = "";
-    let htmlNombre = "";
-    (window.todosLosTerceros || []).forEach(t => {
-      htmlNit += `<option value="${t.nit}">${t.nombre}</option>`;
-      htmlNombre += `<option value="${t.nombre}">NIT: ${t.nit}</option>`;
-    });
-    dlNit.innerHTML = htmlNit;
-    dlNombre.innerHTML = htmlNombre;
-  }
-
-  if (dlRef) {
-    let htmlRef = "";
-    (window.todasLasReferencias || []).forEach(r => {
-      htmlRef += `<option value="${r.codigo} - ${r.nombre}">$${Number(r.precio || 0).toLocaleString('es-CO')} / ${r.unidad || 'Kilos'}</option>`;
-    });
-    dlRef.innerHTML = htmlRef;
-  }
-}
+document.getElementById('btn-logout').addEventListener('click', () => { signOut(auth); });
 
 window.cargarInventario = async function() {
   try {
-    let registrosCombinados = [...(window.kardexInicial || [])];
-    const guardadosLocal = JSON.parse(localStorage.getItem('fubam_kardex_extra') || '[]');
-    registrosCombinados = [...guardadosLocal, ...registrosCombinados];
-
-    try {
-      const q = query(collection(db, "kardex"), orderBy("fecha", "desc"));
-      const snapshot = await getDocs(q);
-      const docsFirebase = [];
-      snapshot.forEach(docSnap => {
-        docsFirebase.push({ id: docSnap.id, ...docSnap.data() });
+    const querySnapshot = await getDocs(collection(window.db, "inventario"));
+    if(!querySnapshot.empty) {
+      const firebaseItems = [];
+      querySnapshot.forEach((doc) => {
+        const item = doc.data();
+        item._id = doc.id;
+        firebaseItems.push(item);
       });
-      if (docsFirebase.length > 0) {
-        registrosCombinados = [...docsFirebase, ...(window.kardexInicial || [])];
-      }
-    } catch (fbErr) {}
-
-    window.todosLosRegistros = registrosCombinados;
-
-    if (typeof window.cargarInicialPorFechaMesActual === 'function') {
-      window.cargarInicialPorFechaMesActual();
-    } else if (typeof window.renderizarTablaKardex === 'function') {
-      window.renderizarTablaKardex(window.todosLosRegistros);
+      window.todosLosRegistros = firebaseItems.concat(window.KARDEX_INICIAL_EXCEL || []);
     }
-
-    if (typeof window.actualizarKPIsReportes === 'function') {
-      window.actualizarKPIsReportes(window.todosLosRegistros);
-    }
-
   } catch (error) {
-    console.error("Error cargando inventario:", error);
+    console.log("Usando Kárdex pre-cargado");
+  }
+  window.cargarInicialPorFechaMesActual();
+  if (typeof window.actualizarModuloReportes === 'function') {
+    window.actualizarModuloReportes();
   }
 };
 
-window.guardarGridEnKardex = async function(generarPdf = false) {
+window.guardarGridEnKardex = async function(esRecogida) {
   const consecutivo = document.getElementById('doc-consecutivo').value;
-  const fechaInput = document.getElementById('doc-fecha').value;
   const tipo = document.getElementById('doc-tipo').value;
   const bodega = document.getElementById('doc-bodega').value;
-  const nit = document.getElementById('doc-nit').value.trim();
-  const tercero = document.getElementById('doc-nombre-tercero').value.trim();
-  const observaciones = document.getElementById('doc-observaciones').value.trim();
-  const items = typeof window.getItemsGrid === 'function' ? window.getItemsGrid() : [];
+  const nit = document.getElementById('doc-nit').value;
+  const tercero = document.getElementById('doc-nombre-tercero').value;
+  const fechaVal = document.getElementById('doc-fecha').value;
+  const observaciones = document.getElementById('doc-observaciones').value;
+  const itemsGrid = window.getItemsGrid();
 
-  if (!tercero) {
-    alert("Por favor selecciona o escribe el Nombre del Tercero.");
-    return;
-  }
-  if (!items || items.length === 0) {
-    alert("Debes agregar al menos un producto al grid antes de guardar.");
+  if(!itemsGrid || itemsGrid.length === 0) {
+    alert("Debes agregar al menos 1 producto al grid.");
     return;
   }
 
-  const fechaISO = fechaInput ? new Date(fechaInput).toISOString() : new Date().toISOString();
-  const nuevosRegistros = [];
+  const fechaFinal = fechaVal ? new Date(fechaVal).toISOString() : new Date().toISOString();
 
-  for (const item of items) {
-    const registro = {
+  for (let item of itemsGrid) {
+    const nuevoRegistro = {
       consecutivo: consecutivo,
       tipo: tipo,
       bodega: bodega,
       nit: nit || 'N/A',
       tercero: tercero,
       referencia: item.referencia,
-      unidad: item.unidad || 'Kilos',
-      cantidad: Number(item.cantidad),
-      valUnit: Number(item.valUnit),
-      valor: Number(item.valor),
-      fecha: fechaISO,
-      observaciones: observaciones,
-      esRecogida: generarPdf
+      unidad: item.unidad,
+      cantidad: item.cantidad,
+      valUnit: item.valUnit,
+      valor: item.valor,
+      esRecogida: esRecogida,
+      fecha: fechaFinal,
+      observaciones: observaciones || ''
     };
 
-    nuevosRegistros.push(registro);
-
     try {
-      await addDoc(collection(db, "kardex"), registro);
-    } catch (e) {}
+      await addDoc(collection(window.db, "inventario"), nuevoRegistro);
+    } catch(e) { console.log("Guardando en memoria local..."); }
+
+    window.todosLosRegistros.unshift(nuevoRegistro);
   }
 
-  const previosLocal = JSON.parse(localStorage.getItem('fubam_kardex_extra') || '[]');
-  localStorage.setItem('fubam_kardex_extra', JSON.stringify([...nuevosRegistros, ...previosLocal]));
-
-  window.todosLosRegistros = [...nuevosRegistros, ...window.todosLosRegistros];
-
-  if (generarPdf && typeof window.generarPDFRecogida === 'function') {
-    window.generarPDFRecogida({
-      consecutivo,
-      fecha: fechaISO,
-      tipo,
-      bodega,
-      nit,
-      tercero,
-      observaciones,
-      items
-    });
+  if (esRecogida) {
+    const canvasFirma = document.getElementById('canvas-firma');
+    const firmaData = canvasFirma ? canvasFirma.toDataURL('image/png') : null;
+    window.generarPDFComprobante(consecutivo, tipo, bodega, nit, tercero, firmaData, itemsGrid, fechaFinal, observaciones);
   }
 
-  if (typeof window.cerrarModalInventario === 'function') {
-    window.cerrarModalInventario();
+  cerrarModalInventario();
+  window.cargarInicialPorFechaMesActual();
+  if (typeof window.actualizarModuloReportes === 'function') {
+    window.actualizarModuloReportes();
   }
-
-  if (typeof window.cargarInicialPorFechaMesActual === 'function') {
-    window.cargarInicialPorFechaMesActual();
-  } else if (typeof window.renderizarTablaKardex === 'function') {
-    window.renderizarTablaKardex(window.todosLosRegistros);
-  }
-
-  if (typeof window.actualizarKPIsReportes === 'function') {
-    window.actualizarKPIsReportes(window.todosLosRegistros);
-  }
-
-  alert(`Documento ${consecutivo} guardado exitosamente (${items.length} ítems consolidados).`);
+  alert("¡Guardado correctamente en Kárdex!");
 };

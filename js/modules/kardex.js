@@ -2,15 +2,13 @@ let itemsGrid = [];
 let editIndex = -1;
 let modoRecogida = false;
 
-// 1. AGRUPACIÓN CONSOLIDADA POR CONSECUTIVO (Un solo registro por documento)
+// Agrupa por consecutivo para mostrar 1 sola fila por documento (sin repetir Pan y Frutas)
 window.agruparRegistrosPorConsecutivo = function(listaOriginal) {
   if (!listaOriginal || !Array.isArray(listaOriginal)) return [];
-  
   const mapa = new Map();
-  
+
   listaOriginal.forEach(item => {
-    const key = `${item.consecutivo || '000000'}_${item.tercero || ''}_${item.fecha ? item.fecha.slice(0,10) : ''}`;
-    
+    const key = `${item.consecutivo || '000000'}_${item.tercero || ''}_${item.fecha ? item.fecha.slice(0, 10) : ''}`;
     if (!mapa.has(key)) {
       mapa.set(key, {
         consecutivo: item.consecutivo,
@@ -36,96 +34,40 @@ window.agruparRegistrosPorConsecutivo = function(listaOriginal) {
   return Array.from(mapa.values());
 };
 
-// 2. COPIAR DOCUMENTO COMPLETO (Trae Pan, Frutas y todos los productos al modal)
-window.duplicarRegistroConsecutivo = function(consecutivo) {
-  const registrosDoc = (window.todosLosRegistros || []).filter(r => r.consecutivo === consecutivo);
+// Carga inicial: solo registros del mes actual (para no mostrar los 802 históricos de golpe)
+window.cargarInicialPorFechaMesActual = function() {
+  const ahora = new Date();
+  const primerDiaMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
+  const inputInicio = document.getElementById('filtro-fecha-inicio');
+  const inputFin = document.getElementById('filtro-fecha-fin');
 
-  if(!registrosDoc || registrosDoc.length === 0) {
-    alert("No se encontraron ítems para copiar de este documento.");
-    return;
+  if (inputInicio) {
+    const yyyy = primerDiaMes.getFullYear();
+    const mm = String(primerDiaMes.getMonth() + 1).padStart(2, '0');
+    inputInicio.value = `${yyyy}-${mm}-01`;
+  }
+  if (inputFin) {
+    const yyyy = ahora.getFullYear();
+    const mm = String(ahora.getMonth() + 1).padStart(2, '0');
+    const dd = String(ahora.getDate()).padStart(2, '0');
+    inputFin.value = `${yyyy}-${mm}-${dd}`;
   }
 
-  const base = registrosDoc[0];
-  abrirModalInventario(base.esRecogida || false);
-
-  document.getElementById('doc-tipo').value = base.tipo || "16";
-  document.getElementById('doc-bodega').value = base.bodega || "PA";
-  document.getElementById('doc-nit').value = base.nit || "";
-  document.getElementById('doc-nombre-tercero').value = base.tercero || "";
-  document.getElementById('doc-observaciones').value = base.observaciones ? `Copia de ${consecutivo}: ${base.observaciones}` : `Copia de ${consecutivo}`;
-
-  itemsGrid = [];
-  registrosDoc.forEach(r => {
-    itemsGrid.push({
-      referencia: r.referencia,
-      unidad: r.unidad || 'Kilos',
-      cantidad: Number(r.cantidad || 0),
-      valUnit: Number(r.valUnit || 0),
-      valor: Number(r.valor || 0)
-    });
+  const delMes = (window.todosLosRegistros || []).filter(item => {
+    if (!item.fecha) return true;
+    return new Date(item.fecha) >= primerDiaMes;
   });
 
-  renderizarGrid();
+  window.renderizarTablaKardex(delMes.length > 0 ? delMes : (window.todosLosRegistros || []));
 };
 
-// 3. RENDERIZADO DE TABLA (MOSTRANDO 1 FILA POR DOCUMENTO CONSOLIDADO)
-window.renderizarTablaKardex = function(lista) {
-  const tabla = document.getElementById('tabla-inventario');
-  const contador = document.getElementById('contador-registros');
-  if(!tabla) return;
-
-  const documentosAgrupados = window.agruparRegistrosPorConsecutivo(lista);
-
-  if(contador) contador.innerText = `${documentosAgrupados.length} Documentos (${lista.length} Ítems)`;
-
-  if(documentosAgrupados.length === 0) {
-    tabla.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 1.5rem; color: #9ca3af;">No se encontraron registros en el rango seleccionado.</td></tr>`;
-    return;
-  }
-
-  let htmlRows = "";
-  documentosAgrupados.forEach((doc) => {
-    const tipoBadge = doc.esRecogida ? `<span style="background: #e0f2fe; color: #0369a1; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;"><i class="fa-solid fa-truck-pickup"></i> Recogida</span>`
-                    : doc.tipo == "16" ? `<span style="background: #dcfce7; color: #15803d; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">16 - Entrada</span>`
-                    : doc.tipo == "30" ? `<span style="background: #fef3c7; color: #b45309; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">30 - Salida Compras</span>`
-                    : `<span style="background: #fee2e2; color: #b91c1c; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">17 - Salida</span>`;
-
-    let refTexto = "";
-    if (doc.items.length === 1) {
-      refTexto = doc.items[0].referencia;
-    } else {
-      refTexto = `<strong style="color: #1e3a8a;">${doc.items[0].referencia}</strong> <span style="background: #e2e8f0; color: #475569; padding: 0.1rem 0.4rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: bold;">+${doc.items.length - 1} más</span>`;
-    }
-
-    const btnPdf = doc.esRecogida ? `<button onclick="window.reimprimirPDF('${doc.consecutivo}')" style="background: #0284c7; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer; font-weight: bold;" title="Descargar PDF"><i class="fa-solid fa-file-pdf"></i> PDF</button>` : ``;
-    const btnCopiar = `<button onclick="window.duplicarRegistroConsecutivo('${doc.consecutivo}')" style="background: #8b5cf6; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer; font-weight: bold; margin-left: 0.2rem;" title="Copiar este documento completo"><i class="fa-solid fa-copy"></i> Copiar</button>`;
-
-    htmlRows += `
-      <tr style="border-bottom: 1px solid #f3f4f6;">
-        <td style="padding: 0.75rem; font-weight: bold; color: #1e3a8a;">${doc.consecutivo || '000001'}</td>
-        <td style="padding: 0.75rem;">${tipoBadge}</td>
-        <td style="padding: 0.75rem; font-size: 0.75rem; color: #475569;">${doc.nit || 'N/A'}</td>
-        <td style="padding: 0.75rem; font-weight: 600; color: #1e3a8a;">${doc.tercero}</td>
-        <td style="padding: 0.75rem; font-weight: bold; color: #374151;">${doc.bodega}</td>
-        <td style="padding: 0.75rem; font-size: 0.85rem;">${refTexto}</td>
-        <td style="padding: 0.75rem; font-weight: bold; color: #0284c7;">${doc.cantTotal.toLocaleString('es-CO')}</td>
-        <td style="padding: 0.75rem; color: #059669; font-weight: bold;">$${Number(doc.valTotal || 0).toLocaleString('es-CO')}</td>
-        <td style="padding: 0.75rem; color: #6b7280; font-size: 0.75rem;">${doc.fecha ? new Date(doc.fecha).toLocaleString() : 'N/A'}</td>
-        <td style="padding: 0.75rem; font-size: 0.75rem; color: #475569; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${doc.observaciones || ''}</td>
-        <td style="padding: 0.75rem; text-align: center; white-space: nowrap;">${btnPdf}${btnCopiar}</td>
-      </tr>
-    `;
-  });
-  tabla.innerHTML = htmlRows;
-};
-
-// 4. CONSULTA POR RANGO DE FECHAS (DESDE / HASTA)
+// Consulta por rango de fechas (botones Desde / Hasta)
 window.consultarPorRangoFechas = function() {
   const inicioStr = document.getElementById('filtro-fecha-inicio').value;
   const finStr = document.getElementById('filtro-fecha-fin').value;
 
-  if(!inicioStr || !finStr) {
-    alert("Por favor selecciona una Fecha Inicio y una Fecha Fin.");
+  if (!inicioStr || !finStr) {
+    alert("Selecciona Fecha Inicio y Fecha Fin para consultar.");
     return;
   }
 
@@ -142,32 +84,13 @@ window.consultarPorRangoFechas = function() {
 };
 
 window.restablecerFiltroFechas = function() {
-  document.getElementById('filtro-fecha-inicio').value = '';
-  document.getElementById('filtro-fecha-fin').value = '';
   document.getElementById('filtro-kardex').value = '';
   window.cargarInicialPorFechaMesActual();
 };
 
-window.cargarInicialPorFechaMesActual = function() {
-  const ahora = new Date();
-  const primerDiaMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
-
-  const delMes = (window.todosLosRegistros || []).filter(item => {
-    if (!item.fecha) return true;
-    const fItem = new Date(item.fecha);
-    return fItem >= primerDiaMes;
-  });
-
-  if (delMes.length > 0) {
-    window.renderizarTablaKardex(delMes);
-  } else {
-    window.renderizarTablaKardex(window.todosLosRegistros || []);
-  }
-};
-
 window.autocompletarTerceroPorNit = function(val) {
   const nitBuscado = String(val || '').trim();
-  const match = (window.todosLosTerceros || []).find(t => String(t.nit || '').trim() === nitBuscado);
+  const match = window.todosLosTerceros.find(t => String(t.nit || '').trim() === nitBuscado);
   if(match) {
     document.getElementById('doc-nombre-tercero').value = match.nombre;
     document.getElementById('doc-nit').value = match.nit;
@@ -176,7 +99,7 @@ window.autocompletarTerceroPorNit = function(val) {
 
 window.autocompletarNitPorNombre = function(val) {
   const nombreBuscado = String(val || '').trim().toLocaleLowerCase('es');
-  const match = (window.todosLosTerceros || []).find(t => String(t.nombre || '').trim().toLocaleLowerCase('es') === nombreBuscado);
+  const match = window.todosLosTerceros.find(t => String(t.nombre || '').trim().toLocaleLowerCase('es') === nombreBuscado);
   if(match) {
     document.getElementById('doc-nit').value = match.nit;
     document.getElementById('doc-nombre-tercero').value = match.nombre;
@@ -184,7 +107,7 @@ window.autocompletarNitPorNombre = function(val) {
 };
 
 window.autocompletarItemRef = function(val) {
-  const match = (window.todasLasReferencias || []).find(r => val.includes(r.codigo) || val.includes(r.nombre));
+  const match = window.todasLasReferencias.find(r => val.includes(r.codigo) || val.includes(r.nombre));
   if(match) {
     document.getElementById('item-referencia').value = `${match.codigo} - ${match.nombre}`;
     if(match.unidad) document.getElementById('item-unidad').value = match.unidad;
@@ -212,6 +135,84 @@ window.filtrarTablaKardex = function() {
   window.renderizarTablaKardex(filtrados);
 };
 
+// Copia TODO el documento (Pan, Frutas y todos los ítems) generando un consecutivo nuevo
+window.duplicarRegistroConsecutivo = function(consecutivo) {
+  const registrosEncontrados = (window.todosLosRegistros || []).filter(r => r.consecutivo === consecutivo);
+
+  if(!registrosEncontrados || registrosEncontrados.length === 0) {
+    alert("No se encontró el documento para copiar.");
+    return;
+  }
+
+  const base = registrosEncontrados[0];
+  abrirModalInventario(base.esRecogida || false);
+
+  document.getElementById('doc-tipo').value = base.tipo || "16";
+  document.getElementById('doc-bodega').value = base.bodega || "PA";
+  document.getElementById('doc-nit').value = base.nit || "";
+  document.getElementById('doc-nombre-tercero').value = base.tercero || "";
+  document.getElementById('doc-observaciones').value = base.observaciones ? `Copia de ${consecutivo}: ${base.observaciones}` : `Copia de ${consecutivo}`;
+
+  itemsGrid = [];
+  registrosEncontrados.forEach(r => {
+    itemsGrid.push({
+      referencia: r.referencia,
+      unidad: r.unidad || 'Kilos',
+      cantidad: Number(r.cantidad || 0),
+      valUnit: Number(r.valUnit || 0),
+      valor: Number(r.valor || 0)
+    });
+  });
+
+  renderizarGrid();
+};
+
+window.renderizarTablaKardex = function(lista) {
+  const tabla = document.getElementById('tabla-inventario');
+  const contador = document.getElementById('contador-registros');
+  if(!tabla) return;
+
+  const docs = window.agruparRegistrosPorConsecutivo(lista);
+  if(contador) contador.innerText = `${docs.length} Documentos (${lista.length} Ítems)`;
+
+  if(docs.length === 0) {
+    tabla.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 1.5rem; color: #9ca3af;">No se encontraron registros en este rango de fechas.</td></tr>`;
+    return;
+  }
+
+  let htmlRows = "";
+  docs.forEach((doc) => {
+    const tipoBadge = doc.esRecogida ? `<span style="background: #e0f2fe; color: #0369a1; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;"><i class="fa-solid fa-truck-pickup"></i> Recogida</span>`
+                    : doc.tipo == "16" ? `<span style="background: #dcfce7; color: #15803d; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">16 - Entrada</span>`
+                    : doc.tipo == "30" ? `<span style="background: #fef3c7; color: #b45309; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">30 - Salida Compras</span>`
+                    : `<span style="background: #fee2e2; color: #b91c1c; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">17 - Salida</span>`;
+
+    const refTexto = doc.items.length === 1
+      ? doc.items[0].referencia
+      : `<strong style="color: #1e3a8a;">${doc.items[0].referencia}</strong> <span style="background: #e2e8f0; color: #475569; padding: 0.1rem 0.4rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: bold;">+${doc.items.length - 1} más</span>`;
+
+    const btnPdf = doc.esRecogida ? `<button onclick="window.reimprimirPDF('${doc.consecutivo}')" style="background: #0284c7; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer; font-weight: bold;" title="Descargar PDF"><i class="fa-solid fa-file-pdf"></i> PDF</button>` : ``;
+    const btnCopiar = `<button onclick="window.duplicarRegistroConsecutivo('${doc.consecutivo}')" style="background: #8b5cf6; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer; font-weight: bold; margin-left: 0.2rem;" title="Copiar documento completo"><i class="fa-solid fa-copy"></i> Copiar</button>`;
+
+    htmlRows += `
+      <tr style="border-bottom: 1px solid #f3f4f6;">
+        <td style="padding: 0.75rem; font-weight: bold; color: #1e3a8a;">${doc.consecutivo || '000001'}</td>
+        <td style="padding: 0.75rem;">${tipoBadge}</td>
+        <td style="padding: 0.75rem; font-size: 0.75rem; color: #475569;">${doc.nit || 'N/A'}</td>
+        <td style="padding: 0.75rem; font-weight: 600; color: #1e3a8a;">${doc.tercero}</td>
+        <td style="padding: 0.75rem; font-weight: bold; color: #374151;">${doc.bodega}</td>
+        <td style="padding: 0.75rem;">${refTexto}</td>
+        <td style="padding: 0.75rem; font-weight: bold; color: #0284c7;">${doc.cantTotal.toLocaleString('es-CO')}</td>
+        <td style="padding: 0.75rem; color: #059669; font-weight: bold;">$${Number(doc.valTotal || 0).toLocaleString('es-CO')}</td>
+        <td style="padding: 0.75rem; color: #6b7280; font-size: 0.75rem;">${doc.fecha ? new Date(doc.fecha).toLocaleString() : 'N/A'}</td>
+        <td style="padding: 0.75rem; font-size: 0.75rem; color: #475569; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${doc.observaciones || ''}</td>
+        <td style="padding: 0.75rem; text-align: center; white-space: nowrap;">${btnPdf}${btnCopiar}</td>
+      </tr>
+    `;
+  });
+  tabla.innerHTML = htmlRows;
+};
+
 window.abrirModalInventario = function(esRecogida = false) {
   modoRecogida = esRecogida;
   itemsGrid = [];
@@ -230,8 +231,7 @@ window.abrirModalInventario = function(esRecogida = false) {
   document.getElementById('doc-tipo').value = "16";
   document.getElementById('doc-bodega').value = "PA";
   ['doc-nit','doc-nombre-tercero','item-referencia','item-cantidad','item-val-unit','item-val-total','doc-observaciones'].forEach(id => {
-    const el = document.getElementById(id);
-    if(el) el.value = '';
+    document.getElementById(id).value = '';
   });
   document.getElementById('item-unidad').value = 'Kilos';
   cancelarEdicionGrid();
