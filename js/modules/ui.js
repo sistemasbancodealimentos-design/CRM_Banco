@@ -97,6 +97,7 @@ window.renderizarTablaTercerosUI = function() {
   tablaTerc.innerHTML = htmlStr;
 };
 
+// Crear y Editar Referencias / Terceros sin refresco ni salir de la sesión
 window.guardarNuevaReferenciaDirecta = function(e) {
   if (e) e.preventDefault();
   const codigo = document.getElementById('ref-codigo').value.trim();

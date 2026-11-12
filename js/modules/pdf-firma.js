@@ -55,6 +55,7 @@ window.generarPDFComprobante = function(consecutivo, tipo, bodega, nit, tercero,
     const doc = new jsPDF();
     const listaItems = itemsArr || [];
 
+    // Encabezado
     doc.setFillColor(11, 98, 164);
     doc.rect(0, 0, 210, 28, 'F');
     doc.setTextColor(255, 255, 255);
@@ -69,6 +70,7 @@ window.generarPDFComprobante = function(consecutivo, tipo, bodega, nit, tercero,
     doc.setFont('helvetica', 'bold');
     doc.text(`N° ${consecutivo}`, 155, 16);
 
+    // Datos del Documento
     const strFecha = fechaDoc ? new Date(fechaDoc).toLocaleString('es-CO') : new Date().toLocaleString('es-CO');
     doc.setTextColor(30, 41, 59);
     doc.setFontSize(10);
@@ -82,6 +84,7 @@ window.generarPDFComprobante = function(consecutivo, tipo, bodega, nit, tercero,
       doc.text(`Observaciones: ${obs}`, 14, 58);
     }
 
+    // Tabla de Productos
     const tableData = listaItems.map((item, idx) => [
       idx + 1,
       item.referencia,
@@ -105,6 +108,7 @@ window.generarPDFComprobante = function(consecutivo, tipo, bodega, nit, tercero,
       });
     }
 
+    // Firma digital
     let yFirma = doc.lastAutoTable ? doc.lastAutoTable.finalY + 18 : 115;
     if (yFirma > 250) { doc.addPage(); yFirma = 30; }
     doc.setFont('helvetica', 'bold');
