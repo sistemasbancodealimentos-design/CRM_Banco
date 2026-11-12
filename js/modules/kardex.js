@@ -2,14 +2,14 @@ let itemsGrid = [];
 let editIndex = -1;
 let modoRecogida = false;
 
-// 1. FUNCIÓN DE AGRUPACIÓN POR DOCUMENTO CONSECUTIVO
+// 1. FUNCIÓN DE AGRUPACIÓN POR CONSECUTIVO (Resuelve los registros repetidos)
 window.agruparRegistrosPorConsecutivo = function(listaOriginal) {
   if (!listaOriginal || !Array.isArray(listaOriginal)) return [];
   
   const mapa = new Map();
   
   listaOriginal.forEach(item => {
-    // Clave unica de documento (Consecutivo + Tercero)
+    // Generar clave única por Consecutivo y Tercero
     const key = `${item.consecutivo || '000000'}_${item.tercero || ''}_${item.fecha ? item.fecha.slice(0,10) : ''}`;
     
     if (!mapa.has(key)) {
@@ -37,9 +37,9 @@ window.agruparRegistrosPorConsecutivo = function(listaOriginal) {
   return Array.from(mapa.values());
 };
 
-// 2. DUPLICAR O COPIAR DOCUMENTO COMPLETO AL MODAL
+// 2. DUPLICAR / COPIAR DOCUMENTO COMPLETO (Carga Pan, Frutas y todos los ítems al modal)
 window.duplicarRegistroConsecutivo = function(consecutivo) {
-  // Buscar todos los items pertenecientes a este consecutivo en los registros globales
+  // Buscar todos los ítems que pertenecen a ese consecutivo
   const registrosDoc = (window.todosLosRegistros || []).filter(r => r.consecutivo === consecutivo);
 
   if(!registrosDoc || registrosDoc.length === 0) {
@@ -50,14 +50,14 @@ window.duplicarRegistroConsecutivo = function(consecutivo) {
   const base = registrosDoc[0];
   abrirModalInventario(base.esRecogida || false);
 
-  // Copiar encabezado
+  // Copiar datos del encabezado
   document.getElementById('doc-tipo').value = base.tipo || "16";
   document.getElementById('doc-bodega').value = base.bodega || "PA";
   document.getElementById('doc-nit').value = base.nit || "";
   document.getElementById('doc-nombre-tercero').value = base.tercero || "";
   document.getElementById('doc-observaciones').value = base.observaciones ? `Copia de ${consecutivo}: ${base.observaciones}` : `Copia de ${consecutivo}`;
 
-  // Copiar TODOS los ítems al grid del modal
+  // Cargar TODOS los productos en el Grid del formulario
   itemsGrid = [];
   registrosDoc.forEach(r => {
     itemsGrid.push({
@@ -72,13 +72,13 @@ window.duplicarRegistroConsecutivo = function(consecutivo) {
   renderizarGrid();
 };
 
-// 3. RENDERIZAR TABLA KÁRDEX (AGRUPADA Y ULTRA RÁPIDA)
+// 3. RENDERIZAR TABLA KÁRDEX (AGRUPADA)
 window.renderizarTablaKardex = function(lista) {
   const tabla = document.getElementById('tabla-inventario');
   const contador = document.getElementById('contador-registros');
   if(!tabla) return;
 
-  // Agrupar lista antes de renderizar
+  // Agrupar la lista por documento
   const documentosAgrupados = window.agruparRegistrosPorConsecutivo(lista);
 
   if(contador) contador.innerText = `${documentosAgrupados.length} Documentos (${lista.length} Ítems)`;
@@ -95,7 +95,7 @@ window.renderizarTablaKardex = function(lista) {
                     : doc.tipo == "30" ? `<span style="background: #fef3c7; color: #b45309; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">30 - Salida Compras</span>`
                     : `<span style="background: #fee2e2; color: #b91c1c; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">17 - Salida</span>`;
 
-    // Formatear resumen de referencias
+    // Resumen visual si hay más de 1 producto
     let refTexto = "";
     if (doc.items.length === 1) {
       refTexto = doc.items[0].referencia;
@@ -155,7 +155,6 @@ window.restablecerFiltroFechas = function() {
 };
 
 window.cargarInicialPorFechaMesActual = function() {
-  // Carga por defecto los registros del mes actual para que la tabla sea ultra rápida
   const ahora = new Date();
   const primerDiaMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
 
@@ -165,7 +164,6 @@ window.cargarInicialPorFechaMesActual = function() {
     return fItem >= primerDiaMes;
   });
 
-  // Si hay pocos en el mes actual, mostrar todos por defecto
   if (delMes.length > 0) {
     window.renderizarTablaKardex(delMes);
   } else {
