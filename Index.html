@@ -1104,50 +1104,112 @@
       renderizarGrid();
     };
 
+    window.toggleDetalleDocKardex = function(grupoId) {
+      const filas = document.querySelectorAll(`.detalle-grupo-${grupoId}`);
+      const icono = document.getElementById(`icono-grupo-${grupoId}`);
+      filas.forEach(tr => tr.classList.toggle('hidden'));
+      if (icono) {
+        icono.classList.toggle('fa-chevron-right');
+        icono.classList.toggle('fa-chevron-down');
+      }
+    };
+
     window.renderizarTablaKardex = function(lista) {
       const tabla = document.getElementById('tabla-inventario');
       const contador = document.getElementById('contador-registros');
-      if(!tabla) return;
+      if (!tabla) return;
 
-      if(contador) contador.innerText = `${lista.length} Registros`;
-
-      if(lista.length === 0) {
+      if (lista.length === 0) {
+        if (contador) contador.innerText = `0 Documentos (0 Ítems)`;
         tabla.innerHTML = `<tr><td colspan="13" style="text-align: center; padding: 1.5rem; color: #9ca3af;">No se encontraron registros.</td></tr>`;
         return;
       }
 
-      tabla.innerHTML = "";
-      lista.forEach((item, index) => {
-        const tipoBadge = item.esRecogida ? `<span style="background: #e0f2fe; color: #0369a1; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;"><i class="fa-solid fa-truck-pickup"></i> Recogida</span>`
-                        : item.tipo == "16" ? `<span style="background: #dcfce7; color: #15803d; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">16 - Entrada</span>`
-                        : item.tipo == "30" ? `<span style="background: #fef3c7; color: #b45309; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">30 - Salida Compras</span>`
-                        : `<span style="background: #fee2e2; color: #b91c1c; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">17 - Salida</span>`;
+      // Agrupar filas por documento (consecutivo + nit + fecha)
+      const gruposMap = new Map();
+      lista.forEach(item => {
+        const key = `${item.consecutivo || ''}|${item.nit || ''}|${item.fecha || ''}`;
+        if (!gruposMap.has(key)) gruposMap.set(key, []);
+        gruposMap.get(key).push(item);
+      });
 
-        const btnPdf = item.esRecogida ? `<button onclick="window.reimprimirPDF('${item.consecutivo}')" style="background: #0284c7; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer; font-weight: bold;" title="Descargar PDF"><i class="fa-solid fa-file-pdf"></i> PDF</button>` : ``;
+      const grupos = Array.from(gruposMap.values());
+      if (contador) {
+        contador.innerText = `${grupos.length} Docs (${lista.length} Ítems)`;
+      }
 
-        const consSafe = String(item.consecutivo || '').replace(/'/g, "\'");
-        const nitSafe = String(item.nit || '').replace(/'/g, "\'");
-        const fechaSafe = String(item.fecha || '').replace(/'/g, "\'");
+      let html = "";
+      grupos.forEach((itemsDoc, idx) => {
+        const base = itemsDoc[0];
+        const esMultiple = itemsDoc.length > 1;
+        const grupoId = `grp_${idx}`;
+
+        const tipoBadge = base.esRecogida
+          ? `<span style="background: #e0f2fe; color: #0369a1; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;"><i class="fa-solid fa-truck-pickup"></i> Recogida</span>`
+          : base.tipo == "16"
+          ? `<span style="background: #dcfce7; color: #15803d; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">16 - Entrada</span>`
+          : base.tipo == "30"
+          ? `<span style="background: #fef3c7; color: #b45309; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">30 - Salida Compras</span>`
+          : `<span style="background: #fee2e2; color: #b91c1c; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">17 - Salida</span>`;
+
+        const btnPdf = base.esRecogida
+          ? `<button onclick="window.reimprimirPDF('${base.consecutivo}')" style="background: #0284c7; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer; font-weight: bold;" title="Descargar PDF"><i class="fa-solid fa-file-pdf"></i> PDF</button>`
+          : ``;
+
+        const consSafe = String(base.consecutivo || '').replace(/'/g, "\\'");
+        const nitSafe = String(base.nit || '').replace(/'/g, "\\'");
+        const fechaSafe = String(base.fecha || '').replace(/'/g, "\\'");
         const btnCopiar = `<button onclick="window.duplicarRegistroConsecutivo('${consSafe}', '${nitSafe}', '${fechaSafe}')" style="background: #8b5cf6; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer; font-weight: bold; margin-left: 0.2rem;" title="Copiar documento completo con nuevo consecutivo"><i class="fa-solid fa-copy"></i> Copiar</button>`;
 
-        tabla.innerHTML += `
-          <tr style="border-bottom: 1px solid #f3f4f6;">
-            <td style="padding: 0.75rem; font-weight: bold; color: #1e3a8a;">${item.consecutivo || '000001'}</td>
+        const totalValorDoc = itemsDoc.reduce((acc, r) => acc + Number(r.valor || 0), 0);
+        const totalCantDoc = itemsDoc.reduce((acc, r) => acc + Number(r.cantidad || 0), 0);
+
+        const colReferencia = esMultiple
+          ? `<button type="button" onclick="window.toggleDetalleDocKardex('${grupoId}')" style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; padding: 0.2rem 0.55rem; border-radius: 0.35rem; font-size: 0.78rem; font-weight: bold; cursor: pointer;">
+               <i id="icono-grupo-${grupoId}" class="fa-solid fa-chevron-right" style="margin-right: 0.3rem;"></i>${itemsDoc.length} referencias (ver detalle)
+             </button>`
+          : base.referencia;
+
+        const colCantidad = esMultiple ? `${Number(totalCantDoc.toFixed(2))}` : base.cantidad;
+        const colUnidad = esMultiple ? `Varios` : (base.unidad || 'Kg');
+        const colValUnit = esMultiple ? `—` : `$${Number(base.valUnit || 0).toLocaleString('es-CO')}`;
+
+        html += `
+          <tr style="border-bottom: 1px solid #e2e8f0; background: #ffffff;">
+            <td style="padding: 0.75rem; font-weight: bold; color: #1e3a8a;">${base.consecutivo || '000001'}</td>
             <td style="padding: 0.75rem;">${tipoBadge}</td>
-            <td style="padding: 0.75rem; font-size: 0.75rem; color: #475569;">${item.nit || 'N/A'}</td>
-            <td style="padding: 0.75rem; font-weight: 600; color: #1e3a8a;">${item.tercero}</td>
-            <td style="padding: 0.75rem; font-weight: bold; color: #374151;">${item.bodega}</td>
-            <td style="padding: 0.75rem;">${item.referencia}</td>
-            <td style="padding: 0.75rem; font-weight: bold;">${item.cantidad}</td>
-            <td style="padding: 0.75rem; font-size: 0.75rem; color: #64748b;">${item.unidad || 'Kg'}</td>
-            <td style="padding: 0.75rem; color: #3b82f6;">$${Number(item.valUnit || 0).toLocaleString('es-CO')}</td>
-            <td style="padding: 0.75rem; color: #059669; font-weight: bold;">$${Number(item.valor || 0).toLocaleString('es-CO')}</td>
-            <td style="padding: 0.75rem; color: #6b7280; font-size: 0.75rem;">${item.fecha ? new Date(item.fecha).toLocaleString() : 'N/A'}</td>
-            <td style="padding: 0.75rem; font-size: 0.75rem; color: #475569; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.observaciones || ''}</td>
+            <td style="padding: 0.75rem; font-size: 0.75rem; color: #475569;">${base.nit || 'N/A'}</td>
+            <td style="padding: 0.75rem; font-weight: 600; color: #1e3a8a;">${base.tercero}</td>
+            <td style="padding: 0.75rem; font-weight: bold; color: #374151;">${base.bodega}</td>
+            <td style="padding: 0.75rem;">${colReferencia}</td>
+            <td style="padding: 0.75rem; font-weight: bold;">${colCantidad}</td>
+            <td style="padding: 0.75rem; font-size: 0.75rem; color: #64748b;">${colUnidad}</td>
+            <td style="padding: 0.75rem; color: #3b82f6;">${colValUnit}</td>
+            <td style="padding: 0.75rem; color: #059669; font-weight: bold;">$${Number(totalValorDoc).toLocaleString('es-CO')}</td>
+            <td style="padding: 0.75rem; color: #6b7280; font-size: 0.75rem;">${base.fecha ? new Date(base.fecha).toLocaleString() : 'N/A'}</td>
+            <td style="padding: 0.75rem; font-size: 0.75rem; color: #475569; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${base.observaciones || ''}</td>
             <td style="padding: 0.75rem; text-align: center; white-space: nowrap;">${btnPdf}${btnCopiar}</td>
           </tr>
         `;
+
+        if (esMultiple) {
+          itemsDoc.forEach(sub => {
+            html += `
+              <tr class="detalle-grupo-${grupoId} hidden" style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-size: 0.8rem;">
+                <td colspan="5" style="padding: 0.45rem 0.75rem; text-align: right; color: #64748b;"><i class="fa-solid fa-turn-up fa-rotate-90" style="margin-right: 0.4rem;"></i>Ítem:</td>
+                <td style="padding: 0.45rem 0.75rem; color: #334155; font-weight: 500;">${sub.referencia}</td>
+                <td style="padding: 0.45rem 0.75rem; font-weight: bold; color: #334155;">${sub.cantidad}</td>
+                <td style="padding: 0.45rem 0.75rem; color: #64748b;">${sub.unidad || 'Kg'}</td>
+                <td style="padding: 0.45rem 0.75rem; color: #3b82f6;">$${Number(sub.valUnit || 0).toLocaleString('es-CO')}</td>
+                <td style="padding: 0.45rem 0.75rem; color: #059669; font-weight: 600;">$${Number(sub.valor || 0).toLocaleString('es-CO')}</td>
+                <td colspan="3"></td>
+              </tr>
+            `;
+          });
+        }
       });
+
+      tabla.innerHTML = html;
     };
 
     window.addEventListener('DOMContentLoaded', () => {
