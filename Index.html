@@ -5,14 +5,49 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Banco de Alimentos - Sistema de Gestión ERP & Analítica</title>
 
-  <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+    /* Utilidades CSS ligeras (reemplaza el compilador pesado de Tailwind CDN) */
+    .bg-white { background-color: #ffffff; }
+    .border-b { border-bottom-width: 1px; border-bottom-style: solid; }
+    .border-r { border-right-width: 1px; border-right-style: solid; }
+    .border-gray-200 { border-color: #e5e7eb; }
+    .flex { display: flex; }
+    .flex-col { flex-direction: column; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .overflow-y-auto { overflow-y: auto; }
+    .p-3 { padding: 0.75rem; }
+    .p-4 { padding: 1rem; }
+    .w-5 { width: 1.25rem; text-align: center; }
+    .w-64 { width: 16rem; }
+    .w-auto { width: auto; }
+    .h-6 { height: 1.5rem; }
+    .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+    .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+    .font-bold { font-weight: 700; }
+    .text-amber-600 { color: #d97706; }
+    .text-blue-400 { color: #60a5fa; }
+    .text-blue-600 { color: #2563eb; }
+    .text-blue-700 { color: #1d4ed8; }
+    .text-emerald-600 { color: #059669; }
+    .text-gray-600 { color: #4b5563; }
+    .text-green-500 { color: #22c55e; }
+    .text-pink-500 { color: #ec4899; }
+    .text-purple-600 { color: #9333ea; }
+    .text-red-400 { color: #f87171; }
+    .space-x-2 > * + * { margin-left: 0.5rem; }
+    .space-y-1 > * + * { margin-top: 0.25rem; }
+  </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- Librerías jsPDF, Chart.js y SheetJS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- Preconexión a CDNs y carga diferida (defer) para arranque instantáneo -->
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -240,7 +275,7 @@
         <div class="bg-white" style="border-radius: 0.75rem 0.75rem 0 0; padding: 1rem; border-bottom: 1px solid #e2e8f0; display: flex; gap: 1rem; align-items: center;">
           <div style="flex: 1; position: relative;">
             <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 0.75rem; top: 0.65rem; color: #94a3b8;"></i>
-            <input type="text" id="filtro-kardex" onkeyup="filtrarTablaKardex()" placeholder="Buscar por Consecutivo, Tercero, NIT, Referencia u Observaciones..." style="width: 100%; border: 1px solid #cbd5e1; padding: 0.5rem 0.5rem 0.5rem 2.2rem; border-radius: 0.375rem; font-size: 0.85rem;">
+            <input type="text" id="filtro-kardex" oninput="filtrarTablaKardexDebounced()" placeholder="Buscar por Consecutivo, Tercero, NIT, Referencia u Observaciones..." style="width: 100%; border: 1px solid #cbd5e1; padding: 0.5rem 0.5rem 0.5rem 2.2rem; border-radius: 0.375rem; font-size: 0.85rem;">
           </div>
           <span id="contador-registros" style="font-size: 0.8rem; font-weight: bold; color: #475569;">Cargando...</span>
         </div>
@@ -837,24 +872,21 @@
 
       if(window.todosLosTerceros) {
         if(datalistNit) {
-          datalistNit.innerHTML = "";
-          window.todosLosTerceros.forEach(t => {
-            datalistNit.innerHTML += `<option value="${String(t.nit || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;')}">${t.nombre || ''} (${t.tipo || ''})</option>`;
-          });
+          datalistNit.innerHTML = window.todosLosTerceros.map(t =>
+            `<option value="${String(t.nit || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;')}">${t.nombre || ''} (${t.tipo || ''})</option>`
+          ).join('');
         }
         if(datalistNombre) {
-          datalistNombre.innerHTML = "";
-          window.todosLosTerceros.forEach(t => {
-            datalistNombre.innerHTML += `<option value="${String(t.nombre || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;')}">${t.nit || ''} (${t.tipo || ''})</option>`;
-          });
+          datalistNombre.innerHTML = window.todosLosTerceros.map(t =>
+            `<option value="${String(t.nombre || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;')}">${t.nit || ''} (${t.tipo || ''})</option>`
+          ).join('');
         }
       }
 
       if(datalistRef && window.todasLasReferencias) {
-        datalistRef.innerHTML = "";
-        window.todasLasReferencias.forEach(r => {
-          datalistRef.innerHTML += `<option value="${r.codigo} - ${r.nombre}">${r.nombre} (${r.unidad})</option>`;
-        });
+        datalistRef.innerHTML = window.todasLasReferencias.map(r =>
+          `<option value="${r.codigo} - ${r.nombre}">${r.nombre} (${r.unidad})</option>`
+        ).join('');
       }
     };
 
@@ -862,10 +894,9 @@
       const tablaRef = document.getElementById('tabla-referencias-body');
       if(!tablaRef || !window.todasLasReferencias) return;
 
-      tablaRef.innerHTML = "";
-      window.todasLasReferencias.forEach(r => {
+      tablaRef.innerHTML = window.todasLasReferencias.map(r => {
         const codEsc = (r.codigo || '').replace(/'/g, "\'");
-        tablaRef.innerHTML += `
+        return `
           <tr>
             <td style="font-weight: bold; color: #15803d;">${r.codigo}</td>
             <td style="font-weight: 600;">${r.nombre}</td>
@@ -880,20 +911,19 @@
             </td>
           </tr>
         `;
-      });
+      }).join('');
     };
 
     window.renderizarTablaTercerosUI = function() {
       const tablaTerc = document.getElementById('tabla-terceros-body');
       if(!tablaTerc || !window.todosLosTerceros) return;
 
-      tablaTerc.innerHTML = "";
-      window.todosLosTerceros.forEach(t => {
+      tablaTerc.innerHTML = window.todosLosTerceros.map(t => {
         const badgeTipo = t.tipo === 'Donante' ? `<span style="background: #fef3c7; color: #b45309; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">Donante</span>`
                         : `<span style="background: #f3e8ff; color: #6b21a8; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">${t.tipo || 'Beneficiario'}</span>`;
 
         const nitEsc = (t.nit || '').replace(/'/g, "\'");
-        tablaTerc.innerHTML += `
+        return `
           <tr>
             <td style="font-weight: bold; color: #1e3a8a;">${t.nit}</td>
             <td style="font-weight: 600; color: #0f172a;">${t.nombre}</td>
@@ -907,7 +937,7 @@
             </td>
           </tr>
         `;
-      });
+      }).join('');
     };
 
     // Funciones para Crear Referencias y Terceros sin recargar ni romper sesión
@@ -1212,16 +1242,23 @@
       tabla.innerHTML = html;
     };
 
+    var _timerFiltroKardex = null;
+    window.filtrarTablaKardexDebounced = function() {
+      clearTimeout(_timerFiltroKardex);
+      _timerFiltroKardex = setTimeout(() => window.filtrarTablaKardex(), 180);
+    };
+
+    var _referenciasRenderizadas = false;
+    var _tercerosRenderizados = false;
+
     window.addEventListener('DOMContentLoaded', () => {
       const inputFecha = document.getElementById('filtro-fecha-kardex');
       if (inputFecha && !inputFecha.value) {
         inputFecha.value = window.obtenerFechaLocalYYYYMMDD(new Date().toISOString());
       }
-      popularDatalistsGlobales();
-      renderizarTablaReferenciasUI();
-      renderizarTablaTercerosUI();
+      // Cargar datalists en segundo plano sin bloquear el arranque visual
+      setTimeout(() => popularDatalistsGlobales(), 50);
       filtrarTablaKardex();
-      actualizarModuloReportes();
     });
 
     function mostrarSeccion(seccion) {
@@ -1235,6 +1272,12 @@
 
       if (seccion === 'reportes') {
         actualizarModuloReportes();
+      } else if (seccion === 'referencias' && !_referenciasRenderizadas) {
+        renderizarTablaReferenciasUI();
+        _referenciasRenderizadas = true;
+      } else if (seccion === 'terceros' && !_tercerosRenderizados) {
+        renderizarTablaTercerosUI();
+        _tercerosRenderizados = true;
       }
     }
 
@@ -1402,7 +1445,7 @@
   <!-- FIREBASE ENGINE SCRIPT -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, doc, writeBatch, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = {
@@ -1416,7 +1459,9 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    window.db = getFirestore(app);
+    window.db = initializeFirestore(app, {
+      localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+    });
     const auth = getAuth(app);
 
     onAuthStateChanged(auth, async (user) => {
@@ -1458,18 +1503,21 @@
         const querySnapshot = await getDocs(collection(window.db, "inventario"));
         if(!querySnapshot.empty) {
           const firebaseItems = [];
-          querySnapshot.forEach((doc) => {
-            const item = doc.data();
-            item._id = doc.id;
+          querySnapshot.forEach((docSnap) => {
+            const item = docSnap.data();
+            item._id = docSnap.id;
             firebaseItems.push(item);
           });
+          firebaseItems.sort((a, b) => new Date(b.fecha || 0) - new Date(a.fecha || 0));
           window.todosLosRegistros = firebaseItems.concat(KARDEX_INICIAL_EXCEL);
         }
       } catch (error) {
         console.log("Usando Kárdex pre-cargado");
       }
       window.filtrarTablaKardex();
-      window.actualizarModuloReportes();
+      if (!document.getElementById('seccion-reportes').classList.contains('hidden')) {
+        window.actualizarModuloReportes();
+      }
     };
 
     window.guardarGridEnKardex = async function(esRecogida) {
@@ -1488,6 +1536,10 @@
 
       const fechaFinal = fechaVal ? new Date(fechaVal).toISOString() : new Date().toISOString();
 
+      const batch = writeBatch(window.db);
+      const colRef = collection(window.db, "inventario");
+      const nuevosRegistros = [];
+
       for (let item of itemsGrid) {
         const nuevoRegistro = {
           consecutivo: consecutivo,
@@ -1504,13 +1556,16 @@
           fecha: fechaFinal,
           observaciones: observaciones || ''
         };
-
-        try {
-          await addDoc(collection(window.db, "inventario"), nuevoRegistro);
-        } catch(e) { console.log("Guardando en memoria local..."); }
-
-        window.todosLosRegistros.unshift(nuevoRegistro);
+        const docRef = doc(colRef);
+        batch.set(docRef, nuevoRegistro);
+        nuevosRegistros.push({ ...nuevoRegistro, _id: docRef.id });
       }
+
+      try {
+        await batch.commit();
+      } catch(e) { console.log("Guardando en memoria local..."); }
+
+      window.todosLosRegistros = nuevosRegistros.concat(window.todosLosRegistros);
 
       if (esRecogida) {
         const canvasFirma = document.getElementById('canvas-firma');
