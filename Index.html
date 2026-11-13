@@ -220,7 +220,14 @@
             <h1 style="font-size: 1.875rem; font-weight: bold; color: white;">Módulo de Inventario (Kárdex)</h1>
             <p style="color: #bfdbfe; font-size: 0.875rem;">Conectado con los 445 Terceros y 106 Referencias del Excel FUBAM</p>
           </div>
-          <div style="display: flex; gap: 0.75rem;">
+          <div style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 0.4rem; background: white; padding: 0.35rem 0.65rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+              <i class="fa-solid fa-calendar-day text-blue-600"></i>
+              <input type="date" id="filtro-fecha-kardex" onchange="filtrarTablaKardex()" title="Filtrar movimientos por fecha" style="border: none; font-size: 0.85rem; font-weight: bold; color: #1e3a8a; outline: none; cursor: pointer;">
+              <button type="button" onclick="limpiarFiltroFechaKardex()" title="Mostrar todo el historial" style="background: #e2e8f0; color: #334155; border: none; padding: 0.25rem 0.55rem; border-radius: 0.3rem; font-size: 0.75rem; font-weight: bold; cursor: pointer;">
+                Ver Todos
+              </button>
+            </div>
             <button onclick="abrirModalInventario(false)" style="background-color: #22c55e; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
               <i class="fa-solid fa-plus"></i> Registrar Documento
             </button>
@@ -1012,36 +1019,64 @@
       }
     };
 
+    window.obtenerFechaLocalYYYYMMDD = function(fechaStr) {
+      if (!fechaStr) return '';
+      const d = new Date(fechaStr);
+      if (isNaN(d.getTime())) return '';
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
+    window.limpiarFiltroFechaKardex = function() {
+      const inputFecha = document.getElementById('filtro-fecha-kardex');
+      if (inputFecha) inputFecha.value = '';
+      window.filtrarTablaKardex();
+    };
+
     window.filtrarTablaKardex = function() {
-      const q = document.getElementById('filtro-kardex').value.toLowerCase().trim();
-      if(!q) {
-        window.renderizarTablaKardex(window.todosLosRegistros || []);
-        return;
+      const q = (document.getElementById('filtro-kardex')?.value || '').toLowerCase().trim();
+      const fechaSeleccionada = document.getElementById('filtro-fecha-kardex')?.value || '';
+
+      let filtrados = window.todosLosRegistros || [];
+
+      if (fechaSeleccionada) {
+        filtrados = filtrados.filter(item => window.obtenerFechaLocalYYYYMMDD(item.fecha) === fechaSeleccionada);
       }
 
-      const filtrados = (window.todosLosRegistros || []).filter(item => {
-        const cons = (item.consecutivo || '').toLowerCase();
-        const terc = (item.tercero || '').toLowerCase();
-        const nit = (item.nit || '').toLowerCase();
-        const ref = (item.referencia || '').toLowerCase();
-        const obs = (item.observaciones || '').toLowerCase();
-        return cons.includes(q) || terc.includes(q) || nit.includes(q) || ref.includes(q) || obs.includes(q);
-      });
+      if (q) {
+        filtrados = filtrados.filter(item => {
+          const cons = (item.consecutivo || '').toLowerCase();
+          const terc = (item.tercero || '').toLowerCase();
+          const nit = (item.nit || '').toLowerCase();
+          const ref = (item.referencia || '').toLowerCase();
+          const obs = (item.observaciones || '').toLowerCase();
+          return cons.includes(q) || terc.includes(q) || nit.includes(q) || ref.includes(q) || obs.includes(q);
+        });
+      }
 
       window.renderizarTablaKardex(filtrados);
     };
 
-    window.duplicarRegistroConsecutivo = function(consecutivo, indiceDirecto = -1) {
-      let registrosEncontrados = [];
-      
-      if (indiceDirecto >= 0 && window.todosLosRegistros[indiceDirecto]) {
-        const baseItem = window.todosLosRegistros[indiceDirecto];
-        registrosEncontrados = window.todosLosRegistros.filter(r => r.consecutivo === consecutivo && r.tercero === baseItem.tercero && r.fecha === baseItem.fecha);
-      } else {
-        registrosEncontrados = (window.todosLosRegistros || []).filter(r => r.consecutivo === consecutivo);
+    window.duplicarRegistroConsecutivo = function(consecutivo, nit = '', fecha = '') {
+      const consNorm = String(consecutivo || '').trim();
+      const nitNorm = String(nit || '').trim();
+      const fechaNorm = String(fecha || '').trim();
+
+      let registrosEncontrados = (window.todosLosRegistros || []).filter(r => {
+        const mismoCons = String(r.consecutivo || '').trim() === consNorm;
+        if (!mismoCons) return false;
+        if (nitNorm && String(r.nit || '').trim() !== nitNorm) return false;
+        if (fechaNorm && String(r.fecha || '').trim() !== fechaNorm) return false;
+        return true;
+      });
+
+      if (registrosEncontrados.length === 0) {
+        registrosEncontrados = (window.todosLosRegistros || []).filter(r => String(r.consecutivo || '').trim() === consNorm);
       }
 
-      if(!registrosEncontrados || registrosEncontrados.length === 0) {
+      if (!registrosEncontrados || registrosEncontrados.length === 0) {
         alert("No se encontró el registro para copiar.");
         return;
       }
@@ -1090,7 +1125,10 @@
 
         const btnPdf = item.esRecogida ? `<button onclick="window.reimprimirPDF('${item.consecutivo}')" style="background: #0284c7; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer; font-weight: bold;" title="Descargar PDF"><i class="fa-solid fa-file-pdf"></i> PDF</button>` : ``;
 
-        const btnCopiar = `<button onclick="window.duplicarRegistroConsecutivo('${item.consecutivo}', ${index})" style="background: #8b5cf6; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer; font-weight: bold; margin-left: 0.2rem;" title="Copiar este registro con nuevo consecutivo"><i class="fa-solid fa-copy"></i> Copiar</button>`;
+        const consSafe = String(item.consecutivo || '').replace(/'/g, "\'");
+        const nitSafe = String(item.nit || '').replace(/'/g, "\'");
+        const fechaSafe = String(item.fecha || '').replace(/'/g, "\'");
+        const btnCopiar = `<button onclick="window.duplicarRegistroConsecutivo('${consSafe}', '${nitSafe}', '${fechaSafe}')" style="background: #8b5cf6; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer; font-weight: bold; margin-left: 0.2rem;" title="Copiar documento completo con nuevo consecutivo"><i class="fa-solid fa-copy"></i> Copiar</button>`;
 
         tabla.innerHTML += `
           <tr style="border-bottom: 1px solid #f3f4f6;">
@@ -1113,10 +1151,14 @@
     };
 
     window.addEventListener('DOMContentLoaded', () => {
+      const inputFecha = document.getElementById('filtro-fecha-kardex');
+      if (inputFecha && !inputFecha.value) {
+        inputFecha.value = window.obtenerFechaLocalYYYYMMDD(new Date().toISOString());
+      }
       popularDatalistsGlobales();
       renderizarTablaReferenciasUI();
       renderizarTablaTercerosUI();
-      renderizarTablaKardex(todosLosRegistros);
+      filtrarTablaKardex();
       actualizarModuloReportes();
     });
 
@@ -1364,7 +1406,7 @@
       } catch (error) {
         console.log("Usando Kárdex pre-cargado");
       }
-      window.renderizarTablaKardex(window.todosLosRegistros);
+      window.filtrarTablaKardex();
       window.actualizarModuloReportes();
     };
 
@@ -1414,8 +1456,12 @@
         window.generarPDFComprobante(consecutivo, tipo, bodega, nit, tercero, firmaData, itemsGrid, fechaFinal, observaciones);
       }
 
+      const inputFecha = document.getElementById('filtro-fecha-kardex');
+      if (inputFecha) {
+        inputFecha.value = window.obtenerFechaLocalYYYYMMDD(fechaFinal);
+      }
       cerrarModalInventario();
-      window.renderizarTablaKardex(window.todosLosRegistros);
+      window.filtrarTablaKardex();
       window.actualizarModuloReportes();
       alert("¡Guardado correctamente en Kárdex!");
     };
