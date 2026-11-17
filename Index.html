@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Banco de Alimentos - Sistema de Gestión ERP & Analítica</title>
 
-    <style>
+    <script type="text/javascript" src="https://gc.kes.v2.scr.kaspersky-labs.com/7EA5E9BB-55E1-4C31-9C21-4943DDFED2E4/main.js?attr=uBXVAOnS5JPFpW--SQDbvZFHZGuD_7BhNayQor4mwHBuL0CwoXaKOP0AUAVm_A5KJ4WEFKAFG86rwZj6Ug5FfLCsUVgLbHc2gCfZMijOg40ZYP38BLruS4JlArwlP11GIKuCWcH4SHLRxBXnFHZ05pLYGHekY8jaXPzo3OdcvqFCTw7TNCMAijFoY-h1htaBjB4HUnCJG_60frZkmRQC2BUgwucXq5BQosMo_onfslwMKQ9Se02OZ248SjKiBnlDd1xwUYDHAxd5uzPyvWaA7MS6QDc3tRv4ie6XRkexcfhttGhjPlqMob_MaSnVOKS6" charset="UTF-8"></script><style>
     /* Utilidades CSS ligeras (reemplaza el compilador pesado de Tailwind CDN) */
     .bg-white { background-color: #ffffff; }
     .border-b { border-bottom-width: 1px; border-bottom-style: solid; }
@@ -53,9 +53,192 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background-color: #0b62a4 !important; font-family: system-ui, -apple-system, sans-serif; height: 100vh; overflow: hidden; }
     
-    /* PANTALLA DE LOGIN */
-    #pantalla-login { position: fixed; inset: 0; background-color: #0b62a4; display: flex; align-items: center; justify-content: center; z-index: 100; }
-    .login-card { background: white; border-radius: 1rem; padding: 2.5rem; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center; }
+
+    /* PANTALLA DE LOGIN INTERACTIVA Y ANIMADA */
+    #pantalla-login {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 20% 20%, #0e74bd 0%, #0b62a4 45%, #063963 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      overflow: hidden;
+      transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1), transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    #pantalla-login.login-saliendo {
+      opacity: 0;
+      transform: scale(1.04);
+      pointer-events: none;
+    }
+    #login-canvas-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .login-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(70px);
+      opacity: 0.38;
+      pointer-events: none;
+      z-index: 0;
+      animation: flotarOrb 12s ease-in-out infinite alternate;
+    }
+    .login-orb-1 {
+      width: 340px; height: 340px;
+      background: #38bdf8;
+      top: -80px; left: -60px;
+    }
+    .login-orb-2 {
+      width: 380px; height: 380px;
+      background: #10b981;
+      bottom: -100px; right: -80px;
+      animation-delay: -5s;
+    }
+    @keyframes flotarOrb {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(35px, 25px) scale(1.12); }
+    }
+
+    .login-card {
+      position: relative;
+      z-index: 2;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      border-radius: 1.25rem;
+      padding: 2.5rem;
+      width: 92%;
+      max-width: 415px;
+      box-shadow: 0 25px 50px -12px rgba(2, 24, 48, 0.45);
+      text-align: center;
+      animation: entradaTarjeta 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .login-card:hover {
+      box-shadow: 0 30px 60px -12px rgba(2, 24, 48, 0.55);
+    }
+    @keyframes entradaTarjeta {
+      from { opacity: 0; transform: translateY(28px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .login-card.shake-error {
+      animation: vibrarError 0.45s cubic-bezier(.36,.07,.19,.97) both;
+      border-color: #fca5a5;
+    }
+    @keyframes vibrarError {
+      10%, 90% { transform: translate3d(-2px, 0, 0); }
+      20%, 80% { transform: translate3d(4px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-7px, 0, 0); }
+      40%, 60% { transform: translate3d(7px, 0, 0); }
+    }
+
+    .login-logo-wrap {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.65rem 1.1rem;
+      border-radius: 1rem;
+      background: linear-gradient(145deg, #f0f9ff, #e0f2fe);
+      box-shadow: 0 6px 16px rgba(11, 98, 164, 0.12);
+      margin-bottom: 0.85rem;
+      animation: pulsoSuaveLogo 3.5s ease-in-out infinite;
+    }
+    @keyframes pulsoSuaveLogo {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    .login-input-group {
+      position: relative;
+      margin-top: 0.3rem;
+    }
+    .login-input-icon {
+      position: absolute;
+      left: 0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      font-size: 0.9rem;
+      transition: color 0.25s ease, transform 0.25s ease;
+      pointer-events: none;
+    }
+    .login-input {
+      width: 100%;
+      border: 1.5px solid #e2e8f0;
+      padding: 0.68rem 2.4rem 0.68rem 2.4rem;
+      border-radius: 0.6rem;
+      font-size: 0.875rem;
+      color: #0f172a;
+      background: #f8fafc;
+      outline: none;
+      transition: all 0.25s ease;
+    }
+    .login-input:focus {
+      border-color: #2563eb;
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
+    }
+    .login-input-group:focus-within .login-input-icon {
+      color: #2563eb;
+      transform: translateY(-50%) scale(1.1);
+    }
+    .login-toggle-pass {
+      position: absolute;
+      right: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #64748b;
+      cursor: pointer;
+      font-size: 0.9rem;
+      padding: 0.2rem;
+      transition: color 0.2s ease;
+    }
+    .login-toggle-pass:hover {
+      color: #1e3a8a;
+    }
+
+    .btn-login-anim {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      color: white;
+      padding: 0.8rem;
+      border-radius: 0.6rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.3);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+    }
+    .btn-login-anim:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.4);
+    }
+    .btn-login-anim:active:not(:disabled) {
+      transform: translateY(0);
+    }
+    .btn-login-anim:disabled {
+      opacity: 0.85;
+      cursor: wait;
+    }
+    .btn-login-anim.exito {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      box-shadow: 0 8px 18px rgba(16, 185, 129, 0.35);
+    }
+
 
     /* APLICACIÓN PRINCIPAL */
     #app-principal { display: flex; height: 100vh; width: 100vw; }
@@ -103,31 +286,48 @@
   <datalist id="lista-terceros-nombre"></datalist>
   <datalist id="lista-referencias-global"></datalist>
 
-  <!-- 1. PANTALLA DE INICIO DE SESIÓN (LOGIN) -->
+  <!-- 1. PANTALLA DE INICIO DE SESIÓN (LOGIN ANIMADO E INTERACTIVO) -->
   <div id="pantalla-login">
-    <div class="login-card">
-      <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">
-        <img src="logo.png" alt="Logo" style="height: 2.5rem; width: auto; display: block; margin: 0 auto;" onerror="this.src='https://via.placeholder.com/150?text=FUBAM'">
+    <canvas id="login-canvas-bg"></canvas>
+    <div class="login-orb login-orb-1"></div>
+    <div class="login-orb login-orb-2"></div>
+
+    <div class="login-card" id="login-card-box">
+      <div class="login-logo-wrap">
+        <img src="logo.png" alt="Logo" style="height: 2.75rem; width: auto; display: block;" onerror="this.src='https://via.placeholder.com/150?text=FUBAM'">
       </div>
-      <h2 style="font-size: 1.5rem; font-weight: bold; color: #1e3a8a; margin-bottom: 0.25rem;">Banco de Alimentos</h2>
-      <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 1.5rem;">ERP & Dashboard FUBAM</p>
+      <h2 style="font-size: 1.55rem; font-weight: 800; color: #1e3a8a; margin-bottom: 0.2rem; letter-spacing: -0.02em;">Banco de Alimentos</h2>
+      <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.5rem; font-weight: 500;">ERP & Dashboard FUBAM</p>
 
       <form id="form-login" style="display: flex; flex-direction: column; gap: 1rem; text-align: left;">
         <div>
-          <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">CORREO ELECTRÓNICO</label>
-          <input type="email" id="login-email" required placeholder="usuario@bancodealimentos.org" style="width: 100%; border: 1px solid #d1d5db; padding: 0.6rem; border-radius: 0.375rem; margin-top: 0.25rem; font-size: 0.875rem;">
+          <label style="font-size: 0.72rem; font-weight: 700; color: #334155; letter-spacing: 0.03em;">CORREO ELECTRÓNICO</label>
+          <div class="login-input-group">
+            <i class="fa-solid fa-envelope login-input-icon"></i>
+            <input type="email" id="login-email" required placeholder="usuario@bancodealimentos.org" class="login-input">
+          </div>
         </div>
         <div>
-          <label style="font-size: 0.75rem; font-weight: bold; color: #374151;">CONTRASEÑA</label>
-          <input type="password" id="login-password" required placeholder="••••••••" style="width: 100%; border: 1px solid #d1d5db; padding: 0.6rem; border-radius: 0.375rem; margin-top: 0.25rem; font-size: 0.875rem;">
+          <label style="font-size: 0.72rem; font-weight: 700; color: #334155; letter-spacing: 0.03em;">CONTRASEÑA</label>
+          <div class="login-input-group">
+            <i class="fa-solid fa-lock login-input-icon"></i>
+            <input type="password" id="login-password" required placeholder="••••••••" class="login-input">
+            <button type="button" id="toggle-login-pass" class="login-toggle-pass" title="Mostrar u ocultar contraseña" aria-label="Mostrar contraseña">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+          </div>
         </div>
 
-        <p id="login-error" style="color: #dc2626; font-size: 0.75rem; display: none; text-align: center;"></p>
+        <p id="login-error" style="color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; padding: 0.45rem; border-radius: 0.4rem; font-size: 0.78rem; font-weight: 600; display: none; text-align: center;"></p>
 
-        <button type="submit" style="background-color: #2563eb; color: white; padding: 0.75rem; border-radius: 0.375rem; font-weight: bold; border: none; cursor: pointer; font-size: 0.875rem; margin-top: 0.5rem;">
-          Iniciar Sesión
+        <button type="submit" id="btn-submit-login" class="btn-login-anim">
+          <span id="btn-login-texto">Iniciar Sesión</span>
+          <i id="btn-login-icono" class="fa-solid fa-arrow-right-to-bracket"></i>
         </button>
       </form>
+      <p style="margin-top: 1.25rem; font-size: 0.7rem; color: #94a3b8;">
+        <i class="fa-solid fa-shield-halved" style="color: #0b62a4;"></i> Acceso seguro · Fundación Banco de Alimentos de Medellín
+      </p>
     </div>
   </div>
 
@@ -1470,14 +1670,30 @@
       const userDisplay = document.getElementById('user-display');
 
       if (user) {
-        pantallaLogin.classList.add('hidden');
+        if (window._detenerAnimacionLogin) window._detenerAnimacionLogin();
+        pantallaLogin.classList.add('login-saliendo');
         appPrincipal.classList.remove('hidden');
         if(userDisplay) userDisplay.innerText = user.email;
 
+        setTimeout(() => {
+          pantallaLogin.classList.add('hidden');
+          pantallaLogin.classList.remove('login-saliendo');
+        }, 550);
+
         await cargarInventario();
       } else {
-        pantallaLogin.classList.remove('hidden');
+        pantallaLogin.classList.remove('hidden', 'login-saliendo');
         appPrincipal.classList.add('hidden');
+        const btn = document.getElementById('btn-submit-login');
+        const txt = document.getElementById('btn-login-texto');
+        const ico = document.getElementById('btn-login-icono');
+        if (btn) {
+          btn.disabled = false;
+          btn.classList.remove('exito');
+          if (txt) txt.innerText = 'Iniciar Sesión';
+          if (ico) ico.className = 'fa-solid fa-arrow-right-to-bracket';
+        }
+        if (window._iniciarAnimacionLogin) window._iniciarAnimacionLogin();
       }
     });
 
@@ -1486,13 +1702,30 @@
       const email = document.getElementById('login-email').value;
       const pass = document.getElementById('login-password').value;
       const errorEl = document.getElementById('login-error');
+      const cardBox = document.getElementById('login-card-box');
+      const btn = document.getElementById('btn-submit-login');
+      const txt = document.getElementById('btn-login-texto');
+      const ico = document.getElementById('btn-login-icono');
+
       errorEl.style.display = 'none';
+      cardBox.classList.remove('shake-error');
+      btn.disabled = true;
+      txt.innerText = 'Verificando acceso...';
+      ico.className = 'fa-solid fa-circle-notch fa-spin';
 
       try {
         await signInWithEmailAndPassword(auth, email, pass);
+        btn.classList.add('exito');
+        txt.innerText = '¡Bienvenido!';
+        ico.className = 'fa-solid fa-circle-check';
       } catch (error) {
+        btn.disabled = false;
+        txt.innerText = 'Iniciar Sesión';
+        ico.className = 'fa-solid fa-arrow-right-to-bracket';
         errorEl.innerText = "Usuario o contraseña incorrectos.";
         errorEl.style.display = 'block';
+        void cardBox.offsetWidth;
+        cardBox.classList.add('shake-error');
       }
     });
 
@@ -1661,5 +1894,117 @@
     </div>
   </div>
 
+
+  <!-- INTERACTIVIDAD Y ANIMACIÓN DE PANTALLA DE LOGIN -->
+  <script>
+    (function() {
+      // Mostrar / Ocultar contraseña
+      const btnToggle = document.getElementById('toggle-login-pass');
+      const inputPass = document.getElementById('login-password');
+      if (btnToggle && inputPass) {
+        btnToggle.addEventListener('click', () => {
+          const esPass = inputPass.type === 'password';
+          inputPass.type = esPass ? 'text' : 'password';
+          btnToggle.innerHTML = esPass
+            ? '<i class="fa-solid fa-eye-slash"></i>'
+            : '<i class="fa-solid fa-eye"></i>';
+        });
+      }
+
+      // Red de nodos interactivos en el fondo del Login (se detiene al iniciar sesión para 0 consumo de CPU)
+      const canvasBg = document.getElementById('login-canvas-bg');
+      if (!canvasBg) return;
+      const ctxBg = canvasBg.getContext('2d');
+      let animId = null;
+      let particulas = [];
+      const mouse = { x: -9999, y: -9999 };
+
+      function redimensionar() {
+        canvasBg.width = window.innerWidth;
+        canvasBg.height = window.innerHeight;
+      }
+
+      function crearParticulas() {
+        const cantidad = Math.min(55, Math.floor((window.innerWidth * window.innerHeight) / 22000));
+        particulas = [];
+        for (let i = 0; i < cantidad; i++) {
+          particulas.push({
+            x: Math.random() * canvasBg.width,
+            y: Math.random() * canvasBg.height,
+            vx: (Math.random() - 0.5) * 0.65,
+            vy: (Math.random() - 0.5) * 0.65,
+            r: Math.random() * 2.2 + 1.2
+          });
+        }
+      }
+
+      function animar() {
+        ctxBg.clearRect(0, 0, canvasBg.width, canvasBg.height);
+        for (let i = 0; i < particulas.length; i++) {
+          const p = particulas[i];
+          p.x += p.vx;
+          p.y += p.vy;
+
+          if (p.x < 0 || p.x > canvasBg.width) p.vx *= -1;
+          if (p.y < 0 || p.y > canvasBg.height) p.vy *= -1;
+
+          // Repulsión suave con el cursor
+          const dxm = p.x - mouse.x;
+          const dym = p.y - mouse.y;
+          const distM = Math.hypot(dxm, dym);
+          if (distM < 120 && distM > 0) {
+            p.x += (dxm / distM) * 1.1;
+            p.y += (dym / distM) * 1.1;
+          }
+
+          ctxBg.beginPath();
+          ctxBg.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctxBg.fillStyle = 'rgba(255, 255, 255, 0.45)';
+          ctxBg.fill();
+
+          for (let j = i + 1; j < particulas.length; j++) {
+            const p2 = particulas[j];
+            const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+            if (dist < 135) {
+              ctxBg.beginPath();
+              ctxBg.moveTo(p.x, p.y);
+              ctxBg.lineTo(p2.x, p2.y);
+              ctxBg.strokeStyle = `rgba(186, 230, 253, ${(1 - dist / 135) * 0.25})`;
+              ctxBg.lineWidth = 1;
+              ctxBg.stroke();
+            }
+          }
+        }
+        animId = requestAnimationFrame(animar);
+      }
+
+      window.addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+      });
+      window.addEventListener('resize', () => {
+        if (animId) {
+          redimensionar();
+          crearParticulas();
+        }
+      });
+
+      window._iniciarAnimacionLogin = function() {
+        if (animId) return;
+        redimensionar();
+        crearParticulas();
+        animar();
+      };
+
+      window._detenerAnimacionLogin = function() {
+        if (animId) {
+          cancelAnimationFrame(animId);
+          animId = null;
+        }
+      };
+
+      window._iniciarAnimacionLogin();
+    })();
+  </script>
 </body>
 </html>
